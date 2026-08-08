@@ -1,0 +1,1 @@
+See https://www.researchgate.net/publication/411967777_Confinement_certificates_for_powers_of_rational_numbers_modulo_one
