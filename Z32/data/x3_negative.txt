@@ -1,0 +1,5 @@
+[KK18] Cor 4.8  X_{3,2}, |U|=2/3     : verdict FAT
+[Dub10] (1.1)   ||.||<1/3, |U|=2/3   : verdict FAT
+[Pol81]         [4/65,61/65)         : verdict FAT
+[Dub08] Thm 1.3 (5/48,43/48)         : verdict FAT
+[Cho80]         [1/19,18/19)         : verdict FAT

@@ -1,0 +1,4 @@
+U=[0/24,10/24) : cycles found: 16  (orbit points 138)
+U=[0/360,150/360) : cycles found: 16  (orbit points 138)
+U=[2/6,4/6) : cycles found: 1  (orbit points 2)
+U=[4/24,13/24) : cycles found: 1  (orbit points 3)

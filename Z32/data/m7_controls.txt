@@ -1,0 +1,70 @@
+== (A0) THEOREM A, tested directly: union_r S_k^(j)[r] == S_k ==
+   (3,2) [4/24,13/24)   depth 10, j=1,2,3: agrees at every level
+   (3,2) ||.|| < 1/3    depth 10, j=1,2,3: agrees at every level
+   (3,2) 4 cells / 12   depth  8, j=1,2,3: agrees at every level
+   (4,3) Akiyama Conj   depth  8, j=1,2,3: agrees at every level
+   (5,2) two-cell 1/5   depth  6, j=1,2,3: agrees at every level
+   ==> the residue coordinate adds nothing to the y-projection
+
+== (A) and its consequence: no product KILL beats the archimedean one ==
+   (a strictly earlier product KILL would refute Theorem A)
+   certWindow38  [4/24,13/24)   arch:CYCLE@8   j=1:CYCLE@8  j=2:CYCLE@8  j=3:CYCLE@9
+   certUnion712  4 cells /12    arch:CYCLE@7   j=1:CYCLE@8  j=2:CYCLE@9  j=3:CYCLE@10
+   certFrontier  L* = 1466/3600 arch:CYCLE@13  j=1:CYCLE@13  j=2:CYCLE@14  j=3:CYCLE@15
+   [Pol81]  [4/65,61/65)        arch:STABLE@1   j=1:STABLE@2  j=2:STABLE@3  j=3:STABLE@4
+   [Cho80]  [1/19,18/19)        arch:STABLE@1   j=1:STABLE@2  j=2:STABLE@3  j=3:STABLE@4
+   [Dub08]  [5/48,43/48)        arch:STABLE@1   j=1:STABLE@2  j=2:STABLE@3  j=3:STABLE@4
+   [Dub10]  ||.||<1/3           arch:STABLE@1   j=1:STABLE@2  j=2:STABLE@3  j=3:STABLE@4
+   [KK18]   X_{3,2}             arch:STABLE@2   j=1:STABLE@3  j=2:STABLE@4  j=3:STABLE@5
+   ==> no level ever KILLed earlier than the archimedean engine
+
+== (B) NEGATIVE controls: sets known NONEMPTY, at every level ==
+   [Pol81]  [4/65,61/65) j=1:STABLE@2  j=2:STABLE@3  j=3:STABLE@4
+   [Cho80]  [1/19,18/19) j=1:STABLE@2  j=2:STABLE@3  j=3:STABLE@4
+   [Dub08]  [5/48,43/48) j=1:STABLE@2  j=2:STABLE@3  j=3:STABLE@4
+   [Dub10]  ||.||<1/3    j=1:STABLE@2  j=2:STABLE@3  j=3:STABLE@4
+   [KK18]   X_{3,2}      j=1:STABLE@3  j=2:STABLE@4  j=3:STABLE@5
+   ==> refused at every level, as it must be
+
+== (C) X4: the crossover curve past the frontier L* = 1466/3600 ==
+   Theorem A forbids a KILL at any level, so the only way the product
+   engine can gain here is a CYCLE certificate.  Run it at the last
+   certified length and at the first band lengths, j = 0..3.
+   L*   = 1466  certified  j=0:CYCLE@13  j=1:CYCLE@13  j=2:CYCLE@14  j=3:CYCLE@15
+   L*+1 = 1467  band       j=0:none@30  j=1:none@30  j=2:none@30  j=3:none@30
+   L*+4 = 1470  band       j=0:none@30  j=1:none@30  j=2:none@30  j=3:none@30
+   ('none+' = undecided, and above 400 components the cubic block
+    merge was skipped, so the CYCLE test did not run at those levels.)
+   ==> flat.  The product engine never certifies a band entry, and on
+       the certified one it needs a STRICTLY DEEPER funnel than the
+       archimedean engine (13 -> 15): more states, later certificate.
+   Honest caveat -- the band is NOT proven out of reach.  Theorem B
+   bounds a certificate below by the periodic-orbit count, and here
+   that count is small, so the theorem does not bite:
+   L*   certified: periodic points by period [0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2]
+   L*+1 band     : periodic points by period [0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 16, 0, 2]
+   L*+4 band     : periodic points by period [0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 14, 0, 16, 0, 2]
+   ==> 1, 2 and 3 orbits respectively out to period 16 (measured to
+       20 offline, unchanged).  So the band entries stay open: this
+       engine fails on them, but no theorem here says every engine must.
+
+== (D) M7: [Aki08] Conjecture 1.4 at (4,3), U = [0,1/4) u [3/4,1) ==
+   j=1  M=3^1=   3  STABLE at depth 2:     4 components  over   2/3 residues,  outdeg 2,  mass 3/4
+   j=2  M=3^2=   9  STABLE at depth 3:     8 components  over   6/9 residues,  outdeg 2,  mass 9/8
+   j=3  M=3^3=  27  STABLE at depth 4:    16 components  over  14/27 residues,  outdeg 2,  mass 27/16
+   j=4  M=3^4=  81  STABLE at depth 5:    32 components  over  30/81 residues,  outdeg 2,  mass 81/32
+   j=5  M=3^5= 243  STABLE at depth 6:    64 components  over  60/243 residues,  outdeg 2,  mass 243/64
+   ==> nonempty and exactly forward-invariant at every level, with
+       2^(j+1) components of length (3/4)^j/4 and out-degree 2:
+       neither a KILL nor a CYCLE certificate can ever appear.
+
+== (E) THEOREM B applied: the ghost 2-shift, at (4,3) and at (3,2) ==
+   [Aki08] Conj 1.4  (4,3), OPEN      [1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191]
+                                      2^L-1 = [1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191]  MATCH
+   [Dub10] ||.||<1/3 (3,2), NONEMPTY  [1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191]
+                                      2^L-1 = [1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191]  MATCH
+   ==> both hold sets carry a full 2-shift of periodic orbits, so by
+       Theorem B NO product certificate exists at any level j -- and
+       the two cases are indistinguishable to the whole family, even
+       though [Dub10] PROVES the (3,2) one nonempty.  The obstruction
+       is therefore not evidence about Conjecture 1.4 either way.

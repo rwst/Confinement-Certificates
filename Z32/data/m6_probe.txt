@@ -1,0 +1,52 @@
+(a) two-cell sets [0,c) u [1-c,1) at (4,3); c = 1/4 IS [Aki08] Conj 1.4:
+  c = 1/4 = 0.25000                        INVARIANT: hold set = U itself, 2 comp, measure 0.500000
+  c = 23/100 = 0.23000                     INVARIANT: hold set = U itself, 2 comp, measure 0.460000
+  c = 11/50 = 0.22000                      INVARIANT: hold set = U itself, 2 comp, measure 0.440000
+  c = 1/5 = 0.20000                        INVARIANT: hold set = U itself, 2 comp, measure 0.400000
+  c = 3/20 = 0.15000                       shrinking at depth 30: 62 comp, measure 0.00023216
+  c = 1/8 = 0.12500                        shrinking at depth 30: 2 comp, measure 0.00004465
+
+(b) the (3,2) analogue; [Dub10] proves c = 1/3 NONEMPTY:
+  c = 1/3 = 0.33333                        INVARIANT: hold set = U itself, 2 comp, measure 0.666667
+  c = 3/10 = 0.30000                       INVARIANT: hold set = U itself, 2 comp, measure 0.600000
+  c = 1/4 = 0.25000                        INVARIANT: hold set = U itself, 2 comp, measure 0.500000
+  c = 1/5 = 0.20000                        shrinking at depth 30: 2 comp, measure 0.00000209
+
+(c) p > q^2, where [Aki08] Thm 2.5 builds nonempty Cantor sets:
+  (5,2) two-cell c = 1/5                   FAT: >4000 components by depth 11
+
+(d) [Dub09AA] zone q < p < q^2: every window of length 1/p resolves:
+  (p,q)=(4,3): 3<4<9;  8 windows, unresolved: 0
+  (p,q)=(5,3): 3<5<9;  8 windows, unresolved: 0
+  (p,q)=(5,4): 4<5<16;  8 windows, unresolved: 0
+  (p,q)=(7,5): 5<7<25;  8 windows, unresolved: 0
+
+(e) p > q^2 -- [Dub09AA] section 4 calls this regime wholly open:
+  (p,q)=(5,2), q^2=4 < p:
+    s=0    : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=1/6  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=1/3  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=1/2  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=2/3  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=5/6  : shrinking at depth 30: 1 comp, measure 0.00000000
+  (p,q)=(7,2), q^2=4 < p:
+    s=0    : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=1/6  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=1/3  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=1/2  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=2/3  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=5/6  : shrinking at depth 30: 2 comp, measure 0.00000000
+  (p,q)=(9,2), q^2=4 < p:
+    s=0    : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=1/6  : shrinking at depth 30: 2 comp, measure 0.00000000
+    s=1/3  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=1/2  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=2/3  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=5/6  : shrinking at depth 30: 1 comp, measure 0.00000000
+  (p,q)=(10,3), q^2=9 < p:
+    s=0    : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=1/6  : shrinking at depth 30: 2 comp, measure 0.00000000
+    s=1/3  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=1/2  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=2/3  : shrinking at depth 30: 1 comp, measure 0.00000000
+    s=5/6  : shrinking at depth 30: 1 comp, measure 0.00000000

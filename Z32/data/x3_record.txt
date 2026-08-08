@@ -1,0 +1,4 @@
+C engine   : verdict CYCLE  kill -1  depth 30  comps 3783  blocks 2512  meas 0.000184423  lambda 0.990664  maxoutdeg 1
+falsify    : no horseshoe up to period 10
+python lvls: 15:1509 16:1867 17:2252 18:2699 
+C lvls     : 15:1509 16:1867 17:2252 18:2699 

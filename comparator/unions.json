@@ -1,0 +1,12 @@
+{
+    "challenge_module": "Challenge",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Z32.dubickas_2008_cor_1_2",
+        "Z32.union_seven_twelfths_empty",
+        "Z32.union_two_thirds_empty",
+        "Z32.union_record_empty"
+    ],
+    "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+    "enable_nanoda": false
+}

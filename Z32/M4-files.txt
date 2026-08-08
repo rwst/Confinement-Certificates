@@ -1,0 +1,197 @@
+(C) 2026 Ralf Stephan, in collaboration with Claude Code.  CC0 1.0.
+
+M4-files.txt -- which Z32/ files the M4 paper needs.
+
+Paper: "A machine-checked confinement atlas for {xi(3/2)^n}" (plan-cert32.html
+section 11.1, milestone M4, lane (b); Math. Comp. primary, Exp. Math. fallback;
+18-25 pp + tables).  Nine sections; the section numbers below are the paper's,
+per the table in section 11.1 -- NOT the plan's own section numbering.
+
+  1 framing ([BD05] contrast)        6 unions and the largeness curve
+  2 carry coding + KILL/CYCLE        7 the band (cycle enumeration)
+  3 the soundness theorem            8 verification + the R-5 bug exhibit
+  4 the length-1/3 line              9 limits and disclosure
+  5 past the 1995 line
+
+Three marks:
+  [R]  required -- the paper cites it, prints a number it produced, or must
+       build to make a cited Lean name check
+  [A]  artifact-only -- not cited in the prose, but inside M4' item P3's
+       "gencert.py, the three engines, reproduce.sh, checksummed data/"
+  [-]  not needed for this paper
+
+
+================================================================================
+A.  LEAN -- the proof objects the paper cites by name
+================================================================================
+
+[R] BlockCert.lean          sections 3, 5, 6.  The soundness theorem
+                            (Cert.not_confined / .not_eventually_confined /
+                            ZSet_eq_empty_of_cert, funnelOk, funcOk by rank,
+                            ok_eq_false_of_full) and all eight decide-checked
+                            entries: ZSet_three_two_sixth_3_8 and
+                            ZSet_three_two_frontier (section 5),
+                            dubickas_2008_cor_1_2 (closed, printed form),
+                            union_seven_twelfths_empty, union_two_thirds_empty,
+                            union_record_empty (section 6).  Carries M6's
+                            (p,q) parameters, so section 3 must state the
+                            soundness theorem in its general form and the two
+                            off-base entries (4/3, 5/2) come along with it.
+
+[R] SmallInterval.lean      section 4.  [Dub09AA] Thm 1: ZSet_eq_empty_of_lt_sq
+                            for all coprime 1<q<p<q^2 and every real s, and the
+                            (3,2) headline ZSet_three_two_third_empty.  Also the
+                            third headline claim of the paper (the whole
+                            length-1/3 line formal, zero cited axioms).
+
+[R] DubickasWord.lean       sections 2, 3, 4.  The carry word itself (the
+                            coding of section 2) and [DN05] Lemma 2 proved,
+                            not cited: not_isEventuallyPeriodic_carry -- the
+                            sole analytic input of every CYCLE certificate, so
+                            section 3's chain ends here.
+
+[R] Dictionary.lean         sections 2, 4.  The floor-residue <-> cell
+                            dictionary (credit line: [KP18] Cor 17-18) and the
+                            ZSet glue.  Imported by BlockCert, SmallInterval,
+                            EscapeCert -- required even where uncited.
+
+[R] EscapeCert.lean         sections 4, 8.  FLP_cor_one_four_a, the five
+                            [FLP95] positions with an independent axiom-free
+                            proof; the X1 control's Lean side, and the escape-N
+                            table (3,2,3,1) the paper prints.
+
+[R] ResidueCapture.lean     section 4.  T1, residue_not_eventually_constant,
+                            stated as a one-line corollary of the length-1/3
+                            line and claimed as new nowhere (ledger item vii).
+
+
+================================================================================
+B.  ENGINES AND GENERATORS
+================================================================================
+
+[R] gencert.py              sections 3, 5, 6, 8.  Emits every funnel in
+                            BlockCert.lean (reproduce.sh diffs them byte for
+                            byte); --closed --ranked is M4' item P1; refuses the
+                            five in-print-nonempty sets in both modes.  Named
+                            explicitly in P3.
+
+[R] atlas.c                 sections 5, 6, 7, 8.  Engine C, the load-bearing
+                            one: the exact y-model for arbitrary unions.
+                            Produces the frontier L*=1466/3600, every union
+                            record and control, the horse cycle enumeration of
+                            section 7, and the falsification test of section 8.
+
+[R] hold.c                  sections 4, 5, 8.  Engine A (theta-model): the X1
+                            escape orbits and the length-1/3 sweep to G=3888,
+                            and the first X2 pass.
+
+[R] gridcert.c              section 8 only.  Engine B -- it prints nothing in
+                            the paper (P4 excludes its grid lambda column, and
+                            section 9 calls those values artifacts), but it is
+                            one of the four implementations whose agreement
+                            section 8 reports, so it must ship and build.
+
+[R] verify_atlas.py         section 8.  The independent Python/Fraction
+                            re-implementation, and the cross-check that caught
+                            the R-5 union-merge bug that section 8 exhibits.
+
+[R] x3climb.py              section 6.  Provenance of the 120- and 240-cell
+                            unions, hence of the 0.7417 record (Tier 1
+                            headline).  The climb itself is quarantined from
+                            every theorem statement; the union it found is
+                            verified three independent ways.
+
+[R] prodcert.py             sections 7, 9.  Not a paper section of its own (M7
+                            is separate and gates nothing), but section 7's
+                            claim as scoped -- "band entries carry exponentially
+                            many confined orbits, so no hold-set-only argument
+                            can settle them" -- is FALSE at the frontier, where
+                            the count is 1.  The corrected scoping and its
+                            evidence come from here, so this ships as the
+                            scope-guard on section 7 whether or not Theorems A/B
+                            are told in the paper.
+
+[A] pqcontrols.py           M6, a second base.  No paper section; reproduce.sh
+                            runs it and checksums its output, so it belongs in
+                            the artifact.  It is also what licenses stating
+                            section 3's soundness theorem in the (p,q) form.
+
+[-] probe_pq.py             M6/M7 feasibility probe, superseded by pqcontrols.py
+                            and prodcert.py; not in the README file table, not
+                            run by reproduce.sh, no number of its own.
+
+
+================================================================================
+C.  DATA -- the printed numbers' provenance
+================================================================================
+
+[R] data/x1_flp_orbits.txt      section 4 -- escape N = 3,2,3,1
+[R] data/x1_sweep.txt           section 4 -- the length-1/3 sweep, G <= 3888
+[R] data/x1_ymodel.txt          section 8 -- same five positions, second model
+[R] data/x2_G360.txt            section 5 -- the fall-off 100% -> 79.2% -> 0%
+[R] data/x2_frontier.txt        section 5 -- L* = 1466/3600, 14 positions
+[R] data/x2_cycles.txt          section 7 -- the 4/8/16 doubling at large L
+[R] data/m7_horse.txt           section 7 -- the correction: ONE cycle in each
+                                frontier entry, band and certified alike
+[R] data/m7_controls.txt        sections 7, 9 -- the product-refinement no-go
+                                behind section 7's scoping
+[R] data/x3_controls.txt        section 6 -- [Dub08] Cor 1.2, [Dub06] complement
+[R] data/x3_exhaustive.txt      section 6 -- the largeness curve, N0 = 12..20
+[R] data/x3_random.txt          section 6 -- N0 = 36,48,60
+[R] data/x3_climb240.log        section 6 -- provenance of the 0.7417 record
+[R] data/x3_record.txt          sections 6, 8 -- the record union, three ways
+[R] data/x3_negative.txt        section 8 -- five in-print-nonempty sets refused
+[R] data/m3_certs.txt           sections 3, 5, 6 -- the eight funnels, diffed
+                                against BlockCert.lean
+[R] data/m3_negative.txt        section 8 -- generator refuses the same five
+[R] data/m4_negative_closed.txt section 8 -- and refuses them in the P1
+                                closed+ranked mode too  (SEE GAPS, below)
+[A] data/m6_default.txt         base-independence byte-identity  (SEE GAPS)
+[A] data/m6_controls.txt        M6 second-base controls
+[A] data/m6_probe.txt           probe_pq.py output, superseded
+
+
+================================================================================
+D.  PROSE AND ORCHESTRATION
+================================================================================
+
+[R] README.md                   the paper's table source throughout; its
+                                "What this does and does not establish" is
+                                section 9 in draft, and its verification-depth
+                                section is section 8 in draft.
+[R] reproduce.sh                M4' item P3 names it; it is also the definition
+                                of what the checksums cover.
+
+
+================================================================================
+E.  OUTSIDE Z32/ -- needed all the same
+================================================================================
+
+  ForMathlib/Combinatorics/Sturmian.lean       section 4's Lothaire criterion;
+                                               goes upstream as a mathlib PR,
+                                               per the M4 target box
+  ForMathlib/Combinatorics/InfiniteComplexity  imported by DubickasWord.lean
+  FLP/                                         FLP.ZSet / lmo / alphaSym: the
+                                               statement vocabulary of every
+                                               entry, and the 1995 baseline
+  Corpus/Util/Attributes/{Basic,Database}      annotation imports; build-only
+  lakefile.lean (lean_lib Z32)                 build-only
+  plans/plan-cert32.html                       not shipped; the claim ledger and
+                                               M4' gate live there and bind the
+                                               prose
+
+
+================================================================================
+F.  GAPS FOUND WHILE MAKING THIS LIST (both are M4' P3/P4 business)
+================================================================================
+
+1.  data/m4_negative_closed.txt and data/m6_default.txt are generated by
+    reproduce.sh but are ABSENT from data/ -- the recent runs were piecewise
+    (x1/x2/x3 at 11:11-11:18, m3 at 18:36, m6 at 19:27, m7 at 19:39, all
+    2026-07-27).  P3 wants one end-to-end run of reproduce.sh, from a clean
+    data/, producing every file it names.
+
+2.  data/m4_negative_closed.txt is covered by NO checksum line: it is written
+    after the `md5sum data/*.txt` at the end of the M2 block, and it falls
+    outside the `data/m3_* data/m6_* data/m7_*` glob at the end of the file.
+    Rename it (m3_negative_closed.txt) or extend the final glob.

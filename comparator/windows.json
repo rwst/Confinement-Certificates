@@ -1,0 +1,12 @@
+{
+    "challenge_module": "Challenge",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Z32.ZSet_three_two_sixth_3_8",
+        "Z32.ZSet_three_two_frontier",
+        "Z32.not_eventually_mem_sixth_3_8",
+        "Z32.ZSet_four_three_beyond_line"
+    ],
+    "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+    "enable_nanoda": false
+}

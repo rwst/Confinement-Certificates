@@ -1,0 +1,5 @@
+verdict CYCLE  kill -1  depth 40  comps 1  blocks 1  meas 3.01459e-08  lambda 1.000000  maxoutdeg 1
+verdict CYCLE  kill -1  depth 40  comps 3  blocks 3  meas 3.01459e-08  lambda 1.000000  maxoutdeg 1
+verdict CYCLE  kill -1  depth 40  comps 2  blocks 2  meas 3.01459e-08  lambda 1.000000  maxoutdeg 1
+verdict CYCLE  kill -1  depth 40  comps 3  blocks 3  meas 3.01459e-08  lambda 1.000000  maxoutdeg 1
+verdict CYCLE  kill -1  depth 40  comps 1  blocks 1  meas 3.01459e-08  lambda 1.000000  maxoutdeg 1

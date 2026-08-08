@@ -1,0 +1,10 @@
+{
+    "challenge_module": "Challenge",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Z32.two_cell_fifth_empty",
+        "Z32.not_forall_abs_sub_round_lt_fifth"
+    ],
+    "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+    "enable_nanoda": false
+}

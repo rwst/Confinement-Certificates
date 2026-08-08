@@ -1,0 +1,7 @@
+{
+    "challenge_module": "Challenge",
+    "solution_module": "SolutionRecord",
+    "theorem_names": ["Z32.union_record_7083_empty"],
+    "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+    "enable_nanoda": false
+}

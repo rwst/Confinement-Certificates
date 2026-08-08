@@ -1,0 +1,2 @@
+[Dub08] Cor 1.2, U = [8/39,18/39) u [21/39,31/39), |U| = 20/39: verdict CYCLE  kill -1  depth 30  comps 4  blocks 4  meas 3.20929e-06  lambda 1.000000  maxoutdeg 1
+[Dub06] complement, |U| = 0.476234: verdict FAT  kill -1  depth 30  comps 9836  blocks 0  meas 0.000515796  lambda 1.148581  maxoutdeg 0

@@ -1,0 +1,302 @@
+import Mathlib.Algebra.Order.Round
+import Mathlib.Data.Nat.GCD.Basic
+import Mathlib.Order.Interval.Set.Basic
+import Mathlib.Order.LiminfLimsup
+import Mathlib.Tactic
+import Mathlib.Topology.Algebra.Order.LiminfLimsup
+
+noncomputable def lmo (β α x : ℝ) : ℝ := Int.fract (β * x + α)
+
+noncomputable def splitPt (β α : ℝ) : ℝ := (1 - α) / β
+
+theorem lmo_nonneg (β α x : ℝ) : 0 ≤ lmo β α x
+
+theorem lmo_lt_one (β α x : ℝ) : lmo β α x < 1
+
+theorem lmo_mem_Ico (β α x : ℝ) : lmo β α x ∈ Ico (0 : ℝ) 1
+
+theorem lmo_iterate_succ_mem_Ico (β α x : ℝ) (n : ℕ) :
+    (lmo β α)^[n + 1] x ∈ Ico (0 : ℝ) 1
+
+theorem lmo_of_lt {β α x : ℝ} (hlo : 0 ≤ β * x + α) (hhi : β * x + α < 1) :
+    lmo β α x = β * x + α
+
+theorem lmo_of_ge {β α x : ℝ} (hlo : 1 ≤ β * x + α) (hhi : β * x + α < 2) :
+    lmo β α x = β * x + α - 1
+
+theorem lmo_zero {β α : ℝ} (hα0 : 0 ≤ α) (hα1 : α < 1) : lmo β α 0 = α
+
+def survivors (β α : ℝ) : Set ℝ :=
+  {x | x ∈ Ico (0 : ℝ) (1 / β) ∧ ∀ n, (lmo β α)^[n] x < 1 / β}
+
+def ZSet (p q : ℕ) (s t : ℝ) : Set ℝ :=
+  {ξ | 0 < ξ ∧ ∀ n : ℕ, Int.fract (ξ * ((p : ℝ) / q) ^ n) ∈ Ico s (s + t)}
+
+def TMap (p q a g : ℕ) : ℕ := (p * g + a + (q - 1)) / q
+
+def iSym (p q a g : ℕ) : ℕ := q * TMap p q a g - (p * g + a)
+
+theorem le_q_mul_TMap {p q a g : ℕ} (hq : 0 < q) : p * g + a ≤ q * TMap p q a g
+
+theorem TMap_mul {p q a g : ℕ} (hq : 0 < q) :
+    q * TMap p q a g = p * g + a + iSym p q a g
+
+theorem iSym_lt {p q a g : ℕ} (hq : 0 < q) : iSym p q a g < q
+
+theorem iSym_add_modEq {p q a g : ℕ} (hq : 0 < q) :
+    (p * g + a + iSym p q a g) % q = 0
+
+theorem TMap_add_qmul {p q a g i : ℕ} (hq : 0 < q) :
+    TMap p q a (g + q * i) = TMap p q a g + p * i
+
+theorem decouple_step {p q a g g' T i : ℕ} {s θ θ' α : ℝ}
+    (hq2 : 2 ≤ q) (hqp : q < p) (hiq : i < q)
+    (hig : (q : ℝ) * T = p * g + a + i)
+    (hβ : (q : ℝ) * ((g' : ℝ) + s + θ' / q) = p * ((g : ℝ) + s + θ / q))
+    (hθlo : 0 ≤ θ) (hθhi : θ < (q : ℝ) / p)
+    (hθ'lo : 0 ≤ θ') (hθ'hi : θ' < (q : ℝ) / p)
+    (haα : (a : ℝ) + α = ((p : ℝ) - q) * s) (hαlo : 0 ≤ α) (hαhi : α < 1) :
+    g' = T ∧ θ' = lmo ((p : ℝ) / q) α θ ∧ (⌊(p : ℝ) / q * θ + α⌋ : ℤ) = i
+
+noncomputable def orbitVal (n : ℕ) : ℝ := ξ * ((p : ℝ) / q) ^ n
+
+noncomputable def gPart (n : ℕ) : ℕ := ⌊orbitVal p q ξ n⌋₊
+
+noncomputable def thetaPart (n : ℕ) : ℝ := q * (Int.fract (orbitVal p q ξ n) - s)
+
+noncomputable def aSym : ℕ := ⌊((p : ℝ) - q) * s⌋₊
+
+noncomputable def alphaSym : ℝ := Int.fract (((p : ℝ) - q) * s)
+
+theorem aSym_add_alphaSym (hqp : q ≤ p) (hs : 0 ≤ s) :
+    (aSym p q s : ℝ) + alphaSym p q s = ((p : ℝ) - q) * s
+
+theorem alphaSym_mem : alphaSym p q s ∈ Ico (0 : ℝ) 1
+
+theorem orbit_decomp (hp : 0 < p) (hq : 0 < q) (hξ : 0 < ξ) (n : ℕ) :
+    orbitVal p q ξ n = (gPart p q ξ n : ℝ) + s + thetaPart p q s ξ n / q
+
+theorem thetaPart_mem (hp : 0 < p) (hq : 0 < q)
+    (hmem : ξ ∈ ZSet p q s (1 / p)) (n : ℕ) :
+    thetaPart p q s ξ n ∈ Ico (0 : ℝ) ((q : ℝ) / p)
+
+theorem decouple (hq2 : 2 ≤ q) (hqp : q < p) (hs : 0 ≤ s) (hξ : 0 < ξ)
+    (hmem : ξ ∈ ZSet p q s (1 / p)) (n : ℕ) :
+    gPart p q ξ (n + 1) = TMap p q (aSym p q s) (gPart p q ξ n) ∧
+      thetaPart p q s ξ (n + 1) = lmo ((p : ℝ) / q) (alphaSym p q s) (thetaPart p q s ξ n) ∧
+      (⌊(p : ℝ) / q * thetaPart p q s ξ n + alphaSym p q s⌋ : ℤ)
+        = iSym p q (aSym p q s) (gPart p q ξ n)
+
+noncomputable def phi (β α : ℝ) (n : ℕ) : ℝ := (lmo β α)^[n] 0
+
+theorem phi_succ (β α : ℝ) (k : ℕ) :
+    phi β α (k + 1) = β * phi β α k + α - ⌊β * phi β α k + α⌋
+
+theorem phi_affine (β α α' : ℝ) :
+    ∀ n, (∀ k < n, (⌊β * phi β α k + α⌋ : ℤ) = ⌊β * phi β α' k + α'⌋) →
+      phi β α n - phi β α' n = (∑ k ∈ Finset.range n, β ^ k) * (α - α')
+
+theorem phi_nonneg (β α : ℝ) (n : ℕ) : 0 ≤ phi β α n
+
+theorem phi_lt_one (β α : ℝ) (n : ℕ) : phi β α n < 1
+
+theorem escape_dense {β : ℝ} (hβ : 1 < β) {u v : ℝ} (huv : u < v) :
+    ∃ α, u < α ∧ α < v ∧ ∃ N, 1 / β ≤ phi β α N
+
+def cyl (β α : ℝ) : List Bool → Set ℝ
+  | [] => Ico 0 (1 / β)
+  | j :: w => {x | x ∈ (if j then Ico (splitPt β α) (1 / β) else Ico 0 (splitPt β α))
+                    ∧ lmo β α x ∈ cyl β α w}
+
+def straddle (β α : ℝ) (w : List Bool) : Prop :=
+  (cyl β α w ∩ Ico 0 α).Nonempty ∧ (cyl β α w ∩ Ico α 1).Nonempty
+
+noncomputable def children (β α : ℝ) (w : List Bool) : Finset (List Bool) :=
+  (Finset.univ.filter (fun j : Bool => (cyl β α (j :: w)).Nonempty)).image (fun j => j :: w)
+
+noncomputable def alive (β α : ℝ) : ℕ → Finset (List Bool)
+  | 0 => {[]}
+  | m + 1 => (alive β α m).biUnion (children β α)
+
+noncomputable def word (β α : ℝ) (x : ℝ) (m : ℕ) : List Bool :=
+  (List.range m).map (fun k => decide (splitPt β α ≤ (lmo β α)^[k] x))
+
+theorem word_length (x : ℝ) (m : ℕ) : (word β α x m).length = m
+
+theorem word_succ_eq (x : ℝ) (m : ℕ) :
+    word β α x (m + 1) = word β α x m ++ [decide (splitPt β α ≤ (lmo β α)^[m] x)]
+
+theorem word_succ_cons (x : ℝ) (m : ℕ) :
+    word β α x (m + 1) = decide (splitPt β α ≤ x) :: word β α (lmo β α x) m
+
+theorem word_take {m m' : ℕ} (h : m ≤ m') (x : ℝ) :
+    (word β α x m').take m = word β α x m
+
+theorem word_ne_mono {x y : ℝ} {m m' : ℕ} (h : m ≤ m')
+    (hne : word β α x m ≠ word β α y m) : word β α x m' ≠ word β α y m'
+
+theorem survivors_iterate_mem {x : ℝ} (hx : x ∈ survivors β α) (n : ℕ) :
+    (lmo β α)^[n] x ∈ Ico (0 : ℝ) (1 / β)
+
+theorem lmo_mem_survivors {x : ℝ} (hx : x ∈ survivors β α) : lmo β α x ∈ survivors β α
+
+theorem splitPt_pos : 0 < splitPt β α
+
+theorem splitPt_le : splitPt β α ≤ 1 / β
+
+theorem lmo_lower {x : ℝ} (hx0 : 0 ≤ x) (hxc : x < splitPt β α) : lmo β α x = β * x + α
+
+theorem lmo_upper {x : ℝ} (hxc : splitPt β α ≤ x) (hx1 : x < 1 / β) : lmo β α x = β * x + α - 1
+
+theorem lmo_mono_branch (j : Bool) {u v : ℝ}
+    (hu : u ∈ (if j then Ico (splitPt β α) (1 / β) else Ico 0 (splitPt β α)))
+    (hv : v ∈ (if j then Ico (splitPt β α) (1 / β) else Ico 0 (splitPt β α)))
+    (huv : u ≤ v) : lmo β α u ≤ lmo β α v
+
+theorem cyl_subset_J : ∀ w, cyl β α w ⊆ Ico 0 (1 / β)
+  | [] => by rw [cyl]
+  | j :: w => by
+      rw [cyl]
+      rintro x ⟨hxJ, _⟩
+      cases j with
+      | false => simp only [if_neg (by decide : ¬ (false = true))] at hxJ
+                 exact ⟨hxJ.1, lt_of_lt_of_le hxJ.2 (splitPt_le hβ hα0 hα1)⟩
+      | true => exact ⟨le_trans (le_of_lt (splitPt_pos hβ hα0 hα1)) hxJ.1, hxJ.2⟩
+
+theorem cyl_ordConnected : ∀ w, (cyl β α w).OrdConnected
+  | [] => by rw [cyl]; exact ordConnected_Ico
+  | j :: w => by
+      rw [cyl]
+      constructor
+      rintro x hx y hy z ⟨hxz, hzy⟩
+      obtain ⟨hxJ, hxc⟩
+
+theorem cyl_stays : ∀ (w : List Bool) {x : ℝ}, x ∈ cyl β α w →
+    ∀ k < w.length, (lmo β α)^[k] x ∈ Ico 0 (1 / β)
+  | [], x, _, k, hk => by simp at hk
+  | j :: w, x, hx, k, hk => by
+      rw [cyl] at hx
+      obtain ⟨hxJ, hxc⟩
+
+theorem false_child_nonempty (w : List Bool) :
+    (cyl β α (false :: w)).Nonempty ↔ (cyl β α w ∩ Ico α 1).Nonempty
+
+theorem true_child_nonempty (w : List Bool) :
+    (cyl β α (true :: w)).Nonempty ↔ (cyl β α w ∩ Ico 0 α).Nonempty
+
+theorem straddle_mem (w : List Bool) (h : straddle β α w) : α ∈ cyl β α w
+
+theorem straddle_iff (w : List Bool) :
+    straddle β α w ↔ (cyl β α (false :: w)).Nonempty ∧ (cyl β α (true :: w)).Nonempty
+
+theorem cyl_eq_of_mem : ∀ (w w' : List Bool) {z : ℝ},
+    z ∈ cyl β α w → z ∈ cyl β α w' → w.length = w'.length → w = w'
+  | [], [], _, _, _, _ => rfl
+  | [], _ :: _, _, _, _, hlen => by simp at hlen
+  | _ :: _, [], _, _, _, hlen => by simp at hlen
+  | j :: w, j' :: w', z, hz, hz', hlen => by
+      rw [cyl] at hz hz'
+      obtain ⟨hzJ, hzc⟩
+
+theorem children_card_le (w : List Bool) :
+    (children β α w).card ≤ 1 + (if straddle β α w then 1 else 0)
+
+theorem alive_mem_length : ∀ (m : ℕ) (w : List Bool),
+    w ∈ alive β α m ↔ w.length = m ∧ (cyl β α w).Nonempty
+  | 0, w => by
+      simp only [alive, Finset.mem_singleton]
+      constructor
+      · rintro rfl
+        exact ⟨rfl, ⟨0, by rw [cyl]; exact ⟨le_refl 0, one_div_pos.mpr (by linarith)⟩⟩⟩
+      · rintro ⟨hlen, _⟩; exact List.length_eq_zero_iff.mp hlen
+  | m + 1, w => by
+      simp only [alive, Finset.mem_biUnion]
+      constructor
+      · rintro ⟨v, hv, hwv⟩
+        simp only [children, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and] at hwv
+        obtain ⟨j, hjne, rfl⟩
+
+theorem straddle_filter_card_le_one (m : ℕ) :
+    ((alive β α m).filter (straddle β α)).card ≤ 1
+
+theorem iterate_alpha (k : ℕ) : (lmo β α)^[k] α = (lmo β α)^[k + 1] 0
+
+theorem straddle_lt_N {N : ℕ} (hesc : 1 / β ≤ (lmo β α)^[N] 0) {m : ℕ} {w : List Bool}
+    (hw : w ∈ alive β α m) (hstr : straddle β α w) : m < N
+
+theorem splitCount_le {N : ℕ} (hesc : 1 / β ≤ (lmo β α)^[N] 0) (m : ℕ) :
+    ((alive β α m).filter (straddle β α)).card ≤ (if m < N then 1 else 0)
+
+theorem alive_step {N : ℕ} (hesc : 1 / β ≤ (lmo β α)^[N] 0) (m : ℕ) :
+    (alive β α (m + 1)).card ≤ (alive β α m).card + (if m < N then 1 else 0)
+
+theorem alive_card_le {N : ℕ} (hesc : 1 / β ≤ (lmo β α)^[N] 0) (m : ℕ) :
+    (alive β α m).card ≤ N + 1
+
+theorem lmo_diff {u v : ℝ} (hu : u ∈ Ico (0 : ℝ) (1 / β)) (hv : v ∈ Ico (0 : ℝ) (1 / β))
+    (hb : decide (splitPt β α ≤ u) = decide (splitPt β α ≤ v)) :
+    lmo β α u - lmo β α v = β * (u - v)
+
+theorem iter_sub_eq {x y : ℝ} (hx : ∀ n, (lmo β α)^[n] x ∈ Ico (0 : ℝ) (1 / β))
+    (hy : ∀ n, (lmo β α)^[n] y ∈ Ico (0 : ℝ) (1 / β)) :
+    ∀ m, word β α x m = word β α y m →
+      (lmo β α)^[m] x - (lmo β α)^[m] y = β ^ m * (x - y)
+
+theorem eq_of_word_eq {x y : ℝ} (hx : ∀ n, (lmo β α)^[n] x ∈ Ico (0 : ℝ) (1 / β))
+    (hy : ∀ n, (lmo β α)^[n] y ∈ Ico (0 : ℝ) (1 / β))
+    (h : ∀ m, word β α x m = word β α y m) : x = y
+
+theorem mem_cyl_word : ∀ (m : ℕ) {x : ℝ}, x ∈ survivors β α → x ∈ cyl β α (word β α x m)
+
+theorem word_mem_alive {x : ℝ} (hx : x ∈ survivors β α) (m : ℕ) :
+    word β α x m ∈ alive β α m
+
+theorem survivors_finite {N : ℕ} (hesc : 1 / β ≤ (lmo β α)^[N] 0) :
+    (survivors β α).Finite
+
+def Tsym (p q a g n : ℕ) : ℕ := iSym p q a ((TMap p q a)^[n] g)
+
+theorem Tsym_zero (g : ℕ) : Tsym p q a g 0 = iSym p q a g
+
+theorem Tsym_succ (g n : ℕ) : Tsym p q a g (n + 1) = Tsym p q a (TMap p q a g) n
+
+theorem dvd_sub_of_iSym_eq (hq : 0 < q) (hcop : Nat.Coprime p q) {g g' : ℕ} (hle : g ≤ g')
+    (h : iSym p q a g = iSym p q a g') : q ∣ g' - g
+
+theorem dvd_sub_of_prefix (hq : 0 < q) (hcop : Nat.Coprime p q) :
+    ∀ (k g g' : ℕ), g ≤ g' → (∀ n ≤ k, Tsym p q a g n = Tsym p q a g' n) →
+      q ^ (k + 1) ∣ g' - g
+
+theorem eq_of_Tsym_eq (hq : 2 ≤ q) (hcop : Nat.Coprime p q) {g g' : ℕ}
+    (h : ∀ n, Tsym p q a g n = Tsym p q a g' n) : g = g'
+
+theorem ZSet_eq_empty_of_survivors_finite {p q : ℕ} {s : ℝ}
+    (hq2 : 2 ≤ q) (hqp : q < p) (hcop : Nat.Coprime p q) (hs : 0 ≤ s)
+    (hSfin : (survivors ((p : ℝ) / q) (alphaSym p q s)).Finite) :
+    ZSet p q s (1 / p) = ∅
+
+theorem lmo_fract_offset (β γ : ℝ) : lmo β (Int.fract γ) = lmo β γ
+
+theorem phi_fract_offset (β γ : ℝ) (N : ℕ) : phi β (Int.fract γ) N = phi β γ N
+
+theorem survivors_zero_finite {β : ℝ} (hβ : 1 < β) : (survivors β 0).Finite
+
+theorem ZSet_empty_zero {p q : ℕ} (hcop : Nat.Coprime p q) (hq2 : 2 ≤ q) (hpq : q < p) :
+    ZSet p q 0 (1 / p) = ∅
+
+theorem ZSet_empty_dense {p q : ℕ} (hcop : Nat.Coprime p q) (hq2 : 2 ≤ q) (hpq : q < p)
+    {a b : ℝ} (ha : 0 ≤ a) (hab : a < b) :
+    ∃ s, a < s ∧ s < b ∧ ZSet p q s (1 / p) = ∅
+
+theorem spread_lower_bound (p q : ℕ) (hcop : Nat.Coprime p q) (hq : 2 ≤ q) (hpq : q < p)
+    (ξ : ℝ) (hξ : 0 < ξ) :
+    (1 : ℝ) / p ≤ limsup (fun n : ℕ => Int.fract (ξ * ((p : ℝ) / q) ^ n)) atTop
+                - liminf (fun n : ℕ => Int.fract (ξ * ((p : ℝ) / q) ^ n)) atTop
+
+theorem three_halves_spread (ξ : ℝ) (hξ : 0 < ξ) :
+    (1 : ℝ) / 3 ≤ limsup (fun n : ℕ => Int.fract (ξ * (3 / 2) ^ n)) atTop
+                - liminf (fun n : ℕ => Int.fract (ξ * (3 / 2) ^ n)) atTop
+
+theorem three_halves_spread_one :
+    (1 : ℝ) / 3 ≤ limsup (fun n : ℕ => Int.fract ((3 / 2) ^ n)) atTop
+                - liminf (fun n : ℕ => Int.fract ((3 / 2) ^ n)) atTop

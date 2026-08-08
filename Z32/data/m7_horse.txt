@@ -1,0 +1,3 @@
+atlas horse P<=12  U=[24 0 10       ] : cycles found: 16  (orbit points 138)
+atlas horse P<=12  U=[3600 961 2427 ] : cycles found: 1  (orbit points 2)
+atlas horse P<=12  U=[3600 961 2428 ] : cycles found: 1  (orbit points 2)

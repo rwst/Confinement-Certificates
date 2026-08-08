@@ -1,0 +1,28 @@
+== (A) POSITIVE: [Dub09AA] Thm 1, every window of length 1/p, 1 < q < p < q^2 ==
+  (p,q)=(4,3), q^2=9: 8/8 certified, max funnel depth 26
+  (p,q)=(5,3), q^2=9: 8/8 certified, max funnel depth 10
+  (p,q)=(5,4), q^2=16: 8/8 certified, max funnel depth 14
+  (p,q)=(7,5), q^2=25: 8/8 certified, max funnel depth 4
+  ==> all reproduced
+
+== (B) NEGATIVE: sets [Aki08] Thms 2.4/2.5 prove NONEMPTY, p > q^2 ==
+  (p,q)=(5,2) two-cell [0,1/5) u [4/5,1): ('FAT', 9, 1024)
+  (p,q)=(7,2) two-cell [0,1/7) u [6/7,1): ('FAT', 9, 1024)
+  (p,q)=(9,2) two-cell [0,1/9) u [8/9,1): ('FAT', 9, 1024)
+  ==> refused, as it must be
+
+== (C) the cover: does the length-1/p line extend to ALL real s? ==
+  (p,q)=(5,2) p>q^2=4: N=  5, element length 10/25 = 0.4000 -> 0/5 certified
+  (p,q)=(5,2) p>q^2=4: N= 10, element length 15/50 = 0.3000 -> 2/10 certified
+  (p,q)=(5,2) p>q^2=4: N= 20, element length 25/100 = 0.2500 -> 8/20 certified
+  (p,q)=(7,2) p>q^2=4: N=  7, element length 14/49 = 0.2857 -> 0/7 certified
+  (p,q)=(7,2) p>q^2=4: N= 14, element length 21/98 = 0.2143 -> 4/14 certified
+  (p,q)=(7,2) p>q^2=4: N= 28, element length 35/196 = 0.1786 -> 14/28 certified
+  (p,q)=(9,2) p>q^2=4: N=  9, element length 18/81 = 0.2222 -> 0/9 certified
+  (p,q)=(9,2) p>q^2=4: N= 18, element length 27/162 = 0.1667 -> 6/18 certified
+  (p,q)=(9,2) p>q^2=4: N= 36, element length 45/324 = 0.1389 -> 20/36 certified
+  (p,q)=(10,3) p>q^2=9: N= 10, element length 20/100 = 0.2000 -> 0/10 certified
+  (p,q)=(10,3) p>q^2=9: N= 20, element length 30/200 = 0.1500 -> 6/20 certified
+  (p,q)=(10,3) p>q^2=9: N= 40, element length 50/400 = 0.1250 -> 20/40 certified
+  ==> no full cover anywhere: the finite column does NOT upgrade to
+      the open theorem, and there is no tension with [Aki08].

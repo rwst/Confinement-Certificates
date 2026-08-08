@@ -1,0 +1,11 @@
+# summary G=6 positions=5 KILL=0 FIN=5 FAT=0 CAP=0 maxesc0=3
+# summary G=12 positions=9 KILL=0 FIN=9 FAT=0 CAP=0 maxesc0=7
+# summary G=24 positions=17 KILL=0 FIN=17 FAT=0 CAP=0 maxesc0=11
+# summary G=48 positions=33 KILL=0 FIN=33 FAT=0 CAP=0 maxesc0=11
+# summary G=96 positions=65 KILL=0 FIN=65 FAT=0 CAP=0 maxesc0=13
+# summary G=192 positions=129 KILL=0 FIN=129 FAT=0 CAP=0 maxesc0=13
+# summary G=384 positions=257 KILL=0 FIN=257 FAT=0 CAP=0 maxesc0=14
+# summary G=768 positions=513 KILL=0 FIN=513 FAT=0 CAP=0 maxesc0=21
+# summary G=1536 positions=1025 KILL=0 FIN=1025 FAT=0 CAP=0 maxesc0=21
+# summary G=3072 positions=2049 KILL=0 FIN=2049 FAT=0 CAP=0 maxesc0=23
+# summary G=3888 positions=2593 KILL=0 FIN=2593 FAT=0 CAP=0 maxesc0=25

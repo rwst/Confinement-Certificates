@@ -1,0 +1,21 @@
+# window s=1/6  L=2/6   alpha=1/6  T=2L=4/6
+esc0 3  escT 2  (limited: 0 0)
+  f^0(0) = 0/6
+  f^1(0) = 2/12
+  f^2(0) = 10/24
+  f^3(0) = 38/48   >= T : ESCAPE
+# window s=2/6  L=2/6   alpha=2/6  T=2L=4/6
+esc0 2  escT 1  (limited: 0 0)
+  f^0(0) = 0/6
+  f^1(0) = 4/12
+  f^2(0) = 20/24   >= T : ESCAPE
+# window s=3/6  L=2/6   alpha=3/6  T=2L=4/6
+esc0 3  escT 2  (limited: 0 0)
+  f^0(0) = 0/6
+  f^1(0) = 6/12
+  f^2(0) = 6/24
+  f^3(0) = 42/48   >= T : ESCAPE
+# window s=4/6  L=2/6   alpha=4/6  T=2L=4/6
+esc0 1  escT 0  (limited: 0 0)
+  f^0(0) = 0/6
+  f^1(0) = 8/12   >= T : ESCAPE
