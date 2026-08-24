@@ -1,0 +1,32 @@
+{
+    "challenge_module": "Challenge",
+    "solution_module": "SolutionRecord",
+    "theorem_names": [
+        "Z32.FLP_cor_one_four_a",
+        "Z32.dubickas_theorem_1",
+        "Z32.ZSet_eq_empty_of_lt_sq",
+        "Z32.ZSet_three_two_third_empty",
+        "Z32.residue_not_eventually_constant",
+        "Z32.exists_residue_change",
+        "Z32.residue_not_eventually_constant_one",
+        "Z32.ZSet_three_two_sixth_3_8",
+        "Z32.ZSet_three_two_frontier",
+        "Z32.not_eventually_mem_sixth_3_8",
+        "Z32.ZSet_four_three_beyond_line",
+        "Z32.dubickas_2008_cor_1_2",
+        "Z32.union_seven_twelfths_empty",
+        "Z32.union_two_thirds_empty",
+        "Z32.union_record_empty",
+        "Z32.union_record_7083_empty",
+        "Z32.two_cell_fifth_empty",
+        "Z32.not_forall_abs_sub_round_lt_fifth",
+        "Z32.ZSet_five_two_fifth",
+        "Z32.ZSet_five_two_grid",
+        "Z32.ZSet_seven_two_grid",
+        "Z32.ZSet_nine_two_grid",
+        "Z32.ZSet_ten_three_grid",
+        "Z32.ZSet_eleven_three_grid"
+    ],
+    "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+    "enable_nanoda": false
+}
