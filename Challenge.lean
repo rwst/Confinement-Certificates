@@ -13,7 +13,7 @@ import Mathlib.Order.Interval.Set.Basic
 # The comparator challenge: what this repository claims, stated against Mathlib alone
 
 This file is the **trusted statement of record** for `leanprover/comparator` (see
-`comparator/*.json` and `lake test`).  It imports *nothing but Mathlib*, re-declares — verbatim —
+`comparator.json` and `lake test`).  It imports *nothing but Mathlib*, re-declares — verbatim —
 the one definition that occurs in the certified theorems, `FLP.ZSet`, and then states those
 theorems with `sorry` proofs.  `Solution.lean` and `SolutionRecord.lean` merely import the real
 development.  Comparator then checks that
@@ -33,31 +33,30 @@ Unlike a challenge that has to mirror a development's module structure (definiti
 the equation compiler share generated matchers when they sit in one module), everything needed
 here is a single non-recursive definition, so one module suffices.
 
-## The configurations, and why there are several
+## The configuration
 
-Every configuration permits **the same three axioms** — `propext`, `Quot.sound`,
-`Classical.choice`, the classical core of Lean, abbreviated "std3" in the paper.  That uniformity
-*is* the claim: the paper asserts that no statement in it rests on cited literature, on a `sorry`,
-or on native compilation.  No config grants an exception, so an axiom appearing anywhere in the
-closure of a certified theorem is reported as `Illegal axiom detected` rather than tolerated.  The
-split into seven follows the paper's own grouping of results, so that a failure names the section
-it belongs to:
+One config, `comparator.json`, certifies every statement below in a single run.  It permits
+**three axioms** — `propext`, `Quot.sound`, `Classical.choice`, the classical core of Lean,
+abbreviated "std3" in the paper — and no more.  That uniformity *is* the claim: the paper asserts
+that no statement in it rests on cited literature, on a `sorry`, or on native compilation, so an
+axiom appearing anywhere in the closure of a certified theorem is reported as `Illegal axiom
+detected` rather than tolerated.  The sections below group the statements the way the paper does:
 
-| Config | Paper | Theorems |
+| Section | Paper | Theorems |
 | --- | --- | --- |
-| `classical.json` | §4, §6 | [FLP95] Cor. 1.4a and [Dub09AA] Thm. 1, formalized |
-| `residue.json` | §5, Thm. C | residues of `⌊ξ(3/2)ⁿ⌋ mod m` are not eventually constant |
-| `windows.json` | §7, Thm. A | single windows past the length-`1/p` line |
-| `unions.json` | §7, Thm. B | certified-empty unions, incl. [Dub08] Cor. 1.2 as printed |
-| `record.json` | §7, Thm. B | the union record of total length `17/24` (see the cost note below) |
-| `nearest.json` | §7, Thm. D | `‖ξ(3/2)ⁿ‖ ≥ 1/5` infinitely often |
-| `pastsquare.json` | §7 | thirty windows in the regime `p > q²` |
+| the classical pillars | §4, §6 | [FLP95] Cor. 1.4a and [Dub09AA] Thm. 1, formalized |
+| Theorem A | §5 | residues of `⌊ξ(3/2)ⁿ⌋ mod m` are not eventually constant |
+| Theorem B | §7 | single windows past the length-`1/p` line, at two bases |
+| Theorem C | §7 | certified-empty unions, incl. [Dub08] Cor. 1.2 as printed |
+| Theorem C, the record | §7 | the union of total length `17/24` (see the cost note below) |
+| Theorem D | §7.4 | `‖ξ(3/2)ⁿ‖ ≥ 1/5` infinitely often |
+| past the square | §7.6 | thirty windows in the regime `p > q²` |
 
-`record.json` is the one config with a solution module of its own, `SolutionRecord`.  The
-certificate behind Theorem `union_record_7083_empty` costs about 100 seconds and 12 gigabytes to
-check, and the development isolates it in `Z32/UnionRecord.lean` so that nothing else pays that;
-splitting the solution module keeps that isolation intact under comparator, where the cost would
-otherwise be paid once per config.
+The config names `SolutionRecord` rather than `Solution`, because the union record of
+Theorem `union_record_7083_empty` is among the statements it certifies.  That certificate costs
+about 100 seconds and 12 gigabytes to check, and the development isolates it in
+`Z32/UnionRecord.lean` so that nothing else pays that; a `lake test` run therefore wants a
+machine with about 16 GB of memory.
 
 Nothing here is proved; the `sorry`s are the point.  The proofs live in `Z32/EscapeCert.lean`,
 `Z32/ResidueCapture.lean`, `Z32/SmallInterval.lean`, `Z32/BlockCert.lean` and
@@ -88,7 +87,7 @@ end FLP
 
 namespace Z32
 
-/-! ## `classical.json` — the two classical pillars (§4, §6) -/
+/-! ## The two classical pillars (§4, §6) -/
 
 /-- **[FLP95] Corollary 1.4a**, as a kernel-checked replay of the finite computation indicated
 there: `Z_{3/2}(s, s+1/3) = ∅` at each of the five positions `s = 0, 1/6, 1/3, 1/2, 2/3`. -/
@@ -110,39 +109,39 @@ theorem ZSet_eq_empty_of_lt_sq {p q : ℕ} (hq : 1 < q) (hpq : q < p) (hpq2 : p 
 `s`, irrational positions included. -/
 theorem ZSet_three_two_third_empty (s : ℝ) : FLP.ZSet 3 2 s (1 / 3) = ∅ := sorry
 
-/-! ## `residue.json` — Theorem C, the residue corollary -/
+/-! ## Theorem A — the residue corollary (§5) -/
 
-/-- **Theorem C.**  For every real `ξ > 0` and every integer `m ≥ 3`, the residues
+/-- **Theorem A.**  For every real `ξ > 0` and every integer `m ≥ 3`, the residues
 `⌊ξ(3/2)ⁿ⌋ mod m` are not eventually constant. -/
 theorem residue_not_eventually_constant {ξ : ℝ} (hξ : 0 < ξ) {m : ℕ} (hm : 3 ≤ m) :
     ¬ ∃ (r : ℤ) (N : ℕ), ∀ n, N ≤ n → ⌊ξ * (3 / 2 : ℝ) ^ n⌋ % (m : ℤ) = r := sorry
 
-/-- Theorem C in its infinitely-often form: past any index the residue still changes. -/
+/-- Theorem A in its infinitely-often form: past any index the residue still changes. -/
 theorem exists_residue_change {ξ : ℝ} (hξ : 0 < ξ) {m : ℕ} (hm : 3 ≤ m) (N : ℕ) :
     ∃ n, N ≤ n ∧ ⌊ξ * (3 / 2 : ℝ) ^ n⌋ % (m : ℤ) ≠ ⌊ξ * (3 / 2 : ℝ) ^ N⌋ % (m : ℤ) := sorry
 
-/-- Theorem C at `ξ = 1`: the residues of `⌊(3/2)ⁿ⌋` modulo any `m ≥ 3` do not stabilize. -/
+/-- Theorem A at `ξ = 1`: the residues of `⌊(3/2)ⁿ⌋` modulo any `m ≥ 3` do not stabilize. -/
 theorem residue_not_eventually_constant_one {m : ℕ} (hm : 3 ≤ m) :
     ¬ ∃ (r : ℤ) (N : ℕ), ∀ n, N ≤ n → ⌊(3 / 2 : ℝ) ^ n⌋ % (m : ℤ) = r := sorry
 
-/-! ## `windows.json` — Theorem A, single windows past the length-`1/p` line -/
+/-! ## Theorem B — single windows past the length-`1/p` line (§7) -/
 
-/-- **Theorem A, first entry.**  `Z_{3/2}(1/6, 13/24) = ∅`: a window of length `3/8 > 1/3`. -/
+/-- **Theorem B, first entry.**  `Z_{3/2}(1/6, 13/24) = ∅`: a window of length `3/8 > 1/3`. -/
 theorem ZSet_three_two_sixth_3_8 : FLP.ZSet 3 2 (1 / 6 : ℝ) (3 / 8) = ∅ := sorry
 
-/-- **Theorem A, the engine frontier.**  `Z_{3/2}(961/3600, 2427/3600) = ∅`, a window of length
+/-- **Theorem B, the engine frontier.**  `Z_{3/2}(961/3600, 2427/3600) = ∅`, a window of length
 `1466/3600 = 0.40722…`. -/
 theorem ZSet_three_two_frontier : FLP.ZSet 3 2 (961 / 3600 : ℝ) (1466 / 3600) = ∅ := sorry
 
-/-- **Theorem A, eventual form.**  No `ξ ≠ 0` has `{ξ(3/2)ⁿ} ∈ [1/6, 13/24)` for all sufficiently
+/-- **Theorem B, eventual form.**  No `ξ ≠ 0` has `{ξ(3/2)ⁿ} ∈ [1/6, 13/24)` for all sufficiently
 large `n`. -/
 theorem not_eventually_mem_sixth_3_8 {ξ : ℝ} (hξ : ξ ≠ 0) {N : ℕ} :
     ¬ ∀ n, N ≤ n → Int.fract (ξ * ((3 : ℝ) / 2) ^ n) ∈ Set.Ico (1 / 6 : ℝ) (13 / 24) := sorry
 
-/-- **Theorem A at a second base.**  `Z_{4/3}(1/3, 5/8) = ∅`, a window of length `7/24 > 1/4`. -/
+/-- **Theorem B at a second base.**  `Z_{4/3}(1/3, 5/8) = ∅`, a window of length `7/24 > 1/4`. -/
 theorem ZSet_four_three_beyond_line : FLP.ZSet 4 3 (1 / 3 : ℝ) (7 / 24) = ∅ := sorry
 
-/-! ## `unions.json` — Theorem B, certified-empty unions -/
+/-! ## Theorem C — certified-empty unions (§7) -/
 
 /-- **[Dub08] Corollary 1.2, as printed.**  No `ξ ≠ 0` has every `{ξ(3/2)ⁿ}` inside the **closed**
 set `[8/39, 18/39] ∪ [21/39, 31/39]`, of total length `20/39`. -/
@@ -150,31 +149,32 @@ theorem dubickas_2008_cor_1_2 {ξ : ℝ} (hξ : ξ ≠ 0) :
     ¬ ∀ n : ℕ, Int.fract (ξ * ((3 : ℝ) / 2) ^ n) ∈
       Set.Icc (8 / 39 : ℝ) (18 / 39) ∪ Set.Icc (21 / 39 : ℝ) (31 / 39) := sorry
 
-/-- **Theorem B**: a certified-empty union of total length `7/12`, past [Dub08]'s `20/39`. -/
+/-- **Theorem C**: a certified-empty union of total length `7/12`, past [Dub08]'s `20/39`. -/
 theorem union_seven_twelfths_empty {ξ : ℝ} (hξ : ξ ≠ 0) :
     ¬ ∀ n : ℕ, Int.fract (ξ * ((3 : ℝ) / 2) ^ n) ∈
       Set.Ico (0 : ℝ) (1 / 6) ∪ Set.Ico (1 / 4 : ℝ) (1 / 3) ∪ Set.Ico (5 / 12 : ℝ) (2 / 3) ∪
         Set.Ico (3 / 4 : ℝ) (5 / 6) := sorry
 
-/-- **Theorem B**: a certified-empty union of total length `2/3` — the same total length as the
+/-- **Theorem C**: a certified-empty union of total length `2/3` — the same total length as the
 *nonempty* union of [KK17] Corollary 4.8, so total length alone decides nothing. -/
 theorem union_two_thirds_empty {ξ : ℝ} (hξ : ξ ≠ 0) :
     ¬ ∀ n : ℕ, Int.fract (ξ * ((3 : ℝ) / 2) ^ n) ∈
       Set.Ico (0 : ℝ) (1 / 9) ∪ Set.Ico (1 / 6 : ℝ) (4 / 9) ∪ Set.Ico (1 / 2 : ℝ) (5 / 9) ∪
         Set.Ico (11 / 18 : ℝ) (7 / 9) ∪ Set.Ico (5 / 6 : ℝ) (8 / 9) := sorry
 
-/-- **Theorem B**: a certified-empty union of total length `25/36 = 0.6944…`. -/
+/-- **Theorem C**: a certified-empty union of total length `25/36 = 0.6944…`. -/
 theorem union_record_empty {ξ : ℝ} (hξ : ξ ≠ 0) :
     ¬ ∀ n : ℕ, Int.fract (ξ * ((3 : ℝ) / 2) ^ n) ∈
       Set.Ico (0 : ℝ) (1 / 12) ∪ Set.Ico (1 / 9 : ℝ) (11 / 36) ∪ Set.Ico (4 / 9 : ℝ) (2 / 3) ∪
         Set.Ico (25 / 36 : ℝ) (3 / 4) ∪ Set.Ico (5 / 6 : ℝ) (8 / 9) ∪ Set.Ico (11 / 12 : ℝ) 1 :=
   sorry
 
-/-! ## `record.json` — Theorem B, the union record
+/-! ## Theorem C — the union record (§7)
 
-Certified against `SolutionRecord` rather than `Solution`; see the module docstring. -/
+Proved in `Z32/UnionRecord.lean`, the one module whose kernel check is expensive; see the module
+docstring. -/
 
-/-- **Theorem B, the record.**  No `ξ ≠ 0` has every `{ξ(3/2)ⁿ}` inside this union of eleven
+/-- **Theorem C, the record.**  No `ξ ≠ 0` has every `{ξ(3/2)ⁿ}` inside this union of eleven
 intervals, of total length `17/24 = 0.70833…`, against `20/39 = 0.5128…` in print. -/
 theorem union_record_7083_empty {ξ : ℝ} (hξ : ξ ≠ 0) :
     ¬ ∀ n : ℕ, Int.fract (ξ * ((3 : ℝ) / 2) ^ n) ∈
@@ -190,7 +190,7 @@ theorem union_record_7083_empty {ξ : ℝ} (hξ : ξ ≠ 0) :
       Set.Ico (41 / 48 : ℝ) (15 / 16) ∪
       Set.Ico (23 / 24 : ℝ) (47 / 48) := sorry
 
-/-! ## `nearest.json` — Theorem D, the nearest-integer family -/
+/-! ## Theorem D — the nearest-integer family (§7.4) -/
 
 /-- **Theorem D, cell form.**  No `ξ ≠ 0` has every `{ξ(3/2)ⁿ}` inside `[0, 1/5) ∪ [4/5, 1)`. -/
 theorem two_cell_fifth_empty {ξ : ℝ} (hξ : ξ ≠ 0) :
@@ -202,7 +202,7 @@ theorem two_cell_fifth_empty {ξ : ℝ} (hξ : ξ ≠ 0) :
 theorem not_forall_abs_sub_round_lt_fifth {ξ : ℝ} (hξ : ξ ≠ 0) {N : ℕ} :
     ¬ ∀ n : ℕ, N ≤ n → |ξ * ((3 : ℝ) / 2) ^ n - round (ξ * ((3 : ℝ) / 2) ^ n)| < 1 / 5 := sorry
 
-/-! ## `pastsquare.json` — the regime `p > q²`, where [Dub09AA] §4 leaves the question open -/
+/-! ## The regime `p > q²` (§7.6), where [Dub09AA] §4 leaves the question open -/
 
 /-- One entry in the regime `p > q²`: `Z_{5/2}(1/5, 2/5) = ∅`. -/
 theorem ZSet_five_two_fifth : FLP.ZSet 5 2 (1 / 5 : ℝ) (1 / 5) = ∅ := sorry

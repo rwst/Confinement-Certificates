@@ -255,14 +255,14 @@ fidelity:
     set [0, 1/5) ∪ [4/5, 1), which contains {y : ‖y‖ < 1/5} — the two differ only
     at y = 4/5 — so the named statement follows a fortiori; the closed form of the
     same set carries no certificate, exactly as Rem. 7.10 predicts.
-    One drift between the repository's prose and the paper should be read with
-    care: the paper of record letters its results A (residues), B (single windows),
-    C (unions), D (nearest integer), whereas the docstrings of Challenge.lean and
-    the table in comparator/README.md — written before the paper was relettered —
-    call the residue corollary "Theorem C" and the windows "Theorem A". The
-    lettering in this file is the paper's. No statement is affected: the
-    docstrings are comments, and what comparator matches are the statements.
-    Lemma names follow the development, not the paper's numbering.
+    The lettering used throughout is the paper's — A (residues), B (single
+    windows), C (unions), D (nearest integer). The docstrings of Challenge.lean
+    predate the paper's relettering and called the residue corollary "Theorem C"
+    and the windows "Theorem A"; they were brought into line on 2026-08-24, a
+    change of comments only, since what comparator matches are the statements. The
+    letters A and B also occur in Z32/README.md for two no-go results about the
+    search engines; those are unrelated to the paper's lettered theorems. Lemma
+    names follow the development, not the paper's numbering.
 
 sources:
   - title: "Confinement certificates for powers of rational numbers modulo one"
@@ -473,9 +473,8 @@ automation:
     except for the union record of Theorem 7.12, whose kernel check alone costs
     about 100 seconds and 12 gigabytes; the development isolates it in
     Z32/UnionRecord.lean so that nothing else pays that. comparator.json names
-    SolutionRecord and therefore includes it; the seven configs of comparator/,
-    which this file merges, split the certification along the paper's sections so
-    that a failure names its section and only comparator/record.json pays the cost.
+    SolutionRecord rather than Solution, the record being among the statements it
+    certifies, so a `lake test` run pays that cost once.
 
 review:
   status: agent-reviewed

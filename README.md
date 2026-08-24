@@ -11,12 +11,18 @@ lake build Z32          # the development
 lake test               # re-certify it with `leanprover/comparator`
 ```
 
-`lake test` runs [`leanprover/comparator`](https://github.com/leanprover/comparator) on the
-seven configs in `comparator/`. It checks, independently of this repository's build, that the
-development proves exactly the statements of `Challenge.lean` — the paper's claims restated
-against Mathlib alone — using only the three axioms of classical Lean, and that the resulting
-environment is re-accepted by the Lean kernel from a fresh export. Setup, the config table, and
-the memory cost of the union record are in [`comparator/README.md`](comparator/README.md).
+`lake test` runs [`leanprover/comparator`](https://github.com/leanprover/comparator) on
+`comparator.json`. It checks, independently of this repository's build, that the development
+proves exactly the statements of `Challenge.lean` — the paper's claims restated against Mathlib
+alone — using only the three axioms of classical Lean, and that the resulting environment is
+re-accepted by the Lean kernel from a fresh export.
+
+The config certifies all twenty-four statements against `SolutionRecord`, which adds the union
+record of Theorem 7.12; that certificate's kernel check alone costs about 100 seconds and 12
+gigabytes, so the run wants a machine with about 16 GB of memory. `comparator` and
+`lean4export` are Lake dependencies (`lake build comparator lean4export`); `landrun`, which
+comparator uses to sandbox every build, has no pinned release and must be built once by hand
+(Go, and Linux-only — it uses Landlock), or supplied via `COMPARATOR_LANDRUN`.
 
 Please cite:
 ```
