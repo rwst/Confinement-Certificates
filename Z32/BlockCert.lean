@@ -382,6 +382,196 @@ private theorem ok_parts (hc : c.ok = true) :
   simp only [Cert.ok, Bool.and_eq_true, decide_eq_true_eq] at hc
   exact ⟨hc.1.1.1.1.1, hc.1.1.1.1.2, hc.1.1.1.2, hc.1.1.2, hc.1.2, hc.2⟩
 
+/-- `ok_parts`, exported: `Z32/EscapeBound.lean` needs the same unpacking. -/
+theorem Cert.parts (hc : c.ok = true) :
+    0 < c.D ∧ 1 < c.q ∧ c.q < c.p ∧ Nat.gcd c.p c.q = 1 ∧
+      funnelOk c.D c.p c.q c.closed c.U c.U c.levels = true ∧
+      funcOk c.D c.p c.q c.closed c.blocks c.strata = true := ok_parts hc
+
+/-! ### The funnel on a finite range
+
+The soundness theorem below only needs the funnel for an orbit confined *forever*, but the
+quantitative form of `Z32/EscapeBound.lean` (plan z32-transform, milestone M2) needs it for an
+orbit confined on `[0, N]`, where each funnel level costs one step at the top: a point is pushed
+from level `k` to level `k+1` using the membership of its **successor**.  So the lemmas here carry
+an index bound, and `Cert.exists_block_path` is recovered from them by taking `N` large. -/
+
+section BlockPath
+
+/-- The carry alphabet of a model orbit: `wₙ ∈ {−q+1, …, p−1}` as soon as `y` stays in `[0,1)`. -/
+private theorem mem_carries_of_rec {c : Cert} (hq0' : 0 < c.q) (hp0' : 0 < c.p)
+    {y : ℕ → ℝ} {w : ℕ → ℤ} (hy0 : ∀ n, 0 ≤ y n) (hy1 : ∀ n, y n < 1)
+    (hrec : ∀ n, (c.q : ℝ) * y (n + 1) = (c.p : ℝ) * y n - (w n : ℝ)) (n : ℕ) :
+    w n ∈ carries c.p c.q := by
+  have hqR : (0 : ℝ) < c.q := by exact_mod_cast hq0'
+  have hpR : (0 : ℝ) < c.p := by exact_mod_cast hp0'
+  have h := hrec n
+  have e1 : (c.p : ℝ) * y n < (c.p : ℝ) * 1 := mul_lt_mul_of_pos_left (hy1 n) hpR
+  have e2 : (c.q : ℝ) * y (n + 1) < (c.q : ℝ) * 1 := mul_lt_mul_of_pos_left (hy1 (n + 1)) hqR
+  have e3 : 0 ≤ (c.p : ℝ) * y n := mul_nonneg hpR.le (hy0 n)
+  have e4 : 0 ≤ (c.q : ℝ) * y (n + 1) := mul_nonneg hqR.le (hy0 (n + 1))
+  have hlo : -(c.q : ℤ) < w n := by
+    have h' : -((c.q : ℕ) : ℝ) < (w n : ℝ) := by linarith
+    exact_mod_cast h'
+  have hhi : w n < (c.p : ℤ) := by
+    have h' : (w n : ℝ) < ((c.p : ℕ) : ℝ) := by linarith
+    exact_mod_cast h'
+  exact mem_carries hlo hhi
+
+/-- The recursion scaled by the certificate's common denominator, the form every interval
+comparison below uses. -/
+private theorem key_rec {c : Cert} {y : ℕ → ℝ} {w : ℕ → ℤ}
+    (hrec : ∀ n, (c.q : ℝ) * y (n + 1) = (c.p : ℝ) * y n - (w n : ℝ)) (n : ℕ) :
+    (c.q : ℝ) * ((c.D : ℝ) * y (n + 1)) + (w n : ℝ) * c.D
+      = (c.p : ℝ) * ((c.D : ℝ) * y n) := by
+  have h : (c.D : ℝ) * ((c.q : ℝ) * y (n + 1)) = (c.D : ℝ) * ((c.p : ℝ) * y n - (w n : ℝ)) := by
+    rw [hrec n]
+  nlinarith [h]
+
+/-- **One funnel step, on a finite range.**  Membership in `next` at `n` is read off membership in
+`cur` at `n+1` and in `U` at `n`, so the range shrinks by one. -/
+private theorem funnel_step_le {c : Cert} (hq0' : 0 < c.q) (hp0' : 0 < c.p)
+    {y : ℕ → ℝ} {w : ℕ → ℤ} (hwmem : ∀ n, w n ∈ carries c.p c.q)
+    (hkey : ∀ n, (c.q : ℝ) * ((c.D : ℝ) * y (n + 1)) + (w n : ℝ) * c.D
+      = (c.p : ℝ) * ((c.D : ℝ) * y n))
+    {N : ℕ} (hmem : ∀ n, n ≤ N → memL c.D c.closed c.U (y n))
+    {cur next : List Ivl} (hlev : levelOk c.D c.p c.q c.closed c.U cur next = true)
+    {k : ℕ} (hcur : ∀ n, n + k ≤ N → memL c.D c.closed cur (y n)) :
+    ∀ n, n + (k + 1) ≤ N → memL c.D c.closed next (y n) := by
+  intro n hn
+  have hqR : (0 : ℝ) < c.q := by exact_mod_cast hq0'
+  have hpR : (0 : ℝ) < c.p := by exact_mod_cast hp0'
+  obtain ⟨I, hI, hIm⟩ := hcur (n + 1) (by omega)
+  obtain ⟨J, hJ, hJm⟩ := hmem n (by omega)
+  have hpc : pieceOk c.D c.p c.q c.closed next I J (w n) = true := by
+    simp only [levelOk, List.all_eq_true] at hlev
+    exact hlev I hI (w n) (hwmem n) J hJ
+  set t : ℝ := (c.p : ℝ) * ((c.D : ℝ) * y n) with htdef
+  have hA : ((pieceA c.D c.q I (w n) : ℤ) : ℝ) ≤ t := by
+    have h1 : (c.q : ℝ) * (I.1 : ℝ) ≤ (c.q : ℝ) * ((c.D : ℝ) * y (n + 1)) :=
+      mul_le_mul_of_nonneg_left hIm.1 hqR.le
+    simp only [pieceA, htdef]; push_cast; linarith [hkey n]
+  have hB : (((c.p : ℤ) * J.1 : ℤ) : ℝ) ≤ t := by
+    have h1 : (c.p : ℝ) * (J.1 : ℝ) ≤ (c.p : ℝ) * ((c.D : ℝ) * y n) :=
+      mul_le_mul_of_nonneg_left hJm.1 hpR.le
+    simp only [htdef]; push_cast; linarith
+  have hC : rleR c.closed t ((pieceC c.D c.q I (w n) : ℤ) : ℝ) := by
+    refine rleR_scale (k := (c.q : ℝ)) hqR hIm.2 ?_
+    simp only [pieceC, htdef]; push_cast; linarith [hkey n]
+  have hE : rleR c.closed t (((c.p : ℤ) * J.2 : ℤ) : ℝ) := by
+    refine rleR_scale (k := (c.p : ℝ)) hpR hJm.2 ?_
+    simp only [htdef]; push_cast; linarith
+  -- the piece is not empty, so the covering disjunct must hold
+  have hne1 := (rle_iff (!c.closed) (pieceC c.D c.q I (w n)) (pieceA c.D c.q I (w n))).not.mpr
+    (not_rleR_flip hA hC)
+  have hne2 := (rle_iff (!c.closed) (pieceC c.D c.q I (w n)) ((c.p : ℤ) * J.1)).not.mpr
+    (not_rleR_flip hB hC)
+  have hne3 := (rle_iff (!c.closed) ((c.p : ℤ) * J.2) (pieceA c.D c.q I (w n))).not.mpr
+    (not_rleR_flip hA hE)
+  have hne4 := (rle_iff (!c.closed) ((c.p : ℤ) * J.2) ((c.p : ℤ) * J.1)).not.mpr
+    (not_rleR_flip hB hE)
+  simp only [pieceOk, minLe, Bool.or_eq_true, decide_eq_true_eq, List.any_eq_true,
+    Bool.and_eq_true, leMax] at hpc
+  rcases hpc with ((((h | h) | h) | h) | ⟨K, hK, hKlo, hKhi⟩)
+  · exact absurd h hne1
+  · exact absurd h hne2
+  · exact absurd h hne3
+  · exact absurd h hne4
+  · refine ⟨K, hK, ?_, ?_⟩
+    · have h3 : (c.p : ℝ) * (K.1 : ℝ) ≤ t := by
+        rcases hKlo with h | h
+        · have h' : (((c.p : ℤ) * K.1 : ℤ) : ℝ) ≤ ((pieceA c.D c.q I (w n) : ℤ) : ℝ) := by
+            exact_mod_cast h
+          push_cast at h'; linarith
+        · have h' : (((c.p : ℤ) * K.1 : ℤ) : ℝ) ≤ (((c.p : ℤ) * J.1 : ℤ) : ℝ) := by
+            exact_mod_cast h
+          have hB' := hB
+          push_cast at h' hB'
+          linarith
+      rw [htdef] at h3
+      exact le_of_mul_le_mul_left h3 hpR
+    · have h3 : rleR c.closed t (((c.p : ℤ) * K.2 : ℤ) : ℝ) := by
+        rcases hKhi with h | h
+        · exact rleR_trans_right hC (by exact_mod_cast h)
+        · exact rleR_trans_right hE (by exact_mod_cast h)
+      refine rleR_cancel (k := (c.p : ℝ)) hpR ?_
+      have e2 : (c.p : ℝ) * (K.2 : ℝ) = (((c.p : ℤ) * K.2 : ℤ) : ℝ) := by push_cast; ring
+      rw [htdef] at h3
+      rw [e2]
+      exact h3
+
+/-- **The whole funnel, on a finite range.**  A `levels`-deep funnel costs `levels.length`
+steps of range. -/
+private theorem funnel_le {c : Cert} (hq0' : 0 < c.q) (hp0' : 0 < c.p)
+    {y : ℕ → ℝ} {w : ℕ → ℤ} (hwmem : ∀ n, w n ∈ carries c.p c.q)
+    (hkey : ∀ n, (c.q : ℝ) * ((c.D : ℝ) * y (n + 1)) + (w n : ℝ) * c.D
+      = (c.p : ℝ) * ((c.D : ℝ) * y n))
+    {N : ℕ} (hmem : ∀ n, n ≤ N → memL c.D c.closed c.U (y n)) :
+    ∀ (levels : List (List Ivl)) (cur : List Ivl) (k : ℕ),
+      funnelOk c.D c.p c.q c.closed c.U cur levels = true →
+      (∀ n, n + k ≤ N → memL c.D c.closed cur (y n)) →
+      ∀ n, n + (k + levels.length) ≤ N → memL c.D c.closed (finalLevel cur levels) (y n) := by
+  intro levels
+  induction levels with
+  | nil =>
+    intro cur k _ hcur n hn
+    exact hcur n (by simpa using hn)
+  | cons next rest ih =>
+    intro cur k hf hcur n hn
+    simp only [funnelOk, Bool.and_eq_true] at hf
+    have hnext := funnel_step_le hq0' hp0' hwmem hkey hmem hf.1 hcur
+    exact ih next (k + 1) hf.2 hnext n (by simp only [List.length_cons] at hn; omega)
+
+/-- **The funnel, quantitative form.**  An orbit confined to `U` on `[0, N]` lies in the blocks at
+every `n` with `n + K ≤ N`, `K = c.levels.length`. -/
+theorem Cert.memL_blocks_of_le {c : Cert} (hc : c.ok = true) {y : ℕ → ℝ} {w : ℕ → ℤ}
+    (hy0 : ∀ n, 0 ≤ y n) (hy1 : ∀ n, y n < 1)
+    (hrec : ∀ n, (c.q : ℝ) * y (n + 1) = (c.p : ℝ) * y n - (w n : ℝ))
+    {N : ℕ} (hmem : ∀ n, n ≤ N → memL c.D c.closed c.U (y n))
+    {n : ℕ} (hn : n + c.levels.length ≤ N) : memL c.D c.closed c.blocks (y n) := by
+  obtain ⟨-, hq1, hqp, -, hfun, -⟩ := ok_parts hc
+  have hq0' : 0 < c.q := by omega
+  have hp0' : 0 < c.p := by omega
+  exact funnel_le hq0' hp0' (mem_carries_of_rec hq0' hp0' hy0 hy1 hrec) (key_rec hrec) hmem
+    c.levels c.U 0 hfun (fun m hm => hmem m (by omega)) n (by omega)
+
+/-- **The block graph edge.**  Consecutive block memberships are joined by an edge labelled by the
+carry.  Pointwise in `n`: nothing beyond the two memberships is used. -/
+theorem Cert.mem_outEdges_of_memI {c : Cert} (hc : c.ok = true) {y : ℕ → ℝ} {w : ℕ → ℤ}
+    (hy0 : ∀ n, 0 ≤ y n) (hy1 : ∀ n, y n < 1)
+    (hrec : ∀ n, (c.q : ℝ) * y (n + 1) = (c.p : ℝ) * y n - (w n : ℝ))
+    {n : ℕ} {I J : Ivl} (hJ : J ∈ c.blocks)
+    (hIm : memI c.D c.closed I (y n)) (hJm : memI c.D c.closed J (y (n + 1))) :
+    (w n, J) ∈ outEdges c.D c.p c.q c.closed c.blocks I := by
+  obtain ⟨-, hq1, hqp, -, -, -⟩ := ok_parts hc
+  have hq0' : 0 < c.q := by omega
+  have hp0' : 0 < c.p := by omega
+  have hqR : (0 : ℝ) < c.q := by exact_mod_cast hq0'
+  have hpR : (0 : ℝ) < c.p := by exact_mod_cast hp0'
+  have hwmem : ∀ m, w m ∈ carries c.p c.q := mem_carries_of_rec hq0' hp0' hy0 hy1 hrec
+  have hkey : ∀ m, (c.q : ℝ) * ((c.D : ℝ) * y (m + 1)) + (w m : ℝ) * c.D
+      = (c.p : ℝ) * ((c.D : ℝ) * y m) := key_rec hrec
+  set t : ℝ := (c.p : ℝ) * ((c.D : ℝ) * y n) with htdef
+  have h1 : (((c.p : ℤ) * I.1 : ℤ) : ℝ) ≤ t := by
+    have h := mul_le_mul_of_nonneg_left hIm.1 hpR.le
+    simp only [htdef]; push_cast; linarith
+  have h2 : rleR c.closed t (((c.p : ℤ) * I.2 : ℤ) : ℝ) := by
+    refine rleR_scale (k := (c.p : ℝ)) hpR hIm.2 ?_
+    simp only [htdef]; push_cast; linarith
+  have h3 : (((c.q : ℤ) * J.1 + w n * c.D : ℤ) : ℝ) ≤ t := by
+    have h := mul_le_mul_of_nonneg_left hJm.1 hqR.le
+    simp only [htdef]; push_cast; linarith [hkey n]
+  have h4 : rleR c.closed t (((c.q : ℤ) * J.2 + w n * c.D : ℤ) : ℝ) := by
+    refine rleR_scale (k := (c.q : ℝ)) hqR hJm.2 ?_
+    simp only [htdef]; push_cast; linarith [hkey n]
+  simp only [outEdges, List.mem_flatMap, List.mem_map, List.mem_filter]
+  refine ⟨w n, hwmem n, J, ⟨hJ, ?_⟩, rfl⟩
+  simp only [hits, Bool.and_eq_true]
+  exact ⟨⟨⟨(rle_iff _ _ _).mpr (rleR_trans_left h1 h2),
+            (rle_iff _ _ _).mpr (rleR_trans_left h1 h4)⟩,
+            (rle_iff _ _ _).mpr (rleR_trans_left h3 h2)⟩,
+            (rle_iff _ _ _).mpr (rleR_trans_left h3 h4)⟩
+
 /-- **The funnel and the block graph, at the level of the model.**  This is everything the
 soundness theorem below establishes *before* aperiodicity enters: the funnel pushes a confined
 orbit into the blocks, and consecutive blocks are joined by an edge of the block graph labelled by
@@ -396,131 +586,13 @@ theorem Cert.exists_block_path (hc : c.ok = true) {y : ℕ → ℝ} {w : ℕ →
     (hrec : ∀ n, (c.q : ℝ) * y (n + 1) = (c.p : ℝ) * y n - (w n : ℝ)) :
     ∃ B : ℕ → Ivl, (∀ n, B n ∈ c.blocks) ∧ (∀ n, memI c.D c.closed (B n) (y n)) ∧
       ∀ n, (w n, B (n + 1)) ∈ outEdges c.D c.p c.q c.closed c.blocks (B n) := by
-  obtain ⟨-, hq1, hqp, -, hfun, -⟩ := ok_parts hc
-  have hq0' : 0 < c.q := by omega
-  have hp0' : 0 < c.p := by omega
-  have hqR : (0 : ℝ) < c.q := by exact_mod_cast hq0'
-  have hpR : (0 : ℝ) < c.p := by exact_mod_cast hp0'
-  have hwmem : ∀ n, w n ∈ carries c.p c.q := by
-    intro n
-    have h := hrec n
-    have e1 : (c.p : ℝ) * y n < (c.p : ℝ) * 1 := mul_lt_mul_of_pos_left (hy1 n) hpR
-    have e2 : (c.q : ℝ) * y (n + 1) < (c.q : ℝ) * 1 := mul_lt_mul_of_pos_left (hy1 (n + 1)) hqR
-    have e3 : 0 ≤ (c.p : ℝ) * y n := mul_nonneg hpR.le (hy0 n)
-    have e4 : 0 ≤ (c.q : ℝ) * y (n + 1) := mul_nonneg hqR.le (hy0 (n + 1))
-    have hlo : -(c.q : ℤ) < w n := by
-      have h' : -((c.q : ℕ) : ℝ) < (w n : ℝ) := by linarith
-      exact_mod_cast h'
-    have hhi : w n < (c.p : ℤ) := by
-      have h' : (w n : ℝ) < ((c.p : ℕ) : ℝ) := by linarith
-      exact_mod_cast h'
-    exact mem_carries hlo hhi
-  -- the key algebraic identity, scaled by `pD`
-  have hkey : ∀ n, (c.q : ℝ) * ((c.D : ℝ) * y (n + 1)) + (w n : ℝ) * c.D
-      = (c.p : ℝ) * ((c.D : ℝ) * y n) := by
-    intro n
-    have h : (c.D : ℝ) * ((c.q : ℝ) * y (n + 1)) = (c.D : ℝ) * ((c.p : ℝ) * y n - (w n : ℝ)) := by
-      rw [hrec n]
-    nlinarith [h]
-  -- one funnel step
-  have hstep : ∀ cur next : List Ivl, levelOk c.D c.p c.q c.closed c.U cur next = true →
-      (∀ n, memL c.D c.closed cur (y n)) → ∀ n, memL c.D c.closed next (y n) := by
-    intro cur next hlev hcur n
-    obtain ⟨I, hI, hIm⟩ := hcur (n + 1)
-    obtain ⟨J, hJ, hJm⟩ := hmem n
-    have hpc : pieceOk c.D c.p c.q c.closed next I J (w n) = true := by
-      simp only [levelOk, List.all_eq_true] at hlev
-      exact hlev I hI (w n) (hwmem n) J hJ
-    set t : ℝ := (c.p : ℝ) * ((c.D : ℝ) * y n) with htdef
-    have hA : ((pieceA c.D c.q I (w n) : ℤ) : ℝ) ≤ t := by
-      have h1 : (c.q : ℝ) * (I.1 : ℝ) ≤ (c.q : ℝ) * ((c.D : ℝ) * y (n + 1)) :=
-        mul_le_mul_of_nonneg_left hIm.1 hqR.le
-      simp only [pieceA, htdef]; push_cast; linarith [hkey n]
-    have hB : (((c.p : ℤ) * J.1 : ℤ) : ℝ) ≤ t := by
-      have h1 : (c.p : ℝ) * (J.1 : ℝ) ≤ (c.p : ℝ) * ((c.D : ℝ) * y n) :=
-        mul_le_mul_of_nonneg_left hJm.1 hpR.le
-      simp only [htdef]; push_cast; linarith
-    have hC : rleR c.closed t ((pieceC c.D c.q I (w n) : ℤ) : ℝ) := by
-      refine rleR_scale (k := (c.q : ℝ)) hqR hIm.2 ?_
-      simp only [pieceC, htdef]; push_cast; linarith [hkey n]
-    have hE : rleR c.closed t (((c.p : ℤ) * J.2 : ℤ) : ℝ) := by
-      refine rleR_scale (k := (c.p : ℝ)) hpR hJm.2 ?_
-      simp only [htdef]; push_cast; linarith
-    -- the piece is not empty, so the covering disjunct must hold
-    have hne1 := (rle_iff (!c.closed) (pieceC c.D c.q I (w n)) (pieceA c.D c.q I (w n))).not.mpr
-      (not_rleR_flip hA hC)
-    have hne2 := (rle_iff (!c.closed) (pieceC c.D c.q I (w n)) ((c.p : ℤ) * J.1)).not.mpr
-      (not_rleR_flip hB hC)
-    have hne3 := (rle_iff (!c.closed) ((c.p : ℤ) * J.2) (pieceA c.D c.q I (w n))).not.mpr
-      (not_rleR_flip hA hE)
-    have hne4 := (rle_iff (!c.closed) ((c.p : ℤ) * J.2) ((c.p : ℤ) * J.1)).not.mpr
-      (not_rleR_flip hB hE)
-    simp only [pieceOk, minLe, Bool.or_eq_true, decide_eq_true_eq, List.any_eq_true,
-      Bool.and_eq_true, leMax] at hpc
-    rcases hpc with ((((h | h) | h) | h) | ⟨K, hK, hKlo, hKhi⟩)
-    · exact absurd h hne1
-    · exact absurd h hne2
-    · exact absurd h hne3
-    · exact absurd h hne4
-    · refine ⟨K, hK, ?_, ?_⟩
-      · have h3 : (c.p : ℝ) * (K.1 : ℝ) ≤ t := by
-          rcases hKlo with h | h
-          · have h' : (((c.p : ℤ) * K.1 : ℤ) : ℝ) ≤ ((pieceA c.D c.q I (w n) : ℤ) : ℝ) := by
-              exact_mod_cast h
-            push_cast at h'; linarith
-          · have h' : (((c.p : ℤ) * K.1 : ℤ) : ℝ) ≤ (((c.p : ℤ) * J.1 : ℤ) : ℝ) := by
-              exact_mod_cast h
-            have hB' := hB
-            push_cast at h' hB'
-            linarith
-        rw [htdef] at h3
-        exact le_of_mul_le_mul_left h3 hpR
-      · have h3 : rleR c.closed t (((c.p : ℤ) * K.2 : ℤ) : ℝ) := by
-          rcases hKhi with h | h
-          · exact rleR_trans_right hC (by exact_mod_cast h)
-          · exact rleR_trans_right hE (by exact_mod_cast h)
-        refine rleR_cancel (k := (c.p : ℝ)) hpR ?_
-        have e2 : (c.p : ℝ) * (K.2 : ℝ) = (((c.p : ℤ) * K.2 : ℤ) : ℝ) := by push_cast; ring
-        rw [htdef] at h3
-        rw [e2]
-        exact h3
-  -- the whole funnel
-  have hfin : ∀ (cur : List Ivl) (levels : List (List Ivl)),
-      funnelOk c.D c.p c.q c.closed c.U cur levels = true →
-      (∀ n, memL c.D c.closed cur (y n)) → ∀ n, memL c.D c.closed (finalLevel cur levels) (y n) := by
-    intro cur levels
-    induction levels generalizing cur with
-    | nil => intro _ h; exact h
-    | cons next rest ih =>
-      intro hf hcur
-      simp only [funnelOk, Bool.and_eq_true] at hf
-      exact ih next hf.2 (hstep cur next hf.1 hcur)
-  have hH : ∀ n, memL c.D c.closed c.blocks (y n) := hfin c.U c.levels hfun hmem
-  -- the block itinerary
+  have hH : ∀ n, memL c.D c.closed c.blocks (y n) := fun n =>
+    Cert.memL_blocks_of_le hc hy0 hy1 hrec (N := n + c.levels.length) (fun m _ => hmem m) le_rfl
   choose Bl hBmem hBm using hH
-  have hedge : ∀ n, (w n, Bl (n + 1)) ∈ outEdges c.D c.p c.q c.closed c.blocks (Bl n) := by
-    intro n
-    set t : ℝ := (c.p : ℝ) * ((c.D : ℝ) * y n) with htdef
-    have h1 : (((c.p : ℤ) * (Bl n).1 : ℤ) : ℝ) ≤ t := by
-      have h := mul_le_mul_of_nonneg_left (hBm n).1 hpR.le
-      simp only [htdef]; push_cast; linarith
-    have h2 : rleR c.closed t (((c.p : ℤ) * (Bl n).2 : ℤ) : ℝ) := by
-      refine rleR_scale (k := (c.p : ℝ)) hpR (hBm n).2 ?_
-      simp only [htdef]; push_cast; linarith
-    have h3 : (((c.q : ℤ) * (Bl (n + 1)).1 + w n * c.D : ℤ) : ℝ) ≤ t := by
-      have h := mul_le_mul_of_nonneg_left (hBm (n + 1)).1 hqR.le
-      simp only [htdef]; push_cast; linarith [hkey n]
-    have h4 : rleR c.closed t (((c.q : ℤ) * (Bl (n + 1)).2 + w n * c.D : ℤ) : ℝ) := by
-      refine rleR_scale (k := (c.q : ℝ)) hqR (hBm (n + 1)).2 ?_
-      simp only [htdef]; push_cast; linarith [hkey n]
-    simp only [outEdges, List.mem_flatMap, List.mem_map, List.mem_filter]
-    refine ⟨w n, hwmem n, Bl (n + 1), ⟨hBmem (n + 1), ?_⟩, rfl⟩
-    simp only [hits, Bool.and_eq_true]
-    exact ⟨⟨⟨(rle_iff _ _ _).mpr (rleR_trans_left h1 h2),
-              (rle_iff _ _ _).mpr (rleR_trans_left h1 h4)⟩,
-              (rle_iff _ _ _).mpr (rleR_trans_left h3 h2)⟩,
-              (rle_iff _ _ _).mpr (rleR_trans_left h3 h4)⟩
-  exact ⟨Bl, hBmem, hBm, hedge⟩
+  exact ⟨Bl, hBmem, hBm, fun n =>
+    Cert.mem_outEdges_of_memI hc hy0 hy1 hrec (hBmem (n + 1)) (hBm n) (hBm (n + 1))⟩
+
+end BlockPath
 
 /-- **Soundness of a block certificate.**  If `c.ok` then no `ξ ≠ 0` has its whole `(p/q)`-power
 orbit confined, mod 1, to the set described by `c.U`.
@@ -815,8 +887,13 @@ family: `[0, c) ∪ [1-c, 1)` is `{y : ‖y‖ < c}` up to the single point `1-c
 it bounds how close to an integer the whole orbit can stay.  [Dub10] proves the case `c = 1/3`
 **nonempty**, and [Dub09AA] Theorem 1 reaches only `c ≤ 1/6` (an arc of length `1/p = 1/3`), so
 `c = 1/5` sits strictly between what is known possible and what is known impossible.  Closing the
-endpoints kills it — `gencert.py --closed` finds no certificate to depth 60 — exactly as with
-[Dub08]'s union. -/
+endpoints defeats the *unranked* search — `gencert.py --closed` finds no certificate to depth 60 —
+exactly as with [Dub08]'s union, and for the same reason, now a theorem: closing `1/5` admits the
+whole chain `(1/5)(2/3)^k` into the hold set, and
+`Z32.BlockCert.Cert.ok_eq_false_of_covers_two_cell` shows that an infinite hold set refuses every
+unranked certificate at every depth.  With ranks the closed set *is* certified, at depth 1 —
+`Z32.BlockCert.certTwoCellFifthClosed` in `Z32/CertComplete.lean` (milestone M4); `--ranked` had
+simply never been run here. -/
 
 /-- Certificate for `[0/5,1/5) u [4/5,5/5)`, total length `2/5`; funnel depth 1, 2 block(s).  Generated by `Z32/gencert.py 5 0 1 4 5`. -/
 def certTwoCellFifth : Cert where

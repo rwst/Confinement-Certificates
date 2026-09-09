@@ -728,7 +728,7 @@ theorem card_modelLang_ge (hok : h.ok = true) {k : ℕ} (hk : 0 < k) :
       fun j => (hwords _ (List.get_mem _ _)).1
     simp only [this, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
   have hkl : 0 < k * h.len := Nat.mul_pos hk hlen0
-  haveI : Finite (modelLang h.p h.q h.uSet (k * h.len)) :=
+  have : Finite (modelLang h.p h.q h.uSet (k * h.len)) :=
     (modelLang_finite hp hq _ _).to_subtype
   have hmem : ∀ c, (fun i : Fin (k * h.len) => (F c).flatten.getD (i : ℕ) 0) ∈
       modelLang h.p h.q h.uSet (k * h.len) :=

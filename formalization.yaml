@@ -5,32 +5,37 @@
 version: "v0.4"
 
 project:
-  name: "Confinement certificates for powers of rational numbers modulo one"
+  name: "Confinement schemas and the reach of block certificates for powers of rational numbers modulo one"
   description: >-
-    A Lean 4 / Mathlib development of a paper on the emptiness theory of the sets
-    Z_{p/q}(s, s+t) = {ξ > 0 : {ξ(p/q)ⁿ} ∈ [s, s+t) for all n ≥ 0}, the generalized
-    Z-numbers of Flatto, Lagarias and Pollington, at and beyond the window length
-    1/p.
-    The paper introduces block certificates --- finite integer
-    witnesses, rechecked from scratch by the Lean proof kernel, whose soundness rests on
-    the aperiodicity lemma alone --- and uses them to pass the length-$1/p$ line:
-    $\Zset_{3/2}(1/6,13/24)=\emptyset$ (window length $3/8>1/3$),
-    $\Zset_{3/2}(961/3600,2427/3600)=\emptyset$ (length $733/1800$), and explicit
-    unions of total length up to $17/24$, against $20/39$ in print. The
-    closed-interval union statement of Dubickas is replicated exactly as printed;
-    no $\xi\ne0$ keeps $\|\xi(3/2)^{n}\|<1/5$ for every $n$, with $\|\cdot\|$ the
-    distance to the nearest integer; and thirty windows of length $1/p$ are
-    certified at five bases in the regime $p>q^{2}$ that Dubickas leaves open.
-    There is no sorry anywhere outside the deliberate placeholders in
-    Challenge.lean, no project-defined axiom, and no native_decide: every block
-    certificate is discharged by `c.ok = true := by decide`, i.e. by kernel
-    reduction of integer arithmetic on the certificate's raw data.
+    A Lean 4 / Mathlib development of the second paper on the sets
+    Z_{p/q}(s, s+t) = {ξ > 0 : {ξ(p/q)ⁿ} ∈ [s, s+t) for all n ≥ 0}, the
+    generalized Z-numbers of Flatto, Lagarias and Pollington. The first paper
+    built a corpus of block certificates for individual statements
+    Z_{p/q}(U) = ∅. This paper replaces parts of that corpus by theorems, and
+    then asks what the certificate format can and cannot reach.
+    Thirty certificates in the regime p > q² collapse into one closed-form
+    criterion on the single real parameter ε = {(p−q)s}, settling a set of
+    positions of measure 1 − 2q²/(p(p+q)) at every base and for every real
+    ξ ≠ 0; the criterion extends to a family indexed by a depth K, identified
+    with the finiteness criterion of [FLP95] and with the parameter intervals
+    J¹_b of [Bug04], the depth playing the role of the denominator of the
+    rotation number. An explicit escape time for L ≤ ξ ≤ X is extracted from the
+    soundness proof, and every unranked certificate of [Ste26] is made effective
+    by it. A completeness theorem says the verdict is forced on the class where a
+    certificate can exist — a finite hold set — and that an infinite hold set
+    refuses every unranked certificate at every depth and over every denominator,
+    which turns a bounded computer search into a theorem. A measure-theoretic
+    depth–size bound 1 ≤ 2δ(K + 2 + log_{p/q} 2B) prices [KK17, Prob. 6.1] for
+    this format. Finally a rank-stratified certificate gives
+    ‖ξ(3/2)ⁿ‖ < 2/7 = 0.285714… infinitely often for every ξ ≠ 0, past the
+    31/81 = 0.38271… of [Dub19] as a window and past the corpus's own 1/3 as a
+    nearest-integer constant.
   authors:
     # Contributor roles for the formalization, not a bibliographic byline; the
     # paper's byline is recorded under sources.
     - "Ralf Stephan (direction, review, paper author)"
     - "Claude Code, claude-fable-5 (mathematical discovery, paper drafting)"
-    - "Claude Code, claude-opus-4-8 (formalization)"
+    - "Claude Code, claude-opus-5 (formalization)"
   license: "CC0-1.0"
   responsible_maintainers:
     - "Ralf Stephan"
@@ -40,279 +45,440 @@ repository:
 
 classification:
   arxiv: [math.NT, math.DS]
-  msc2020: ["11J71", "11K06", "37B10"]
+  msc2020: ["11J71", "11K06", "37E05"]
 
 status:
   scope: >-
-    Complete for every statement of the paper: Appendix A of the paper is a table
-    of every statement with its Lean identifier, its file and its status, and
-    every row is proved at std3 — no sorry, no cited axiom admitted as an axiom,
-    no natively compiled decision procedure. The lettered results are Theorem A
-    (the residue corollary, Theorem 5.3), Theorem B (the single windows,
-    Theorems 7.8 and 7.15), Theorem C (the unions, Theorems 7.11, 7.12 and 7.9)
-    and Theorem D (the nearest-integer family, Theorem 7.14); the two classical
-    pillars are Theorem 4.2 ([FLP95] Cor. 1.4a) and Theorems 6.8/6.9
-    ([Dub09AA] Thm. 1 and its Z-set forms); the regime p > q² is Theorems 7.16
-    and 7.17. All of these are among the twenty-four compared declarations. The
-    forty block certificates behind them — the ten of Table 2 and the thirty of
-    Table 3 — are each a `Cert.ok = true := by decide`, so the comparator's kernel
-    replay re-evaluates every one from its raw integer data on a fresh
-    environment, with no .olean loaded and no appeal to the C and Python engines
-    that discovered them.
-    Not formalized, and delimited as such in the paper: the atlas as a whole. The
-    sweeps of Z32/README.md, the sharpness of the engine frontier (that nothing is
-    certified at any position above length 1467/3600), the λ and dimension columns,
-    and the two search records past the kernel — a certificate at 43/60 (funnel
-    depth 20, 433 blocks) and one at 0.7417 (240 cells, 3783 surviving components
-    at depth 30, merging to 2512 blocks) — are engine output, not theorems. So is
-    the negative evidence: that no certificate of this family exists for the arc
-    ‖·‖ < 21/100 within funnel depth 60, nor for the closed form of the c = 1/5
-    set; and that the (4,3) scan found nothing between lengths 70/240 and 94/240,
-    which the paper itself rates weak evidence because that scan ran only to funnel
-    depth 14 while the length-1/4 windows at that base already need depth 26.
+    Complete for every numbered statement of the paper except two: Appendix A is
+    a table of every statement with its Lean identifier, its file and its status,
+    and every row is proved at std3 — no sorry, no cited axiom admitted as an
+    axiom, no natively compiled decision procedure. The two exceptions are marked
+    "not formalized" in the table itself: Conjecture 7.2 (the period-doubling
+    cascade and its closed form for the entry points c_k) and Remark 7.3, which
+    reads that cascade back off the transient tree. Corollary 3.8 has no Lean
+    identifier either; it is immediate arithmetic from the display (5) that
+    Corollary 3.7 is stated with.
+    The lettered results are Theorem A (the depth-K schema, Theorems 3.5 and
+    3.6), Theorem B (the closed-form family on ε, Corollaries 3.7 and 3.8),
+    Theorem C (the escape rate, Theorem 4.4), Theorem D (what the scheme can and
+    cannot decide: Theorem 5.5, Theorem 5.7, and Theorem 6.3 with Corollary 6.4)
+    and Theorem E (the ranked frontier, Theorem 7.1).
+    Forty-one declarations are compared by comparator2.json. They are the
+    statements of the paper that speak about real numbers and windows: all of §3,
+    Theorem 4.4 row one with the nine rows of Table 1 and Corollary 4.5,
+    Theorems 5.2, 5.5 and 5.10, Theorem 6.3 in both its forms, and all four forms
+    of Theorem 7.1. Three groups are proved but deliberately not compared,
+    because their statements quantify over the certificate format itself —
+    Z32.BlockCert.Cert together with its Bool-valued checker Cert.ok — rather
+    than over reals: Theorem 4.2 with Proposition 4.3(ii) and Theorem 4.4 row
+    two; Theorems 5.6, 5.7, 5.8 and Corollary 5.9; Corollary 6.4 and Example 6.5.
+    Restating those against Mathlib alone would mean re-declaring several hundred
+    lines of the decision procedure inside Challenge2.lean, i.e. inside the one
+    file the challenge exists to keep auditable; their consequences on concrete
+    sets are compared instead. Challenge2.lean says so, entry by entry.
+    The certificates behind the "computed" rows — the nine unranked ones of
+    Table 1, the five closed-endpoint ones of Theorem 5.10, and the rank-
+    stratified certTwoSeven of Theorem 7.1 (funnel depth 15, 166 blocks in 32
+    rank strata, over D = 7·3¹⁵) — are each a `Cert.ok = true := by decide`, so
+    the comparator's kernel replay re-evaluates every one from its raw integer
+    data on a fresh environment, with no .olean loaded and no appeal to the C and
+    Python engines that discovered them.
+    Not formalized, and delimited as such in the paper: the measurements. Remark
+    6.6 records what the greedy interval-by-interval search of [Ste26] reaches
+    when restarted from its 240-interval grid — unions of total length 179/240,
+    3/4 and 181/240 = 0.754167…, at depth 29 with 2801 blocks — and states in the
+    same breath that these are search output, far too large to verify inside the
+    formalization, and that nothing later depends on them. So is the count in §7
+    of how many of the 236 frontier positions the rank-stratified criterion
+    certifies (213, against fourteen for the unranked search), and the census of
+    531 292 orbits of period at most 14 at the base 3/2 that Remark 6.6 reads
+    Theorem 5.8 off.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: ["propext", "Classical.choice", "Quot.sound"]
   main_results:
-    # --- the two classical pillars (paper §4, §6) ---
-    - declaration: "Z32.FLP_cor_one_four_a"
-      file: "Z32/EscapeCert.lean"
+    # --- §3, Theorem A: the depth-K schema (Z32/DepthKSchema.lean) ---
+    - declaration: "Z32.ZSet_eq_empty_of_certifiedK"
+      file: "Z32/DepthKSchema.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.dubickas_theorem_1"
-      file: "Z32/SmallInterval.lean"
+    - declaration: "Z32.ZSet_eq_empty_of_lowBand"
+      file: "Z32/DepthKSchema.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.ZSet_eq_empty_of_lt_sq"
-      file: "Z32/SmallInterval.lean"
+    # --- §3, Theorem B: the closed-form family on ε (Z32/SymbolicCert.lean) ---
+    - declaration: "Z32.ZSet_eq_empty_of_certified"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.ZSet_three_two_third_empty"
-      file: "Z32/SmallInterval.lean"
+    - declaration: "Z32.ZSet_zero_eq_empty"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    # --- Theorem A: the residue corollary (§5) ---
-    - declaration: "Z32.residue_not_eventually_constant"
-      file: "Z32/ResidueCapture.lean"
+    - declaration: "Z32.ZSet_eq_empty_of_theta_int"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.exists_residue_change"
-      file: "Z32/ResidueCapture.lean"
+    - declaration: "Z32.ZSet_half_eq_empty"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.residue_not_eventually_constant_one"
-      file: "Z32/ResidueCapture.lean"
+    # --- §3, Theorem 3.10: the thirty grid entries, p > q² ---
+    - declaration: "Z32.ZSet_five_two"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    # --- Theorem B: single windows past the length-1/p line (§7) ---
-    - declaration: "Z32.ZSet_three_two_sixth_3_8"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.ZSet_seven_two"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.ZSet_three_two_frontier"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.ZSet_nine_two"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.not_eventually_mem_sixth_3_8"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.ZSet_ten_three"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.ZSet_four_three_beyond_line"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.ZSet_eleven_three"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    # --- Theorem C: certified-empty unions (§7) ---
-    - declaration: "Z32.dubickas_2008_cor_1_2"
-      file: "Z32/BlockCert.lean"
+    # --- §3, Corollary 3.11: continua of real positions at the base 5/2 ---
+    - declaration: "Z32.ZSet_five_two_upper"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.union_seven_twelfths_empty"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.ZSet_five_two_band"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.union_two_thirds_empty"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.ZSet_five_two_interval"
+      file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.union_record_empty"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.ZSet_five_two_depth_two"
+      file: "Z32/DepthKSchema.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.union_record_7083_empty"
+    - declaration: "Z32.ZSet_five_two_depth_three"
+      file: "Z32/DepthKSchema.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.ZSet_five_two_depth_two_interval"
+      file: "Z32/DepthKSchema.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    # --- §4, Theorem C: the escape rate (Z32/EscapeBound.lean) ---
+    - declaration: "Z32.exists_fract_notMem_le_of_certifiedK"
+      file: "Z32/EscapeBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.BlockCert.escape_sixth_3_8"
+      file: "Z32/EscapeBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.BlockCert.escape_sixth_3_8_million"
+      file: "Z32/EscapeBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.BlockCert.escape_frontier"
+      file: "Z32/EscapeBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.BlockCert.escape_union_712"
+      file: "Z32/EscapeBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.BlockCert.escape_union_23"
+      file: "Z32/EscapeBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.BlockCert.escape_union_2536"
+      file: "Z32/EscapeBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.BlockCert.escape_two_cell_fifth"
+      file: "Z32/EscapeBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.BlockCert.escape_four_three"
+      file: "Z32/EscapeBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.BlockCert.escape_five_two_fifth"
+      file: "Z32/EscapeBound.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.escape_union_7083"
       file: "Z32/UnionRecord.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    # --- Theorem D: the nearest-integer family (§7.4) ---
-    - declaration: "Z32.two_cell_fifth_empty"
-      file: "Z32/BlockCert.lean"
+    # --- §5, Theorem D(i) and the closed-endpoint entries (Z32/CertComplete.lean) ---
+    - declaration: "Z32.step_unique"
+      file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.not_forall_abs_sub_round_lt_fifth"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.holdSet_finite_imp"
+      file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    # --- the regime p > q², where [Dub09AA] §4 leaves the question open (§7.6) ---
-    - declaration: "Z32.ZSet_five_two_fifth"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.BlockCert.two_cell_fifth_closed"
+      file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.ZSet_five_two_grid"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.BlockCert.sixth_3_8_closed"
+      file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.ZSet_seven_two_grid"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.BlockCert.frontier_closed"
+      file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.ZSet_nine_two_grid"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.BlockCert.four_three_closed"
+      file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.ZSet_ten_three_grid"
-      file: "Z32/BlockCert.lean"
+    - declaration: "Z32.BlockCert.five_two_fifth_closed"
+      file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
       literature_dependencies: []
-    - declaration: "Z32.ZSet_eleven_three_grid"
-      file: "Z32/BlockCert.lean"
+    # --- §6, Theorem D(iii): the depth–size bound (Z32/DepthSize.lean) ---
+    - declaration: "Z32.depth_size"
+      file: "Z32/DepthSize.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator.json"
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.depth_size_logb"
+      file: "Z32/DepthSize.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    # --- §7, Theorem E: the ranked frontier (Z32/RankedFrontier.lean) ---
+    - declaration: "Z32.ZSet_three_two_two_seven"
+      file: "Z32/RankedFrontier.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.two_seven_empty"
+      file: "Z32/RankedFrontier.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.not_eventually_two_seven"
+      file: "Z32/RankedFrontier.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.not_forall_two_seven_le_abs_sub_round"
+      file: "Z32/RankedFrontier.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
       literature_dependencies: []
 
 fidelity:
   divergences: >-
-    The formalization follows the paper's own proofs; where it deviates, it
-    deviates in the direction the paper records. In §2 the growth bound
-    (Prop. 2.3) is applied with C = p rather than the C = 2p of [Dub09AA] §3,
-    because the formalization proves the sharper alphabet bound 0 ≤ sₙ ≤ p under
-    the confinement hypothesis (Rem. 6.3), giving the growth constant c = |x₀| + p.
-    The aperiodicity lemma (Lem. 2.4) follows [DN05] in its use of the expanding
-    affine map but closes with a direct divisibility argument instead of reducing
-    to [DN05, Lem. 1], and keeps the liberalization ξ ≠ 0 noted in [Dub09AA] in
-    place of the ξ > 0 of [DN05]. In §6, only one direction of the classical
-    Sturmian equivalence is formalized (Lem. 6.1), and by a shorter route than the
-    balance argument of [Lot02] — through uniqueness of the right special factor —
-    with the matching Morse–Hedlund floor proved in ForMathlib; the alphabet lemma
-    carries the explicit k = ⌈(p−q)s − q/p⌉ where [Dub09AA, Thm. 3] says "for some
-    k ∈ ℤ"; and the endgame replaces the extraction of mth roots by Bernoulli's
-    inequality, to the same effect. The Z-set forms quantify over every real s,
-    irrational positions included, since Z_{p/q} is defined by the window
-    [s, s+1/p) itself and not by its reduction modulo one, while the confinement
-    theorem behind them (Thm. 6.7) is stated for 0 ≤ s < 1 as in the source.
-    In §7 the Lean text follows Algorithm 1 line by line, with two differences
-    that serve the kernel's evaluator and are recorded as cosmetic in Rem. 7.5:
-    each max and min is expanded into the disjunction of its two comparisons
-    (leMax, minLe), because the order-theoretic max on ℤ unfolds through
-    LinearOrder projections the evaluator does not reduce well, and the flipped
-    endpoint relation ≼κ̄ is implemented as its own relation rather than as a
-    negation, which is the same Boolean. Theorem D is certified for the two-cell
-    set [0, 1/5) ∪ [4/5, 1), which contains {y : ‖y‖ < 1/5} — the two differ only
-    at y = 4/5 — so the named statement follows a fortiori; the closed form of the
-    same set carries no certificate, exactly as Rem. 7.10 predicts.
-    The lettering used throughout is the paper's — A (residues), B (single
-    windows), C (unions), D (nearest integer). The docstrings of Challenge.lean
-    predate the paper's relettering and called the residue corollary "Theorem C"
-    and the windows "Theorem A"; they were brought into line on 2026-08-24, a
-    change of comments only, since what comparator matches are the statements. The
-    letters A and B also occur in Z32/README.md for two no-go results about the
-    search engines; those are unrelated to the paper's lettered theorems. Lemma
-    names follow the development, not the paper's numbering.
+    The formalization follows the paper's own proofs. Where names and wording part company, the paper
+    records it. Appendix A notes two Lean names that predate the paper's wording:
+    Z32.SchemaCertifiedK — the "certifiedK" of the file — is Definition 3.3's
+    "s escapes at depth K", and "two_cell" throughout Z32/ is the two-interval
+    union [0, 1/5) ∪ [4/5, 1) of Theorem 5.10's first entry. Lemma names follow
+    the development, not the paper's numbering.
+    One entry of Appendix A's tables gives a name that does not resolve: Table 1
+    row 6 is listed as Z32.BlockCert.escape_union_7083, but the declaration sits
+    after `end Z32.BlockCert` in Z32/UnionRecord.lean and is Z32.escape_union_7083.
+    comparator2.json uses the real name.
+    §3.3 states the correspondence with the literature and is used nowhere in the
+    development: Definition 3.3 is the finiteness criterion of [FLP95, Thm. 3.4]
+    together with the returning case of [Bug04, Lem. 1]; Proposition 3.4 is the
+    cyclic permutation of [Bug04, Prop. 1]; and the interval (4) is J¹_{K+1}(q/p)
+    in the notation of [Bug04, Lem. 3]. Theorems 3.5 and 3.6 are therefore a
+    machine-checked fragment of [Bug04, Thm. 1], not an improvement of it; what
+    the formalization adds is that the criterion is proved uniformly in
+    (p, q, s, K) with no computation on concrete data, and that Definition 3.3 is
+    identified with the funnel depth of a block certificate, which is what lets
+    §4 treat the two on the same footing.
+    Theorem 4.4 is stated in two rows with different offsets, δ = 0 for a schema
+    position and δ = K for a certificate, because the two halves have different
+    hypotheses; the paper explains the asymmetry rather than smoothing it. Both
+    logarithms of Definition 4.1 are necessary, and Remark 4.6 exhibits the
+    entry of Table 1 that shows it. Remark 4.7 records why a ranked certificate
+    admits no bound at all, so the one entry of [Ste26] excluded from Table 1 is
+    the ranked certDub08 replicating [Dub08, Cor. 1.2].
+    Theorem 5.10's first entry is subsumed as a statement — Remark 5.12 notes
+    that [Ste26, Thm. 7.14] already gives ‖ξ(3/2)ⁿ‖ ≥ 0.238 for some n, and
+    ‖y‖ ≤ 1/5 implies ‖y‖ < 0.238 — and is kept for the certificate, not for the
+    statement: the point of the entry is that a *ranked* certificate exists at
+    depth one for a set whose hold set is infinite, exactly the configuration
+    Corollary 5.9 shows an unranked one cannot have.
+    Theorem 6.3 is not a competitive estimate for one set: Example 6.5 measures
+    the slack on the 25/36 record at a factor of about thirteen (bound
+    δ ≥ 1/44 against the true hole 11/36). What it asserts is that the slack
+    closes as δ → 0, which is the sense in which it prices [KK17, Prob. 6.1].
+    Theorem 7.1 falls 6.7·10⁻⁵ short of the printed constant of [Dub06, Cor. 1]
+    and does not close the gap; §7.1 explains why no member of the family can,
+    and Conjecture 7.2 — the period-doubling cascade behind that ceiling — is
+    stated as a conjecture and left unformalized, being the outcome of an exact
+    rational computation checked against a complete enumeration of the periodic
+    orbits of period at most 20.
 
 sources:
+  - title: "Confinement schemas and the reach of block certificates for powers of rational numbers modulo one"
+    authors: ["Ralf Stephan"]
+    type: paper
+    location: "paper2.pdf in this repository; Theorems A, B, C, D, E; Theorems 3.5, 3.6, 4.4, 5.5, 5.7, 6.3, 7.1 and Corollaries 3.7, 3.9, 3.11, 4.5, 5.9, 6.4"
+    relationship: formalizes
+    author_endorsement: participated
+    note: >-
+      The source of record, dated 8 September 2026. Paper and formalization come
+      from the same collaboration and were developed together; Appendix A of the
+      paper indexes every statement by Lean identifier, file and status,
+      including the load-bearing ones that are not separately compared. The
+      forty-one compared declarations are the statements phrased in Mathlib
+      vocabulary alone; the statements quantified over the certificate format are
+      proved but not compared, and Challenge2.lean lists them. Novelty is
+      recorded as unknown: §3.3 positions Theorems 3.5 and 3.6 explicitly as a
+      machine-checked fragment of [Bug04, Thm. 1] rather than as new mathematics,
+      and a full prior-art gate was performed.
+
   - title: "Confinement certificates for powers of rational numbers modulo one"
     authors: ["Ralf Stephan"]
     type: paper
     id: "https://doi.org/10.13140/RG.2.2.36190.19520"
-    location: "Theorems A, B, C, D; Theorems 4.2, 5.3, 6.8, 6.9, 7.8, 7.9, 7.11, 7.12, 7.14, 7.15, 7.16, 7.17"
-    relationship: formalizes
+    location: "Thms. 7.2, 7.8, 7.9, 7.11, 7.12, 7.14, 7.17, §7.4; Tables 2 and 3"
+    relationship: background
     author_endorsement: participated
     note: >-
-      The source of record. Paper and formalization come from the same
-      collaboration and were developed together; Appendix A of the paper indexes
-      every statement by Lean identifier, file and status, including the
-      load-bearing ones that are not separately compared. The twenty-four compared
-      declarations are the lettered theorems, the two classical pillars and the
-      p > q² table. Novelty is recorded as unknown: the paper positions each entry
-      against the printed record it could locate ([FLP95], [Bug04], [Dub09AA],
-      [Dub08], [KK17], [Aki08], [Dub10]) but no systematic prior-art gate is
-      documented in this repository, and the residue corollary is described there
-      as folklore-grade and merely not found stated.
+      The corpus this paper reasons about, by the same author, formalized in the
+      same repository and compared by comparator.json. Its soundness theorem
+      (Thm. 7.2, Z32.BlockCert.Cert.not_confined) is the input to §4 and the
+      thing §5 proves a converse of; its thirty depth-one certificates of
+      Thm. 7.17 are what Corollary 3.7 replaces by one criterion; its nine
+      unranked certificates are the rows of Table 1, made effective; its
+      certUnion2536 is Example 6.5; and its refusal of the closed two-cell arc to
+      depth 60 — a bounded search — becomes Corollary 5.9. Nothing is assumed
+      from it: every statement it supplies is a theorem in this repository.
 
   - title: "On the range of fractional parts {ξ(p/q)ⁿ}"
     authors: ["Leopold Flatto", "Jeffrey C. Lagarias", "Andrew D. Pollington"]
     type: paper
-    location: "Acta Arith. 70 (1995), 125–147; (1.4), Thm. 1.4, Cor. 1.4a, Thms. 3.2, 3.4"
+    location: "Acta Arith. 70 (1995), 125–147; (1.4), Thm. 3.4"
     relationship: background
     author_endorsement: not-contacted
     note: >-
-      Defines the sets Z_{p/q}(s, s+t) and proves the 1/p-spread theorem.
-      Corollary 1.4a is Theorem 4.2 of the paper, regenerated rather than cited:
-      Theorems 3.2 and 3.4 are proved in FLP/ZEmpty.lean and FLP/SurvivorFinite.lean,
-      the case s = 0 credited there to Pollington is FLP.ZSet_empty_zero in
-      FLP/ParamDensity.lean, and the escape witnesses of Table 1 are exact rational
-      computations in Z32/EscapeCert.lean. FLP/ carries more than the paper uses:
-      Theorem 1.4 itself is proved as FLP.spread_lower_bound, with the base-3/2
-      case FLP.three_halves_spread, and neither is compared.
+      Defines the sets Z_{p/q}(s, s+t), whose definition FLP.ZSet restates
+      verbatim in Challenge2.lean. Theorem 3.4 — for N least with f^N(0) ≥ 1/β
+      the survivor set has exactly N elements, cyclically permuted — is the
+      finiteness criterion that §3.3 identifies with Definition 3.3's escape data.
+      Not assumed: the identification is commentary, used nowhere in the proofs,
+      and the [FLP95] material this repository does formalize lives in FLP/ and
+      belongs to the first paper.
+
+  - title: "Linear mod one transformations and the distribution of fractional parts {ξ(p/q)ⁿ}"
+    authors: ["Yann Bugeaud"]
+    type: paper
+    location: "Acta Arith. 114 (2004), 301–311; Thms. 1 and 3, Lems. 1–3, Prop. 1, §2–§3"
+    relationship: background
+    author_endorsement: not-contacted
+    note: >-
+      The nearest thing in print to §3, and the paper says so: Theorem 1 gives
+      Z_{p/q}(s, s+1/p) = ∅ for a set of s of full Lebesgue measure with an
+      explicit criterion, Theorem 3 that the exceptional set is null,
+      uncountable and not closed. Proposition 3.4 is the cyclic permutation of
+      its Proposition 1, and the depth-K interval (4) is its J¹_{K+1}(q/p).
+      Nothing is assumed from it; Theorems 3.5 and 3.6 are a machine-checked
+      fragment of its Theorem 1, proved from the aperiodicity lemma alone.
 
   - title: "Powers of a rational number modulo 1 cannot lie in a small interval"
     authors: ["Arturas Dubickas"]
     type: paper
-    location: "Acta Arith. 137 (2009), 233–239; Thms. 1 and 3, §2–§4"
+    location: "Acta Arith. 137 (2009), 233–239; Thms. 1 and 3, (2), (3), §2–§4"
     relationship: background
     author_endorsement: not-contacted
     note: >-
-      The second classical pillar, formalized in full in Z32/SmallInterval.lean as
-      Z32.dubickas_theorem_1 and its Z-set forms, following the source's proof:
-      confinement forces a two-letter carry word, the word is Sturmian, and p < q²
-      is incompatible with Sturmian complexity. Nothing is assumed from it. Its
-      §4 leaves the length-1/p statement open for p > q², which is the regime the
-      thirty certificates of Theorem 7.17 live in.
+      Supplies the notation of §2 — the orbit xₙ, yₙ, the carry word sₙ and the
+      recursion qy_{n+1} = pyₙ + θ − sₙ, formalized as Z32.orb, Z32.yFract,
+      Z32.carry and Z32.q_mul_yFract_succ — and the alphabet argument that
+      Lemma 3.2 restates around ⌊θ⌋. Its §4 leaves the length-1/p statement open
+      for p > q², which is the regime Corollaries 3.7, 3.9, 3.11 and
+      Theorem 3.10 live in. Its Theorem 1 itself is proved in this repository
+      (Z32.dubickas_theorem_1, first paper), so nothing is cited as an axiom.
 
   - title: "Integer parts of powers of rational numbers"
     authors: ["Arturas Dubickas", "Aivaras Novikas"]
@@ -321,48 +487,26 @@ sources:
     relationship: background
     author_endorsement: not-contacted
     note: >-
-      The aperiodicity of the carry word — the single analytic input of the whole
-      development, and the only thing the block-certificate soundness theorem
-      rests on. Proved rather than cited, as Z32.not_isEventuallyPeriodic_carry in
-      Z32/DubickasWord.lean, so no certified statement carries a literature axiom.
-
-  - title: "Algebraic Combinatorics on Words"
-    authors: ["M. Lothaire"]
-    type: book
-    location: "Encyclopedia of Mathematics and its Applications 90, Cambridge University Press, 2002; Prop. 2.1.3, Thm. 2.1.5"
-    relationship: background
-    author_endorsement: "n/a"
-    note: >-
-      The bispecial criterion for Sturmian words that [Dub09AA] §2 quotes. Only the
-      direction the proof needs is formalized, in
-      ForMathlib/Combinatorics/Sturmian.lean, and by a shorter route than the
-      source's balance argument.
-
-  - title: "Symbolic dynamics"
-    authors: ["Marston Morse", "Gustav A. Hedlund"]
-    type: paper
-    location: "Amer. J. Math. 60 (1938), 815–866"
-    relationship: background
-    author_endorsement: "n/a"
-    note: >-
-      The complexity floor p(w, m) ≥ m + 1 for aperiodic words, which the Sturmian
-      criterion consumes. Proved in ForMathlib/Combinatorics/InfiniteComplexity.lean
-      and ForMathlib/Combinatorics/Sturmian.lean, not cited.
+      The aperiodicity of the carry word (Lemma 2.1 of the paper) — the single
+      analytic input of the whole development, and the only thing every
+      emptiness statement here rests on, through the periodicity contradiction.
+      Proved rather than cited, as Z32.not_isEventuallyPeriodic_carry in
+      Z32/DubickasWord.lean, so no certified statement carries a literature
+      axiom. Theorem 4.2 is its dichotomy made quantitative.
 
   - title: "On the powers of 3/2 and other rational numbers"
     authors: ["Arturas Dubickas"]
     type: paper
-    location: "Math. Nachr. 281 (2008), no. 7, 951–958; Cor. 1.2, Thm. 1.3"
+    location: "Math. Nachr. 281 (2008), no. 7, 951–958; Cor. 1.2"
     relationship: background
     author_endorsement: not-contacted
     note: >-
-      The printed record for empty unions: no ξ has all of {ξ(3/2)ⁿ} in the closed
-      union [8/39, 18/39] ∪ [21/39, 31/39], of total length 20/39. Replicated
-      exactly as printed — in the closed convention, which is the stronger
-      statement and the one entry needing the rank stratification of condition (D)
-      — as Z32.dubickas_2008_cor_1_2, by a certificate of the development's own
-      scheme rather than by the source's argument. Theorem 7.12 exceeds its total
-      length by a factor 1.38.
+      The closed union of total length 20/39, replicated in [Ste26] by a ranked
+      certificate. It is the one entry of that corpus Theorem 4.4 cannot make
+      effective, and Remark 4.7 explains why the obstruction is a property of
+      rank strata rather than a gap in the proof: a ranked block may carry an
+      equal-rank edge and a lower-rank one, so a model orbit can follow an
+      equal-rank cycle arbitrarily long before dropping.
 
   - title: "Cellular automata and powers of p/q"
     authors: ["Jarkko Kari", "Johan Kopra"]
@@ -371,53 +515,101 @@ sources:
     relationship: background
     author_endorsement: not-contacted
     note: >-
-      The opposite direction, and the reason total length decides nothing: their
-      nonempty confinement union has total length 2/3, exactly that of one of the
-      empty unions certified here and more than another. Their Problem 6.1 asks
-      for explicit empty unions of total length 1 − ε for every ε; the entries
-      here are records on that curve, not a solution of it. Nothing is assumed
-      from the paper, and Z32/reproduce.sh runs their Cor. 4.8 union as a negative
-      control that the generator must refuse.
+      Problem 6.1 asks for explicit empty unions of total length 1 − ε for every
+      ε, their Theorem 5.9 proving non-constructively that such unions exist.
+      Theorem 6.3 is a negative answer for this certificate format: driving the
+      hole δ to 0 costs depth or blocks like 1/δ, so a parametric certificate of
+      bounded shape valid for every P does not exist. Nothing is assumed from
+      the paper.
 
-  - title: "Mahler's Z-number and 3/2 number systems"
-    authors: ["Shigeki Akiyama"]
+  - title: "The set of rational cycles for the 3x + 1 problem"
+    authors: ["Jeffrey C. Lagarias"]
     type: paper
-    location: "Unif. Distrib. Theory 3 (2008), no. 2, 91–99; Thms. 2.4, 2.5, Conj. 1.4"
+    location: "Acta Arith. 56 (1990), 33–53; Thm. 2.1"
     relationship: background
     author_endorsement: not-contacted
     note: >-
-      Nonempty confinement sets of arbitrarily small measure when p > q². No
-      tension with the thirty certificates of Theorem 7.17: those sets are
-      Cantor-type unions, not single windows of length 1/p — and they are exactly
-      where the natural upgrade to all real positions fails, the element containing
-      0 refusing to certify at every cover resolution tested. Separately, the M7
-      measurement of Z32/README.md establishes that no block certificate of this
-      family, at any product level, can prove Conjecture 1.4; that measurement is
-      engine output, not a formalized statement.
+      The shape of the periodic points that Propositions 5.3 and 5.4 pin down at
+      a general coprime base: the P-periodic points of the model relation in
+      [0,1) are exactly the A/(p^P − q^P) with 0 ≤ A < p^P − q^P. Proved here
+      (Z32.cyclePoint_eq_base with Z32.cycOrbit_period_dvd), not cited; [Ste26]
+      had it at 3/2 only.
 
-  - title: "Linear mod one transformations and the distribution of fractional parts {ξ(p/q)ⁿ}"
-    authors: ["Yann Bugeaud"]
-    type: paper
-    location: "Acta Arith. 114 (2004), 301–311; Cor. 1"
+  - title: "Applied Proof Theory: Proof Interpretations and their Use in Mathematics"
+    authors: ["Ulrich Kohlenbach"]
+    type: book
+    location: "Springer Monographs in Mathematics, Springer, Berlin, 2008; §2"
     relationship: background
     author_endorsement: not-contacted
     note: >-
-      The intermediate step between [FLP95] and [Dub09AA] on the length-1/p line:
-      emptiness for almost every position, and an enlarged explicit list. Not
-      formalized and not used; Theorem 6.9 subsumes it at every position for
-      p < q².
+      The sense in which §4 extracts a rate: every emptiness proof in this
+      corpus is a proof by contradiction from aperiodicity and so says nothing
+      about when an orbit leaves, yet a bound is latent in it. Methodological
+      reference only; nothing is formalized from it.
 
-  - title: "On the fractional parts of powers of rational numbers"
+  - title: "On the distance from a rational power to the nearest integer"
     authors: ["Arturas Dubickas"]
     type: paper
-    location: "Bull. Aust. Math. Soc. 82 (2010), 249–254"
+    location: "J. Number Theory 117 (2006), 222–239; Cor. 1, (1)"
     relationship: background
     author_endorsement: not-contacted
     note: >-
-      Constructs ξ with ‖ξ(3/2)ⁿ‖ < 1/3 for every n, which is what makes
-      Theorem D a threshold statement rather than an emptiness statement: the
-      threshold for that family lies in [1/5, 1/3], and Theorem 7.14 moves the
-      lower end from the 1/6 reachable by [Dub09AA] to 1/5.
+      The exact ceiling of the whole certificate family, and the reason
+      Theorem 7.1 stops where it does. Corollary 1 gives every ξ ≠ 0 a limit
+      point of (‖ξ(3/2)ⁿ‖)ₙ at least (3 − T(2/3))/12 = 0.238117… and at most
+      (1 + T(2/3))/4 = 0.285647…, with T(z) = ∏_{m≥0}(1 − z^{2^m}). Theorem 7.1's
+      2/7 = 0.285714… misses the second by 6.7·10⁻⁵ and [Ste26, Thm. 7.14]'s
+      0.238 misses the first by 1.2·10⁻⁴; §7.1 identifies both constants as the
+      accumulation points of the method's own obstruction. Not formalized:
+      Conjecture 7.2 is the unproved half of that identification.
+
+  - title: "Fractional parts of powers of large rational numbers"
+    authors: ["Arturas Dubickas"]
+    type: paper
+    location: "Discrete Math. 342 (2019), no. 7, 1949–1955; Thms. 1.1, 1.2"
+    relationship: background
+    author_endorsement: not-contacted
+    note: >-
+      The printed single-window record that Theorem 7.1 passes: 31/81 =
+      0.38271… at the base 3/2, against 3/7 = 0.428571… here. Theorem 1.1
+      settles the regime p > q² at every position for algebraic ξ ≠ 0, which is
+      what makes Corollary 3.11 — the same regime for a continuum of positions
+      and every real ξ ≠ 0 — a statement the certificate scheme could not reach.
+      Nothing is assumed from it.
+
+  - title: "Progressions arithmétiques généralisées et le problème des (3/2)ⁿ"
+    authors: ["Andrew D. Pollington"]
+    type: paper
+    location: "C. R. Acad. Sci. Paris Sér. I 292 (1981), 383–384"
+    relationship: background
+    author_endorsement: "n/a"
+    note: >-
+      Exhibits ξ ≠ 0 with ‖ξ(3/2)ⁿ‖ > 4/65 for every n, one end of the interval
+      in which the optimal nearest-integer constant lies. Quoted in §7.1 to fix
+      how much room a different method would have; not formalized and not used.
+
+  - title: "Powers of rationals modulo 1 and rational base number systems"
+    authors: ["Shigeki Akiyama", "Christiane Frougny", "Jacques Sakarovitch"]
+    type: paper
+    location: "Israel J. Math. 168 (2008), 53–91"
+    relationship: background
+    author_endorsement: not-contacted
+    note: >-
+      Exhibits ξ ≠ 0 with ‖ξ(3/2)ⁿ‖ < 1/3 for every n, the other end of that
+      interval. Quoted in §7.1 for the same purpose; not formalized and not used.
+
+  - title: "On the Diophantine nature of the elements of Cantor sets arising in the dynamics of contracted rotations"
+    authors: ["Yann Bugeaud", "Dong Han Kim", "Michel Laurent", "Arnaldo Nogueira"]
+    type: paper
+    location: "Ann. Sc. Norm. Super. Pisa Cl. Sci. (2021), arXiv:2001.00380; Def. 1"
+    relationship: background
+    author_endorsement: not-contacted
+    note: >-
+      Names the contracted rotation T_{γ,α}(x) = {γx + α} that Proposition 3.4
+      identifies the rank function with, and shows the exceptional set of
+      [Bug04, Thm. 1] to consist of transcendental numbers — which is why the
+      positions §3 does not reach are, in the footnote of §3.3, a null
+      uncountable set of transcendental ε. Commentary only; not formalized.
 
   - title: "An unsolved problem on the powers of 3/2"
     authors: ["Kurt Mahler"]
@@ -427,8 +619,7 @@ sources:
     author_endorsement: "n/a"
     note: >-
       The origin of the sets: whether Z_{3/2}(0, 1/2) is empty. Nothing here
-      touches it, and Remark 5.5 records why the residue corollary excludes the
-      modulus m = 2 — its two cells are exactly that problem and its parity twin.
+      touches it; the longest single window certified is 3/7 = 0.428571… < 1/2.
 
 automation:
   methods:
@@ -452,475 +643,621 @@ automation:
         content.
   spend_usd: "subscription-based usage ($100/month subscription; no separate API spend)"
   notes: >-
-    Three independent kinds of check ship with the repository. First, the engines
-    are cross-checked against each other: atlas.c (exact y-model, arbitrary
-    unions), hold.c (θ-model, single windows) and gridcert.c (uniform cell SFT)
-    are three implementations of the same pruning, and verify_atlas.py is a
-    deliberately naive fourth in Python with exact Fraction arithmetic whose only
-    purpose is to catch implementation error in the C engines. All arithmetic in
-    every decision path is integer or exact-rational; no floating point occurs
-    anywhere. Second, Z32/reproduce.sh regenerates every number quoted in
-    Z32/README.md from scratch in about a minute (except the M6 controls, about an
-    hour), with md5 checksums, and — the load-bearing part — re-runs gencert.py on
-    each of the forty certificates and diffs the result against the definitions in
-    Z32/BlockCert.lean and Z32/UnionRecord.lean, requiring them to be byte
-    identical. The same script runs the generator against five sets known to be
-    NONEMPTY in print ([KK17] Cor. 4.8, [Dub10], [Pol81], [Dub08] Thm. 1.3,
-    [Cho80]) and requires it to refuse every one, in the default mode and in the
-    strongest closed/ranked mode. Third, `lake test` runs leanprover/comparator,
-    which re-derives the axiom list from a kernel replay of a fresh export of both
-    the challenge and the solution. Wall time and hardware were not recorded,
-    except for the union record of Theorem 7.12, whose kernel check alone costs
-    about 100 seconds and 12 gigabytes; the development isolates it in
-    Z32/UnionRecord.lean so that nothing else pays that. comparator.json names
-    SolutionRecord rather than Solution, the record being among the statements it
-    certifies, so a `lake test` run pays that cost once.
+    The checks of the first paper still ship with the repository and still
+    apply to the certificates this one reuses: the four independent engines
+    (atlas.c, hold.c, gridcert.c and the naive Python verify_atlas.py, all in
+    exact integer or rational arithmetic, no floating point anywhere), and
+    Z32/reproduce.sh, which regenerates every certificate with gencert.py and
+    requires the result to be byte identical to the Lean definition, and which
+    runs the generator against five sets known to be NONEMPTY in print and
+    requires it to refuse every one.
+    Two things are specific to this paper. The certificates it adds — the five
+    closed-endpoint ones of Theorem 5.10 and the rank-stratified certTwoSeven of
+    Theorem 7.1 — are generated by the same `Z32/gencert.py` invocations
+    recorded in their docstrings, so the same byte-identity check covers them.
+    And §3 is the section with no certificates at all: its proofs are uniform in
+    (p, q, s, K) with no computation on concrete data, which is why Appendix A
+    marks no row of §3 "computed" and why Theorem 3.10 reproduces thirty
+    kernel-checked certificates of [Ste26] as thirty specialisations of one
+    theorem instead.
+    `lake test` runs leanprover/comparator on comparator.json and
+    comparator2.json, each of which re-derives the axiom list from a kernel
+    replay of a fresh export of both the challenge and the solution. Wall time
+    and hardware were not recorded, except for the union record behind Table 1
+    row 6, whose kernel check alone costs about 100 seconds and 12 gigabytes;
+    the development isolates it in Z32/UnionRecord.lean so that nothing else
+    pays that. comparator2.json names SolutionRecord2 rather than Solution2, that
+    row being among the statements it certifies, so a `lake test` run pays the
+    cost once per config.
 
 review:
-  status: agent-reviewed
+  status: self-assessed
   reviewers:
     - "Ralf Stephan"
-    - "aiXiv Official Agent (anonymous)"
   notes: >-
     The author directed the work and checked the statements against the paper.
-    One external review, of v1.0 of aiXiv preprint aixiv.260808.000001
-    (2026-08-08), by the platform's anonymous "Official Agent": rating 8, and no
-    error identified in any statement or proof. Its four weaknesses are the
-    narrow scope for a machine-learning venue, the undocumented certificate
-    search, the absence of independent cross-validation, and dense exposition;
-    two of them are answered by material the review did not consult, Appendix A
-    of the paper being the requested theorem-to-Lean table and Z32/reproduce.sh
-    the requested independent recheck of the certificates outside Lean. It is an
-    agent review; no human referee has read the paper or the development.
+    No external review of this paper is recorded.
 
 limitations:
   - >-
     The compared theorems depend on propext, Classical.choice and Quot.sound and
-    nothing else. There is no sorry outside the deliberate placeholders in
-    Challenge.lean, no project-defined axiom and no native_decide; every block
-    certificate is discharged by `by decide`, so the comparator's kernel replay
-    re-evaluates it from raw integer data. Challenge.lean restates exactly one
-    definition, FLP.ZSet, and fixes no definition holes, so no compared statement
-    can be hollowed out by a definition value supplied elsewhere. The
-    block-certificate apparatus — Cert, Cert.ok, funnelOk, funcOk, the carry
-    alphabet, the soundness theorem — does not appear in the challenge at all:
-    every certified statement is phrased in Mathlib vocabulary alone, so the
-    apparatus is quantified away before comparator sees a statement, and its
-    correctness is rechecked in the same kernel replay rather than assumed.
+    nothing else, confirmed with #print axioms. There is no sorry outside the
+    deliberate placeholders in Challenge2.lean, no project-defined axiom and no
+    native_decide; every block certificate is discharged by `by decide`, so the
+    comparator's kernel replay re-evaluates it from raw integer data.
+    Challenge2.lean restates fifteen definitions — FLP.ZSet, the orbit Z32.orb
+    and Z32.yFract, the schema parameters Z32.schemaTheta and Z32.schemaEps, the
+    predicates Z32.SchemaCertified, Z32.Escape, Z32.SchemaCertifiedK and
+    Z32.LowBand, the budget Z32.escapeSteps, Z32.HasDenom, Z32.CoprimeDenom,
+    Z32.holdSet, and the funnel Z32.pre and Z32.funnel — and fixes no definition
+    holes, so no compared statement can be hollowed out by a definition value
+    supplied elsewhere.
   - >-
-    Novelty is unknown, and no prior-art gate is documented in this repository.
-    The residue corollary (Theorem A) is described in the paper as a folklore-grade
-    consequence of [Dub09AA, Thm. 1] that the author could not find stated; what
-    is new there is the verified proof object and the fact that the proof is
-    independent of [Dub09AA], resting only on the five [FLP95] positions and an
-    elementary covering. The union entries are records only against the explicit
-    values the author could locate in print.
+    Three groups of the paper's statements are proved but not compared, because
+    restating them would mean re-declaring Z32.BlockCert.Cert and its Bool-valued
+    checker Cert.ok inside the challenge: Theorem 4.2 with Proposition 4.3(ii)
+    and Theorem 4.4 row two; Theorems 5.6, 5.7, 5.8 and Corollary 5.9; and
+    Corollary 6.4 with Example 6.5. Their consequences on concrete real sets are
+    compared instead — Table 1, Corollary 4.5, Theorem 5.10, Theorem 7.1 — so
+    what a reader of Challenge2.lean alone does not see verified is exactly the
+    reach statements about the format, including Theorem D(ii). This is a
+    deliberate trade: the first paper's challenge quantified the apparatus away
+    entirely, and this one cannot, because half its results are about the
+    apparatus.
   - >-
-    Not formalized: the atlas as a whole. The (position, length) sweeps, the
-    sharpness of the frontier at L* ≈ 0.40722, the λ and dimension columns, the
-    0.7417 search record, the M7 no-go measurement about [Aki08] Conjecture 1.4,
-    and the negative results at c = 21/100 and at the base 4/3 are engine output,
-    not theorems, and none of them is used by any proof. The certified entries are
-    individual points on that map, not the map.
+    Novelty is limited and the paper says where. §3.3 states outright that
+    Theorems 3.5 and 3.6 are a machine-checked fragment of [Bug04, Thm. 1], not
+    an improvement of it, and that the mathematics of §3 is not new; what is new
+    there is uniformity in (p, q, s, K), the identification of Definition 3.3
+    with certificate funnel depth, and the continuum statements of
+    Corollary 3.11 in a regime where [Dub19] needs ξ algebraic. No systematic
+    prior-art gate is documented in this repository.
   - >-
-    The kernel and the search part company at 17/24. Certificates exist at 43/60
-    and at 0.7417 but have funnels three times and an order of magnitude wider
-    than the one checked, and the one checked already costs about 12 gigabytes;
-    coarsening a funnel's intermediate levels outward is sound and is the route to
-    those entries, and has not been carried out. [KK17, Prob. 6.1] — explicit empty
-    unions of total length 1 − ε for every ε — stays open, as does the
-    all-positions length-1/p statement for p > q²: Table 3 is a finite list of
-    rational windows, and the natural upgrade by a finite cover fails in practice,
-    the fattened windows developing hundreds of surviving components, with the
-    element containing 0 failing at every resolution tested — which is where
-    [Aki08] puts its nonempty Cantor sets.
+    Not formalized: Conjecture 7.2 and Remark 7.3 (marked as such in Appendix A),
+    and the measurements. Remark 6.6's search records — unions of total length
+    179/240, 3/4 and 181/240 = 0.754167… at depth 29 with 2801 blocks — are
+    engine output, explicitly "records on the curve of [KK17, Prob. 6.1], not a
+    solution of it", and nothing in the development depends on them; likewise the
+    count of 213 of 236 certified frontier positions in §7 and the 531 292-orbit
+    census behind Remark 6.6's reading of Theorem 5.8.
   - >-
-    Mahler's problem stays open, and with it everything at the modulus m = 2 and
-    at window length 1/2, where the engine returns the whole interval. The
-    threshold of the nearest-integer family is pinned only to [1/5, 1/3].
+    The kernel and the search still part company, now at 3/7 for single windows
+    and 17/24 for unions. Theorem 6.3 says the gap to [KK17, Prob. 6.1] cannot
+    be closed in this format at all; it does not say what format would close it.
+    Theorem 7.1 falls 6.7·10⁻⁵ short of the printed constant of [Dub06, Cor. 1]
+    and §7.1 argues no member of this family reaches it, but that argument rests
+    on Conjecture 7.2, which is unproved. How much better a different method
+    could do is wide open: §7.1 records only that the two optimal constants of
+    this shape lie in [4/65, 0.285647…] and [0.238117…, 1/3], from [Pol81] and
+    [AFS08].
   - >-
-    The repository proves more than comparator.json compares. FLP/ carries the
+    Mahler's problem stays open, and with it everything at window length 1/2.
+  - >-
+    The repository proves more than comparator2.json compares, and more than
+    either paper uses. comparator.json compares the twenty-four statements of the
+    first paper against Challenge.lean and SolutionRecord; FLP/ carries the
     [FLP95] 1/3-spread theorem itself (FLP.spread_lower_bound,
-    FLP.three_halves_spread), which the paper does not use; and six Z32 modules
-    belong to other plans entirely — EscapeLadder.lean (the visit ladder below
-    density), VisitDensity.lean (the V-rung grid and M6_iff_dyadic),
-    ModelEntropy.lean (the φ_model ledger and its horseshoe certificates),
-    DyadicOrbit.lean (the 2-adic shape of the ξ = 1 orbit), PairStatistics.lean
-    (lag identities, window energies, the Weyl collapse) and BalanceVectors.lean
-    (the level-w carry graph and the proved vacuity of every finite-resolution
-    balance argument). All are std3 and sorry-free, none is named in
-    comparator.json, and no compared statement depends on any of them.
+    FLP.three_halves_spread), which neither paper uses; and six Z32 modules
+    belong to other plans entirely — EscapeLadder.lean, VisitDensity.lean,
+    ModelEntropy.lean, DyadicOrbit.lean, PairStatistics.lean and
+    BalanceVectors.lean. All are std3 and sorry-free, none is named in
+    comparator2.json, and no compared statement depends on any of them.
 
 alignment:
   namespace: "Z32"
-  # FLP/ lives in namespace FLP (including the definition FLP.ZSet that the
-  # certified statements mention) and the word-combinatorics infrastructure in
-  # ForMathlib/ is in the root namespace.
+  # The only definition outside Z32 that the certified statements mention is
+  # FLP.ZSet, in namespace FLP; the word-combinatorics infrastructure in
+  # ForMathlib/ is in the root namespace and is not reached from here.
   statements:
-    # --- the twenty-four compared declarations ---
-    - source: "Theorem 4.2 = [FLP95] Cor. 1.4a: Z_{3/2}(s, s+1/3) = ∅ at s = 0, 1/6, 1/3, 1/2, 2/3"
-      lean: "Z32.FLP_cor_one_four_a"
-      module: "Challenge (statement), Solution / Z32.EscapeCert (proof)"
+    # --- §3: the schema and the rotation (forty-one compared, seventeen here) ---
+    - source: "Theorem A (Thm. 3.5): Z_{p/q}(s, s+1/p) = ∅ whenever s escapes at depth K"
+      lean: "Z32.ZSet_eq_empty_of_certifiedK"
+      module: "Challenge2 (statement), Solution2 / Z32.DepthKSchema (proof)"
       status: proved
       note: >-
-        A kernel-checked replay of the finite computation indicated after
-        [FLP95, Thm. 1.4]. The four escape witnesses of Table 1 are exact rational
-        computations (Z32.escape_one_sixth and its three siblings); the fixed point
-        s = 0 has no escape witness and goes through the endpoint analysis of
-        FLP.ZSet_empty_zero, the case credited there to Pollington. The five
-        positions receive a second, independent proof from Theorem 6.9, which
-        shares only the definitions with this one.
-    - source: "Theorem 6.8 = [Dub09AA] Thm. 1: the parts leave [s, s+1/p] infinitely often, 1 < q < p < q²"
-      lean: "Z32.dubickas_theorem_1"
-      module: "Challenge (statement), Solution / Z32.SmallInterval (proof)"
+        The hypothesis is Z32.SchemaCertifiedK p q s K, i.e. Definition 3.3's
+        escape data for ε = {(p−q)s}. Uniform in (p, q, s, K), with no
+        computation on concrete data and no assumption on the arithmetic nature
+        of ξ. The mechanism is the rotation of Proposition 3.4: the K+1 marked
+        points cut the window into K+1 arcs, the map permutes them cyclically,
+        so the rank sequence is eventually periodic, and the branch — hence the
+        carry letter — is a function of the rank.
+    - source: "Theorem A (Thm. 3.6), closed form: the all-low escape data, as two inequalities in ε"
+      lean: "Z32.ZSet_eq_empty_of_lowBand"
+      module: "Challenge2 (statement), Solution2 / Z32.DepthKSchema (proof)"
       status: proved
       note: >-
-        Formalized in full, with both word-combinatorial inputs proved rather than
-        cited. Stated for every real s and every N, in the arc form
-        1/p < {ξ(p/q)ⁿ − s}, which is why the escape-ladder corollaries elsewhere
-        in the repository need no endpoint case split.
-    - source: "Theorem 6.9: Z_{p/q}(s, s+1/p) = ∅ for coprime 1 < q < p < q² and every real s"
-      lean: "Z32.ZSet_eq_empty_of_lt_sq"
-      module: "Challenge (statement), Solution / Z32.SmallInterval (proof)"
+        Z32.LowBand is display (4): q^{K+1}(p−q) ≤ pε(p^{K+1} − q^{K+1}) and
+        ε(p^{K+1} − q^{K+1}) ≤ q^K(p−q). Sufficient for depth K and not
+        necessary — Definition 3.3 permits any branch word — since the other
+        words cut the cells indexed by rotation number rather than by depth.
+        With Z32.lowOrbit and Z32.lowOrbit_add_eq for the closed form of wᵢ.
+    - source: "Theorem B (Cor. 3.7), the certificate schema: ε = 0, or q ≤ pε, or q² ≤ p(p+q)ε and (p+q)ε ≤ q"
+      lean: "Z32.ZSet_eq_empty_of_certified"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
       status: proved
       note: >-
-        The all-positions strengthening of Theorem 4.2 and of [Bug04, Cor. 1]. The
-        position s ranges over all of ℝ, irrational positions included.
-    - source: "Theorem 6.9 at (3,2): Z_{3/2}(s, s+1/3) = ∅ for every real s"
-      lean: "Z32.ZSet_three_two_third_empty"
-      module: "Challenge (statement), Solution / Z32.SmallInterval (proof)"
+        The K ≤ 1 case of Theorem A together with the degenerate ε = 0, written
+        with denominators cleared (Z32.SchemaCertified). It is what the thirty
+        depth-one certificates of [Ste26, Thm. 7.17] collapse into, and it
+        settles positions of measure 1 − 2q²/(p(p+q)) at every base. The
+        excluded ε form the two open intervals of Corollary 3.8, of total length
+        2q²/(p(p+q)); that corollary is immediate arithmetic from the display and
+        has no Lean identifier. Z32.certifiedK_of_certified is the bridge back to
+        Theorem A.
+    - source: "Corollary 3.9(i): Z_{p/q}(0, 1/p) = ∅ at every coprime base p > q > 1"
+      lean: "Z32.ZSet_zero_eq_empty"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
       status: proved
-      note: "The base 3/2 qualifies since 3 < 4 = 2²."
-    - source: "Theorem A (Thm. 5.3): for ξ > 0 and m ≥ 3 the residues ⌊ξ(3/2)ⁿ⌋ mod m are not eventually constant"
-      lean: "Z32.residue_not_eventually_constant"
-      module: "Challenge (statement), Solution / Z32.ResidueCapture (proof)"
+      note: "The ε = 0 clause at s = 0."
+    - source: "Corollary 3.9(i): every position with (p − q)s ∈ ℤ is certified"
+      lean: "Z32.ZSet_eq_empty_of_theta_int"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
       status: proved
-      note: >-
-        Proved from Theorem 4.2 and the covering Lemma 5.1 alone — the five
-        windows of length 1/3 at spacing 1/6 cover every cell of every modulus
-        m ≥ 3 — so it does not use [Dub09AA, Thm. 1], although that theorem would
-        give it in one line. m = 2 is excluded deliberately: its two cells are
-        Mahler's problem and its parity twin.
-    - source: "Theorem A, infinitely-often form: past any index the residue changes again"
-      lean: "Z32.exists_residue_change"
-      module: "Challenge (statement), Solution / Z32.ResidueCapture (proof)"
-      status: proved
-      note: "The shift trick of Lemma 3.2 turns eventual confinement into confinement."
-    - source: "Theorem A at ξ = 1: the residues of ⌊(3/2)ⁿ⌋ mod m do not stabilize"
-      lean: "Z32.residue_not_eventually_constant_one"
-      module: "Challenge (statement), Solution / Z32.ResidueCapture (proof)"
-      status: proved
-      note: "Stated separately so the reader need not instantiate ξ."
-    - source: "Theorem B (Thm. 7.8): Z_{3/2}(1/6, 13/24) = ∅, a window of length 3/8 > 1/3"
-      lean: "Z32.ZSet_three_two_sixth_3_8"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
+      note: "At the base 3/2 these are the halves, at 10/3 the sevenths."
+    - source: "Corollary 3.9(ii): Z_{p/q}(1/2, 1/2 + 1/p) = ∅ when p − q is even or 2q ≤ p"
+      lean: "Z32.ZSet_half_eq_empty"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
       status: proved
       note: >-
-        Certificate certWindow38: D = 24·3⁸, funnel depth 8, three blocks,
-        half-open. The published single-window line stops at length 1/p = 1/3, so
-        this passes it. What the certificate rules out is a real ξ, not a model
-        orbit: the surviving set of the interval map here is the nonempty 3-cycle
-        4/19 → 6/19 → 9/19, and it is aperiodicity of the carry word that forbids
-        a genuine orbit from following it.
-    - source: "Theorem B (Thm. 7.8): Z_{3/2}(961/3600, 2427/3600) = ∅, length 733/1800 = 0.40722…"
-      lean: "Z32.ZSet_three_two_frontier"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
+        The remaining case — p − q odd and p < 2q — is genuinely outside the
+        depth-one schema; its smallest instance is (p,q) = (4,3), for which
+        [Ste26] needs a certificate of funnel depth 26.
+    - source: "Theorem 3.10: six positions s = j/6 at the base 5/2"
+      lean: "Z32.ZSet_five_two"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
       status: proved
       note: >-
-        Certificate certFrontier: funnel depth 13, two blocks. The longest window
-        the search certifies at any position; that nothing certifies above
-        1467/3600 is engine output and is not formalized.
-    - source: "Theorem B (Thm. 7.8), eventual form: no ξ ≠ 0 is eventually confined to [1/6, 13/24)"
-      lean: "Z32.not_eventually_mem_sixth_3_8"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
+        [Ste26, Thm. 7.17] verbatim, but as six specialisations of
+        Corollary 3.7, each supplying only a decomposition (p−q)s = m + ε — no
+        certificate data and no kernel evaluation. Appendix A marks no row of §3
+        "computed" for exactly this reason.
+    - source: "Theorem 3.10: six positions at the base 7/2"
+      lean: "Z32.ZSet_seven_two"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
+      status: proved
+      note: "The entry at s = 5/6 is a band case: ε = 1/6 lies in [4/63, 2/9]."
+    - source: "Theorem 3.10: six positions at the base 9/2"
+      lean: "Z32.ZSet_nine_two"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
+      status: proved
+      note: "The entry at s = 1/6 is a band case: ε = 1/6 lies in [4/99, 2/11]."
+    - source: "Theorem 3.10: six positions at the base 10/3"
+      lean: "Z32.ZSet_ten_three"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
+      status: proved
+      note: "The entry at s = 1/6 is a band case: ε = 1/6 lies in [9/130, 3/13]."
+    - source: "Theorem 3.10: six positions at the base 11/3"
+      lean: "Z32.ZSet_eleven_three"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
+      status: proved
+      note: "Here p − q = 8 is even, so s = 1/2 lands in the ε = 0 case."
+    - source: "Corollary 3.11, depth 0: every real s at the base 5/2 with {3s} ≥ 2/5"
+      lean: "Z32.ZSet_five_two_upper"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
       status: proved
       note: >-
-        Theorem 7.2 refutes eventual confinement directly, which is what makes the
-        infinitely-often forms elsewhere immediate.
-    - source: "Theorem B (Thm. 7.15): Z_{4/3}(1/3, 5/8) = ∅, a window of length 7/24 > 1/4"
-      lean: "Z32.ZSet_four_three_beyond_line"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
+        A continuum of positions, rational or not, in the regime p > q² where
+        [Dub09AA, §4] leaves the question open and [Dub19, Thm. 1.1] settles it
+        only for algebraic ξ. This is the kind of statement the certificate
+        scheme cannot produce at all, since it quantifies over a continuum.
+    - source: "Corollary 3.11, depth 1: {3s} ∈ [4/35, 2/7]"
+      lean: "Z32.ZSet_five_two_band"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
+      status: proved
+      note: "The two-block arc, where the carry word is forced to alternate."
+    - source: "Corollary 3.11, depth 1 as an interval of positions: s ∈ [4/105, 2/21]"
+      lean: "Z32.ZSet_five_two_interval"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
+      status: proved
+      note: "Stated without Int.fract, since 3s ∈ [4/35, 2/7] ⊂ [0,1) there."
+    - source: "Corollary 3.11, depth 2: {3s} ∈ [8/195, 4/39]"
+      lean: "Z32.ZSet_five_two_depth_two"
+      module: "Challenge2 (statement), Solution2 / Z32.DepthKSchema (proof)"
       status: proved
       note: >-
-        Certificate certFourThree, at a second base: six branches instead of four,
-        funnel depth 5. Here 1/p = 1/4 is exactly where [Dub09AA, Thm. 1] stops,
-        and it does apply at this base since 4 < 9 = 3².
-    - source: "Theorem 7.9 = [Dub08] Cor. 1.2, as printed: the closed union [8/39,18/39] ∪ [21/39,31/39]"
-      lean: "Z32.dubickas_2008_cor_1_2"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
+        Strictly inside the low band (0, 4/35) on which the depth-one schema
+        says nothing, and 54% of it. The whole family (4) over all K covers
+        about 87%.
+    - source: "Corollary 3.11, depth 3: {3s} ∈ [16/1015, 8/203]"
+      lean: "Z32.ZSet_five_two_depth_three"
+      module: "Challenge2 (statement), Solution2 / Z32.DepthKSchema (proof)"
       status: proved
-      note: >-
-        Certificate certDub08, the one entry in the closed convention and the one
-        needing the rank stratification of condition (D): with the endpoints
-        included the hold set acquires the 4-cycle through 18/39 = 6/13, and no
-        partition with one outgoing edge per block exists at any depth examined
-        (up to 40). What does exist, at depth 3, is a 4-rank stratification of
-        twelve blocks. The closed statement implies its half-open shadow and not
-        conversely.
-    - source: "Theorem C (Thm. 7.11): a certified-empty union of total length 7/12"
-      lean: "Z32.union_seven_twelfths_empty"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
+      note: "The next band down."
+    - source: "Corollary 3.11, depth 2 as an interval of positions: s ∈ [8/585, 4/117]"
+      lean: "Z32.ZSet_five_two_depth_two_interval"
+      module: "Challenge2 (statement), Solution2 / Z32.DepthKSchema (proof)"
       status: proved
-      note: "Certificate certUnion712: four intervals, funnel depth 7, a single block."
-    - source: "Theorem C (Thm. 7.11): a certified-empty union of total length 2/3"
-      lean: "Z32.union_two_thirds_empty"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
-      status: proved
-      note: >-
-        Certificate certUnion23: five intervals, funnel depth 9, twelve blocks.
-        Exactly the total length of the nonempty union of [KK17, Cor. 4.8], which
-        is the point — total length decides nothing, position does.
-    - source: "Theorem C (Thm. 7.11): a certified-empty union of total length 25/36"
-      lean: "Z32.union_record_empty"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
-      status: proved
-      note: "Certificate certUnion2536: six intervals, funnel depth 11, seventeen blocks."
-    - source: "Theorem C (Thm. 7.12), the record: the eleven-interval union of total length 17/24"
-      lean: "Z32.union_record_7083_empty"
-      module: "Challenge (statement), SolutionRecord / Z32.UnionRecord (proof)"
-      status: proved
-      note: >-
-        Certificate certUnion7083: D = 48·3¹⁷ = 6 198 727 824 (the largest
-        denominator in the paper), funnel depth 17, 100 blocks, 73 612 piece tests
-        and 40 000 edge tests. Its kernel check alone costs about 100 seconds and
-        12 gigabytes, which is why it has a module of its own that nothing imports,
-        and why the pre-merge configs gave it a solution module of its own. It
-        exceeds the largest explicit empty union found in print, the 20/39 of
-        [Dub08, Cor. 1.2], by a factor 1.38.
-    - source: "Theorem D (Thm. 7.14), cell form: no ξ ≠ 0 stays in [0, 1/5) ∪ [4/5, 1)"
-      lean: "Z32.two_cell_fifth_empty"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
-      status: proved
-      note: >-
-        Certificate certTwoCellFifth, the smallest in the paper: D = 15, one funnel
-        level, two blocks. The first certified set that was named in advance rather
-        than found by the search.
-    - source: "Theorem D (Thm. 7.14): ‖ξ(3/2)ⁿ‖ ≥ 1/5 for infinitely many n, for every ξ ≠ 0"
-      lean: "Z32.not_forall_abs_sub_round_lt_fifth"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
-      status: proved
-      note: >-
-        {y : ‖y‖ < 1/5} ⊆ [0, 1/5) ∪ [4/5, 1) — the two differ only at y = 4/5 — so
-        the cell form refutes it a fortiori, and the infinitely-often form comes
-        from the eventual half of Theorem 7.2. Against [Dub10], which builds ξ with
-        ‖ξ(3/2)ⁿ‖ < 1/3 for every n, this pins the threshold of the family to
-        [1/5, 1/3]; the engine finds no certificate at c = 21/100.
-    - source: "Theorem 7.16: Z_{5/2}(1/5, 2/5) = ∅, in the regime p > q²"
-      lean: "Z32.ZSet_five_two_fifth"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
-      status: proved
-      note: >-
-        Certificate certFiveTwo: D = 25, one funnel level, one block. Small enough
-        that Example 7.6 of the paper runs Algorithm 1 on it by hand — six piece
-        tests and six edge tests — so a reader can audit one certified statement
-        end to end without reading Lean. A confined orbit would have the constant
-        carry word 1,1,1,…, which aperiodicity forbids.
-    - source: "Theorem 7.17: six length-1/p windows at the base 5/2"
-      lean: "Z32.ZSet_five_two_grid"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
-      status: proved
-      note: >-
-        Positions s = 0, 1/6, 1/3, 1/2, 2/3, 5/6; certificates certGridFiveTwo0…5,
-        every one at funnel depth 1. The regime is not hard for a block
-        certificate; it is only out of reach of the counting endgame, which needs
-        p < q².
-    - source: "Theorem 7.17: six length-1/p windows at the base 7/2"
-      lean: "Z32.ZSet_seven_two_grid"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
-      status: proved
-      note: "Certificates certGridSevenTwo0…5, funnel depth 1."
-    - source: "Theorem 7.17: six length-1/p windows at the base 9/2"
-      lean: "Z32.ZSet_nine_two_grid"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
-      status: proved
-      note: "Certificates certGridNineTwo0…5, funnel depth 1."
-    - source: "Theorem 7.17: six length-1/p windows at the base 10/3"
-      lean: "Z32.ZSet_ten_three_grid"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
-      status: proved
-      note: "Certificates certGridTenThree0…5, funnel depth 1."
-    - source: "Theorem 7.17: six length-1/p windows at the base 11/3"
-      lean: "Z32.ZSet_eleven_three_grid"
-      module: "Challenge (statement), Solution / Z32.BlockCert (proof)"
-      status: proved
-      note: "Certificates certGridElevenThree0…5, funnel depth 1."
+      note: "Emptiness for all real s in an interval that the depth-one layer could not reach."
 
-    # --- the one definition restated in Challenge.lean ---
+    # --- §4: the escape rate ---
+    - source: "Theorem C (Thm. 4.4) row one: escape within ℰ(K+2, X, L) steps for a schema position"
+      lean: "Z32.exists_fract_notMem_le_of_certifiedK"
+      module: "Challenge2 (statement), Solution2 / Z32.EscapeBound (proof)"
+      status: proved
+      note: >-
+        With the budget Z32.escapeSteps = A + 1 + ⌈log_q(X(p/q)^A + 1)⌉ +
+        ⌈log_{p/q}(q/L)⌉ of Definition 4.1, at A = K + 2 and offset δ = 0. The
+        Z-set form of Z32.exists_escape_le_of_certifiedK, which is stated in the
+        window coordinate. Both logarithms are necessary; Remark 4.6 gives the
+        counterexample to a bound in X alone.
+    - source: "Table 1 row 1: [1/6, 13/24) is left within 14 + α steps, 2^α ≥ X(3/2)³ + 1"
+      lean: "Z32.BlockCert.escape_sixth_3_8"
+      module: "Challenge2 (statement), Solution2 / Z32.EscapeBound (proof)"
+      status: proved
+      note: >-
+        The flagship window of [Ste26, Thm. 7.8], made effective. Certificate
+        certWindow38, K = 8, B = 3, β = 2. Computed: the row re-evaluates
+        certWindow38.ok on the kernel.
+    - source: "Corollary 4.5: every ξ ∈ [1, 10⁶] leaves [1/6, 13/24) within 36 steps"
+      lean: "Z32.BlockCert.escape_sixth_3_8_million"
+      module: "Challenge2 (statement), Solution2 / Z32.EscapeBound (proof)"
+      status: proved
+      note: "Row one at α = 22, since 10⁶·(3/2)³ + 1 < 2²²."
+    - source: "Table 1 row 2: [961/3600, 2427/3600) within 18 + α steps"
+      lean: "Z32.BlockCert.escape_frontier"
+      module: "Challenge2 (statement), Solution2 / Z32.EscapeBound (proof)"
+      status: proved
+      note: "Certificate certFrontier, K = 13, B = 2; the corpus's longest single window."
+    - source: "Table 1 row 3: the union of total length 7/12, within 11 + α steps"
+      lean: "Z32.BlockCert.escape_union_712"
+      module: "Challenge2 (statement), Solution2 / Z32.EscapeBound (proof)"
+      status: proved
+      note: "Certificate certUnion712, K = 7, B = 1."
+    - source: "Table 1 row 4: the union of total length 2/3, within 24 + α steps"
+      lean: "Z32.BlockCert.escape_union_23"
+      module: "Challenge2 (statement), Solution2 / Z32.EscapeBound (proof)"
+      status: proved
+      note: "Certificate certUnion23, K = 9, B = 12."
+    - source: "Table 1 row 5: the union of total length 25/36, within 31 + α steps"
+      lean: "Z32.BlockCert.escape_union_2536"
+      module: "Challenge2 (statement), Solution2 / Z32.EscapeBound (proof)"
+      status: proved
+      note: "Certificate certUnion2536, K = 11, B = 17; the same certificate Example 6.5 prices."
+    - source: "Table 1 row 7: [0, 1/5) ∪ [4/5, 1) within 6 + α steps"
+      lean: "Z32.BlockCert.escape_two_cell_fifth"
+      module: "Challenge2 (statement), Solution2 / Z32.EscapeBound (proof)"
+      status: proved
+      note: >-
+        Certificate certTwoCellFifth, K = 1, B = 2. This is the row of
+        Remark 4.6: for 0 < ξ < 1/5 the orbit stays inside for exactly
+        ⌈log_{3/2}(1/(5ξ))⌉ steps, unbounded as ξ → 0, so the term
+        ⌈log_{p/q}(q/L)⌉ of Definition 4.1 cannot be dropped.
+    - source: "Table 1 row 8: [1/3, 5/8) at the base 4/3, within 12 + α steps"
+      lean: "Z32.BlockCert.escape_four_three"
+      module: "Challenge2 (statement), Solution2 / Z32.EscapeBound (proof)"
+      status: proved
+      note: "Certificate certFourThree, K = 5, B = 2, β = 4; here 3^α ≥ X(4/3)² + 1."
+    - source: "Table 1 row 9: [1/5, 2/5) at the base 5/2, within 4 + α steps"
+      lean: "Z32.BlockCert.escape_five_two_fifth"
+      module: "Challenge2 (statement), Solution2 / Z32.EscapeBound (proof)"
+      status: proved
+      note: "Certificate certFiveTwo, K = 1, B = 1, β = 1; the regime p > q²."
+    - source: "Table 1 row 6: the eleven-interval union of total length 17/24, within 120 + α steps"
+      lean: "Z32.escape_union_7083"
+      module: "Challenge2 (statement), SolutionRecord2 / Z32.UnionRecord (proof)"
+      status: proved
+      note: >-
+        Certificate certUnion7083, D = 48·3¹⁷ = 6 198 727 824, K = 17, B = 100 —
+        the largest additive constant in the table, because the certificate is
+        the largest in the corpus. Its kernel check alone costs about 100 seconds
+        and 12 gigabytes, which is why it has a module of its own that nothing
+        else imports, and why comparator2.json names SolutionRecord2. Appendix A
+        lists this row as Z32.BlockCert.escape_union_7083; the declaration is
+        Z32.escape_union_7083, outside the BlockCert namespace.
+
+    # --- §5: completeness and the obstruction ---
+    - source: "Theorem 5.2 (determinism): at most one successor in [0,1) with denominator coprime to q"
+      lean: "Z32.step_unique"
+      module: "Challenge2 (statement), Solution2 / Z32.CertComplete (proof)"
+      status: proved
+      note: >-
+        With Z32.HasDenom and Z32.CoprimeDenom. The arithmetic content: the q
+        carries admissible at a point of [0,1) are q consecutive integers, and
+        exactly one keeps the denominator coprime to q — so the recurrent part
+        of the model dynamics is a map, not a relation. It is what makes the
+        branching hypothesis of Theorem 5.5 automatic.
+    - source: "Theorem D(i) (Thm. 5.5): a finite hold set forces the verdict, with no certificate in sight"
+      lean: "Z32.holdSet_finite_imp"
+      module: "Challenge2 (statement), Solution2 / Z32.CertComplete (proof)"
+      status: proved
+      note: >-
+        With Z32.holdSet of Definition 5.1. The converse half of the soundness
+        theorem [Ste26, Thm. 7.2]: soundness says a certificate forces the
+        verdict, completeness says the class on which a certificate can exist
+        already forces it, with no hypothesis on how the held orbits are
+        arranged. What remains unformalized on this side is the production of
+        certificate data from a finite hold set, which is combinatorics of
+        interval lists rather than dynamics and is what the search program does.
+    - source: "Theorem 5.10, first entry: the closed two-cell arc [0, 1/5] ∪ [4/5, 1]"
+      lean: "Z32.BlockCert.two_cell_fifth_closed"
+      module: "Challenge2 (statement), Solution2 / Z32.CertComplete (proof)"
+      status: proved
+      note: >-
+        Certificate certTwoCellFifthClosed: funnel depth 1, four blocks in two
+        rank strata — the 2-cycle {1/5, 4/5} at rank 0, the two large intervals
+        at rank 1. Exactly the configuration Corollary 5.9 shows an unranked
+        certificate cannot have, the closed arc's hold set being infinite
+        (Z32.twoCellPt, the backward chain (1/5)(2/3)^k). Remark 5.12 records
+        that the statement itself is subsumed by [Ste26, Thm. 7.14]; the entry is
+        kept for the certificate.
+    - source: "Theorem 5.10: the closed [1/6, 13/24]"
+      lean: "Z32.BlockCert.sixth_3_8_closed"
+      module: "Challenge2 (statement), Solution2 / Z32.CertComplete (proof)"
+      status: proved
+      note: "Certificate certWindow38Closed; the flagship window with its right endpoint."
+    - source: "Theorem 5.10: the closed [961/3600, 2427/3600]"
+      lean: "Z32.BlockCert.frontier_closed"
+      module: "Challenge2 (statement), Solution2 / Z32.CertComplete (proof)"
+      status: proved
+      note: "Certificate certFrontierClosed: funnel depth 13, 14 blocks in 13 rank strata."
+    - source: "Theorem 5.10: the closed [1/3, 5/8] at the base 4/3"
+      lean: "Z32.BlockCert.four_three_closed"
+      module: "Challenge2 (statement), Solution2 / Z32.CertComplete (proof)"
+      status: proved
+      note: "Certificate certFourThreeClosed."
+    - source: "Theorem 5.10: the closed [1/5, 2/5] at the base 5/2"
+      lean: "Z32.BlockCert.five_two_fifth_closed"
+      module: "Challenge2 (statement), Solution2 / Z32.CertComplete (proof)"
+      status: proved
+      note: >-
+        Certificate certFiveTwoClosed, in the regime p > q². Closing an endpoint
+        adds transients that only a rank stratification separates, which is what
+        these four companions of [Ste26]'s half-open entries demonstrate.
+
+    # --- §6: the depth–size bound ---
+    - source: "Theorem 6.3, one exponent at a time: (K + j + 1)δ + B ≥ 1"
+      lean: "Z32.depth_size"
+      module: "Challenge2 (statement), Solution2 / Z32.DepthSize (proof)"
+      status: proved
+      note: >-
+        With the exact funnel Z32.funnel (T₀ = U, T_{k+1} = U ∩ f⁻¹(T_k)) and
+        Z32.pre for f⁻¹. Expansion: |f⁻¹(S)| ≥ |S| by the factorisation
+        f⁻¹ = slice_p ∘ fold_q (Z32.pre_eq_slice_fold), so the funnel loses at
+        most δ per level (Prop. 6.1, Z32.one_le_volume_funnel_add).
+    - source: "Theorem D(iii) (Thm. 6.3): 1 ≤ 2δ(K + 2 + log_{p/q} 2B)"
+      lean: "Z32.depth_size_logb"
+      module: "Challenge2 (statement), Solution2 / Z32.DepthSize (proof)"
+      status: proved
+      note: >-
+        Expansion against contraction: past depth K an unranked certificate with
+        B blocks confines the funnel to B intervals of diameter (q/p)^j
+        (Prop. 6.2), and optimising in j gives the bound. Stated for an arbitrary
+        measurable U with a covering hypothesis, so it does not mention Cert;
+        the certificate instance Z32.BlockCert.cert_depth_size and Corollary 6.4
+        do, and are not compared.
+
+    # --- §7: the ranked frontier ---
+    - source: "Theorem E (Thm. 7.1): Z_{3/2}(2/7, 3/7) = ∅, a window of length 3/7 = 0.428571…"
+      lean: "Z32.ZSet_three_two_two_seven"
+      module: "Challenge2 (statement), Solution2 / Z32.RankedFrontier (proof)"
+      status: proved
+      note: >-
+        Certificate certTwoSeven: D = 7·3¹⁵ = 100 442 349, funnel depth 15, 166
+        blocks in 32 rank strata, closed on both ends. Passes the corpus record
+        0.40722 and [Dub19, Thm. 1.2]'s 31/81 = 0.38271…, the longest single
+        window excluded in print. Computed: the kernel re-evaluates
+        certTwoSeven.ok from the raw integer data.
+    - source: "Theorem E, closed form: no ξ ≠ 0 keeps every {ξ(3/2)ⁿ} in the closed [2/7, 5/7]"
+      lean: "Z32.two_seven_empty"
+      module: "Challenge2 (statement), Solution2 / Z32.RankedFrontier (proof)"
+      status: proved
+      note: "Strictly stronger than the Z-set form, the certificate being closed on the right."
+    - source: "Theorem E, eventual form: the orbit leaves [2/7, 5/7] infinitely often"
+      lean: "Z32.not_eventually_two_seven"
+      module: "Challenge2 (statement), Solution2 / Z32.RankedFrontier (proof)"
+      status: proved
+      note: "Through Cert.not_eventually_confined of [Ste26, Thm. 7.2]."
+    - source: "Theorem E, nearest-integer form: ‖ξ(3/2)ⁿ‖ < 2/7 infinitely often, for every ξ ≠ 0"
+      lean: "Z32.not_forall_two_seven_le_abs_sub_round"
+      module: "Challenge2 (statement), Solution2 / Z32.RankedFrontier (proof)"
+      status: proved
+      note: >-
+        The point of the entry: the corpus's previous constant of this shape was
+        1/3, from the length-1/3 line. It misses [Dub06, Cor. 1]'s
+        (1 + T(2/3))/4 = 0.285647… by 6.7·10⁻⁵, and §7.1 argues no member of the
+        family can reach it — an argument resting on the unformalized
+        Conjecture 7.2.
+
+    # --- the fifteen definitions restated in Challenge2.lean ---
     - source: "The Z-set Z_{p/q}(s, s+t) ([FLP95] (1.4))"
       lean: "FLP.ZSet"
-      module: "Challenge (statement), FLP.Basic (definition)"
+      module: "Challenge2 (statement), FLP.Basic (definition)"
       status: proved
       note: >-
-        {ξ | 0 < ξ ∧ ∀ n, Int.fract (ξ (p/q)ⁿ) ∈ Set.Ico s (s+t)}, restated verbatim
-        in Challenge.lean and the only definition the certified statements mention.
-        A half-open window quietly turned closed, or the membership condition 0 < ξ
-        swapped, is what comparator's statement match catches here. [Dub09AA]
-        defines the same sets with ξ ≠ 0; the statements that hold in that
-        generality say so explicitly and are phrased without ZSet.
+        {ξ | 0 < ξ ∧ ∀ n, Int.fract (ξ (p/q)ⁿ) ∈ Set.Ico s (s+t)}, restated
+        verbatim, as in the first paper's challenge. A half-open window quietly
+        turned closed, or 0 < ξ swapped, is what comparator's statement match
+        catches. The statements that hold for every ξ ≠ 0 say so explicitly and
+        are phrased without ZSet.
+    - source: "§2: the shifted orbit ξ(p/q)ⁿ + ν and its fractional part"
+      lean: "Z32.orb, Z32.yFract"
+      module: "Challenge2 (statement), Z32.DubickasWord (definition)"
+      status: proved
+      note: "Restated only because Theorem 5.5 is stated in the orbit coordinate."
+    - source: "Definition 3.1: θ = (p−q)s and ε = {(p−q)s}"
+      lean: "Z32.schemaTheta, Z32.schemaEps"
+      module: "Challenge2 (statement), Z32.SymbolicCert (definition)"
+      status: proved
+      note: >-
+        The only way the position enters §3. Z32.schemaBase (k = ⌊θ⌋) is in the
+        development but in no compared statement, so the challenge does not
+        restate it.
+    - source: "Corollary 3.7's criterion (5), as a predicate"
+      lean: "Z32.SchemaCertified"
+      module: "Challenge2 (statement), Z32.SymbolicCert (definition)"
+      status: proved
+      note: "ε = 0 ∨ q ≤ pε ∨ (q² ≤ p(p+q)ε ∧ (p+q)ε ≤ q), denominators cleared."
+    - source: "Definition 3.3: the escape data, and 's escapes at depth K'"
+      lean: "Z32.Escape, Z32.SchemaCertifiedK"
+      module: "Challenge2 (statement), Z32.DepthKSchema (definition)"
+      status: proved
+      note: >-
+        A six-field structure in Prop — w 0 = 0, the orbit stays in the window,
+        each step takes the low or the high branch, and at step K both branches
+        are unavailable (the hole entered with its right end closed). This is the
+        largest object the challenge restates, and the place a reader must check
+        the restatement most carefully. The name predates the paper's wording,
+        as Appendix A notes.
+    - source: "Theorem 3.6's band (4), as a predicate"
+      lean: "Z32.LowBand"
+      module: "Challenge2 (statement), Z32.DepthKSchema (definition)"
+      status: proved
+      note: "The two inequalities in ε alone, at depth K."
+    - source: "Definition 4.1: the escape budget ℰ(A, X, L)"
+      lean: "Z32.escapeSteps"
+      module: "Challenge2 (statement), Z32.EscapeBound (definition)"
+      status: proved
+      note: "A + 1 + ⌈log_q(X(p/q)^A + 1)⌉ + ⌈log_{p/q}(q/L)⌉, with Nat.ceil and Real.logb."
+    - source: "§5.1: a denominator, and one coprime to q"
+      lean: "Z32.HasDenom, Z32.CoprimeDenom"
+      module: "Challenge2 (statement), Z32.CertComplete (definition)"
+      status: proved
+      note: "Deliberately not 'the' denominator, so two points can be put over a common one."
+    - source: "Definition 5.1: the hold set ℋ_{p/q}(U)"
+      lean: "Z32.holdSet"
+      module: "Challenge2 (statement), Z32.CertComplete (definition)"
+      status: proved
+      note: >-
+        The points of U carrying an infinite orbit of the model relation inside
+        U — the survivor set at the level of the model, and what decides whether
+        a certificate can exist at all.
+    - source: "§6: f⁻¹(S) and the exact funnel T_k"
+      lean: "Z32.pre, Z32.funnel"
+      module: "Challenge2 (statement), Z32.DepthSize (definition)"
+      status: proved
+      note: >-
+        T₀ = U, T_{k+1} = U ∩ f⁻¹(T_k). A certificate's own levels are supersets
+        of these, which is what lets Theorem 6.3 be stated without mentioning
+        Cert. Z32.slice and Z32.fold, used only for the factorisation lemma, are
+        not restated.
 
-    # --- load-bearing, not compared ---
-    - source: "Prop. 2.1 ([Dub09AA] (3)): sₙ = pyₙ − qy_{n+1} − (p−q)ν, the carry word"
-      lean: "Z32.carry_eq"
-      module: "Z32.DubickasWord"
-      status: proved
-      note: "With Z32.orb, Z32.xInt, Z32.yFract, Z32.carry, the orbit and its word."
-    - source: "Prop. 2.2 ([Dub09AA] (4)): the summation identity for x_{n+m}"
-      lean: "Z32.xInt_add"
-      module: "Z32.DubickasWord"
-      status: proved
-      note: "Accumulator Z32.geomAcc. Everything downstream telescopes against it."
-    - source: "Prop. 2.3: the growth bound |xₙ| + C ≤ (|x₀| + C)(p/q)ⁿ"
-      lean: "Z32.abs_xInt_le"
-      module: "Z32.DubickasWord"
-      status: proved
-      note: "Applied with C = p rather than the source's 2p; see fidelity.divergences."
-    - source: "Lem. 2.4 ([DN05] Lem. 2): the carry word is aperiodic"
+    # --- proved, load-bearing, not compared ---
+    - source: "Lemma 2.1 ([DN05] Lem. 2): the carry word is not eventually periodic"
       lean: "Z32.not_isEventuallyPeriodic_carry"
       module: "Z32.DubickasWord"
       status: proved
       note: >-
-        The single analytic input of the development and the sole hypothesis of the
-        block-certificate soundness theorem. Proved, not cited, for every coprime
-        p > q > 1, every ξ ≠ 0 and every shift ν.
-    - source: "Prop. 3.1: {t/m} = ((⌊t⌋ mod m) + {t})/m, and the residue/cell dictionary"
-      lean: "Z32.fract_div_natCast, Z32.floor_emod_iff_fract_mem"
-      module: "Z32.Dictionary"
+        The single analytic input of both papers. Every emptiness statement here
+        closes by producing an eventually periodic carry word and contradicting
+        it — the paper calls that step the periodicity contradiction. Proved, not
+        cited, for every coprime p > q > 1, every ξ ≠ 0 and every shift ν.
+    - source: "Lemma 3.2: confinement forces sₙ ∈ {k, k+1}, and the branch is the carry letter"
+      lean: "Z32.carry_eq_base_or_succ, Z32.base_block, Z32.succ_block"
+      module: "Z32.SymbolicCert"
       status: proved
-      note: "What turns a statement about integer parts into one about confinement."
-    - source: "Window monotonicity of the sets Z_{p/q}"
-      lean: "Z32.ZSet_mono"
-      module: "Z32.Dictionary"
-      status: proved
-      note: "Transfers emptiness from a certified window to every sub-window."
-    - source: "Lem. 3.2 (the shift trick): eventual confinement gives genuine confinement"
-      lean: "Z32.mem_ZSet_of_eventually"
-      module: "Z32.Dictionary"
-      status: proved
-      note: "The orbit of ξ(p/q)ᴺ is the tail of the orbit of ξ; used in §5, §6 and §7 alike."
-    - source: "Prop. 4.1 ([FLP95] Thms. 3.2, 3.4 combined at 3/2)"
-      lean: "Z32.ZSet_third_empty_of_escape"
-      module: "Z32.EscapeCert"
-      status: proved
-      note: "If the orbit of 0 under f_{3/2,s} reaches [2/3,1), then Z_{3/2}(s,s+1/3) = ∅."
-    - source: "[FLP95] Thm. 3.2: finitely many survivors forces the Z-set empty"
-      lean: "FLP.ZSet_eq_empty_of_survivors_finite"
-      module: "FLP.ZEmpty"
-      status: proved
-      note: "Through the T-map decoupling of FLP/Decoupling.lean and FLP/TExpansion.lean."
-    - source: "[FLP95] Thm. 3.4: the survivor set is finite once the origin escapes"
-      lean: "FLP.survivors_finite"
-      module: "FLP.SurvivorFinite"
-      status: proved
-      note: "The cylinder/straddle counting argument; the exact-N trichotomy reproduces."
-    - source: "[FLP95] Cor. 1.4a at s = 0, credited there to Pollington"
-      lean: "FLP.ZSet_empty_zero"
-      module: "FLP.ParamDensity"
+      note: "[Dub09AA, Thm. 3] restated around ⌊θ⌋, with the two branches of (2) and (3)."
+    - source: "Proposition 3.4: the rank is a rotation by N_R + 1 modulo K + 1"
+      lean: "Z32.blockRank_step_low, Z32.blockRank_step_high, Z32.low_iff_blockRank_le"
+      module: "Z32.DepthKSchema"
       status: proved
       note: >-
-        The fixed point of f_{3/2,0} admits no escape witness, so this case goes
-        through the endpoint analysis of the survivor set at α = 0. The same file
-        carries FLP.ZSet_empty_dense, emptiness at a dense set of positions.
-    - source: "Table 1: the four escape computations"
-      lean: "Z32.escape_one_sixth, Z32.escape_one_third, Z32.escape_one_half, Z32.escape_two_thirds"
-      module: "Z32.EscapeCert"
-      status: proved
-      note: "Exact rational arithmetic through FLP.lmo_of_lt / FLP.lmo_of_ge; escape times 3, 2, 3, 1."
-    - source: "Lem. 5.1 (covering): every cell of every modulus m ≥ 3 sits in one of the five windows"
-      lean: "Z32.exists_grid_window"
-      module: "Z32.ResidueCapture"
-      status: proved
-      note: "The tight cases are m = 3, where each cell is a window, and m = 4 at r = 1, 3."
-    - source: "Prop. 5.2: Z_{3/2}(r/m, (r+1)/m) = ∅ for m ≥ 3"
-      lean: "Z32.ZSet_cell_empty, Z32.ZSet_cell_empty_int"
-      module: "Z32.ResidueCapture"
-      status: proved
-      note: "Lemma 5.1 plus window monotonicity."
-    - source: "Lem. 6.1 (after [Lot02] Prop. 2.1.3, Thm. 2.1.5): no bispecial pair implies Sturmian"
-      lean: "isSturmian_of_not_hasBispecialPair"
-      module: "ForMathlib.Combinatorics.Sturmian"
+        With Z32.blockRank, Z32.lowCount, Z32.highCount. The engine of
+        Theorem 3.5: the rank decides the branch, so the carry word is a
+        function of a sequence taking at most K + 1 values.
+    - source: "Theorem 4.2: the carry word cannot have period P over a long enough range"
+      lean: "Z32.not_period_of_pow_le, Z32.not_period_of_escapeSteps"
+      module: "Z32.EscapeBound"
       status: proved
       note: >-
-        With the definitions IsSturmian and HasBispecialPair, and the pigeonhole
-        consequence exists_factor_eq_of_isSturmian. Only the direction the proof
-        needs, by uniqueness of the right special factor.
-    - source: "The Morse–Hedlund floor p(w,m) ≥ m+1 for aperiodic words ([MH38])"
-      lean: "succ_le_pComplexity, pComplexity_lt_succ_of_not_isEventuallyPeriodic"
-      module: "ForMathlib.Combinatorics.Sturmian, ForMathlib.Combinatorics.InfiniteComplexity"
+        The quantitative form of [DN05, Lem. 2], with the ladder
+        Z32.q_pow_mul_orbDiff and Z32.q_pow_dvd_orbDiff and the dichotomy (6)
+        Z32.escape_endgame. Not compared: it is stated about the carry word, and
+        restating it would need Z32.carry in the challenge with nothing gained,
+        since Theorem 4.4 is the consequence a reader wants.
+    - source: "Proposition 4.3: confinement over a long enough range repeats the carry word"
+      lean: "Z32.exists_carry_period_of_certifiedK, Z32.BlockCert.Cert.exists_carry_period_le"
+      module: "Z32.EscapeBound"
       status: proved
-      note: "With the factor complexity pComplexity. Shared byte for byte with two sibling repositories."
-    - source: "Lem. 6.2 ([Dub09AA] Thm. 3, alphabet): confinement forces sₙ ∈ {k, k+1}"
-      lean: "Z32.carry_mem_alphabet"
-      module: "Z32.SmallInterval"
-      status: proved
-      note: "With the explicit k = ⌈(p−q)s − q/p⌉ (letter Z32.letterBase), where the source says 'for some k'."
-    - source: "Rem. 6.3: the sharper bound |sₙ| ≤ p"
-      lean: "Z32.abs_carry_le"
-      module: "Z32.SmallInterval"
-      status: proved
-      note: "Sharper than the |sₙ| < 2p read off from the alphabet in [Dub09AA] §3."
-    - source: "Lem. 6.4 (no bispecial pair) — the arithmetic heart of [Dub09AA] Thm. 3"
-      lean: "Z32.not_hasBispecialPair"
-      module: "Z32.SmallInterval"
-      status: proved
-      note: "The telescoped difference forces ((p/q)^{M−1}+1)/q ≤ ((p/q)^M+1)/p, i.e. p ≤ q."
-    - source: "Thm. 6.5 ([Dub09AA] Thm. 3): the carry word is Sturmian"
-      lean: "Z32.isSturmian_carryBit"
-      module: "Z32.SmallInterval"
-      status: proved
-      note: "Two letters (Lem. 6.2), aperiodic (Lem. 2.4), no bispecial pair (Lem. 6.4)."
-    - source: "Lem. 6.6: the integer parts are eventually injective"
-      lean: "Z32.exists_xInt_injective"
-      module: "Z32.SmallInterval"
-      status: proved
-      note: "Consecutive orbit points eventually differ by more than 1."
-    - source: "Thm. 6.7: no orbit is confined to the closed window [s, s+1/p] when p < q²"
-      lean: "Z32.no_confinement"
-      module: "Z32.SmallInterval"
+      note: "The two front ends that supply the combinatorial budget A; part (ii) quantifies over Cert."
+    - source: "Theorem 4.4 row two: the certificate half of the escape bound, offset δ = K"
+      lean: "Z32.BlockCert.Cert.exists_escape_le, Z32.BlockCert.exists_fract_notMem_le_of_cover, ...of_cover_pow"
+      module: "Z32.EscapeBound"
       status: proved
       note: >-
-        The counting endgame: two equal factors of length m give q^m | x_j − x_i ≠ 0,
-        against the growth bound, and Bernoulli's inequality closes it where the
-        source extracts mth roots.
-    - source: "Def. 7.1 and Algorithm 1: the block certificate and the Boolean the kernel evaluates"
-      lean: "Z32.BlockCert.Cert, Z32.BlockCert.Cert.ok"
-      module: "Z32.BlockCert"
+        Quantifies over a valid unranked Cert, so it is not restated in the
+        challenge; the covering forms are what the nine rows of Table 1 are
+        instances of, and those rows are compared.
+    - source: "Proposition 5.3: the return denominator p^P − q^P, and its coprimality to q"
+      lean: "Z32.hasDenom_of_return, Z32.cyclePoint_eq_base, Z32.cycleDenom, Z32.cycleDenom_coprime"
+      module: "Z32.CertComplete"
+      status: proved
+      note: "The shape of [Lag90, Thm. 2.1] at a general coprime base."
+    - source: "Proposition 5.4: the recurrent map is multiplication by p/q in ℤ/Dℤ; no transients"
+      lean: "Z32.cycOrbit, Z32.cycOrbit_rec, Z32.cycOrbit_periodic, Z32.exists_periodic_orbit, Z32.cycOrbit_period_dvd"
+      module: "Z32.CycleTransversal"
       status: proved
       note: >-
-        With carries/carriesFrom (the p+q−1 carry letters), pieceA, pieceC,
-        pieceOk, levelOk, funnelOk for condition (F), hits, outEdges, rank, funcOk
-        for condition (D), and leMax, minLe, rle, rleR for the expanded comparisons.
-        Every check is an inequality between integers over one common denominator.
-    - source: "Thm. 7.2 (soundness): a valid certificate refutes confinement and eventual confinement"
-      lean: "Z32.BlockCert.Cert.not_confined, Z32.BlockCert.Cert.not_eventually_confined"
-      module: "Z32.BlockCert"
+        a/D ↦ (p a q⁻¹ mod D)/D. With Proposition 5.3 this pins the P-periodic
+        points exactly: the denominator is forced and every numerator occurs.
+        Z32.CycleTransversal is not imported by Solution2, no compared statement
+        being proved there.
+    - source: "Theorem 5.6: an unranked block determines the orbit, so a block holds at most one"
+      lean: "Z32.BlockCert.Cert.eq_of_memI_block, Z32.BlockCert.outEdges_length_le_one"
+      module: "Z32.CertComplete"
       status: proved
       note: >-
-        Via Cert.exists_block_path: condition (F) pushes the orbit into the blocks,
-        condition (D) makes the block itinerary eventually deterministic hence
-        eventually periodic, and an eventually periodic carry word contradicts
-        Lemma 2.4. Nothing counts survivors, uses the sign of ξ, or compares p with
-        q². The Z-set and single-window bridges are
-        Z32.BlockCert.ZSet_eq_empty_of_cert, not_eventually_mem_Ico_of_cert and
-        ZSet_eq_empty_of_window.
-    - source: "Rem. 7.3: the checks have teeth"
-      lean: "Z32.BlockCert.ok_eq_false_of_full, ok_eq_false_of_full_closed, ok_eq_false_of_not_coprime"
-      module: "Z32.BlockCert"
+        yₙ = Σ_{i≥0} qⁱ s_{n+i}/p^{i+1}: an orbit is determined by its carry
+        word. Quantifies over Cert; not compared.
+    - source: "Theorem D(ii) (Thm. 5.7): an infinite hold set refuses every unranked certificate"
+      lean: "Z32.BlockCert.Cert.ok_eq_false_of_infinite_hold"
+      module: "Z32.CertComplete"
       status: proved
       note: >-
-        Three formal counterexamples guarding the definition: [0,1) and [0,1] are
-        rejected by (D), and the non-coprime base 4/2 is rejected by (B) — there
-        ξ = 1/3 has a genuinely periodic orbit, so a certificate would prove a
-        falsehood.
-    - source: "Ex. 7.6: the (5,2) certificate, checked by hand in the paper"
-      lean: "Z32.BlockCert.certFiveTwo, certFiveTwo_ok"
-      module: "Z32.BlockCert"
-      status: proved
-      note: "The bridge between the printed Algorithm 1 and the kernel-evaluated Boolean."
-    - source: "[FLP95] Thm. 1.4, the 1/p-spread theorem — beyond what the paper uses"
-      lean: "FLP.spread_lower_bound, FLP.three_halves_spread"
-      module: "FLP.Capstone"
+        At any funnel depth and over any denominator — a bounded computer search
+        turned into a theorem. Quantifies over Cert, so it is one of the
+        statements Challenge2.lean deliberately does not restate; this is the
+        one headline result of the paper that comparator2.json does not compare.
+    - source: "Theorem 5.8: the certificate's hole must meet all but finitely many cycles"
+      lean: "Z32.BlockCert.Cert.ok_eq_false_of_infinite_cycles"
+      module: "Z32.CycleTransversal"
       status: proved
       note: >-
-        Proved in FLP/ but used by no statement of the paper and named in no
-        comparator config. Recorded here because a reader of FLP/ will meet it
-        first.
+        Theorem 5.7 combined with Proposition 5.4: the hole is a transversal of
+        the cycle set, and the cycles are dense in [0,1). With
+        Z32.carry_cycle_nineteen, the 3-cycle 2/19 → 3/19 → 14/19 of Remark 6.6.
+    - source: "Corollary 5.9: no unranked certificate for a set containing [0,1/5] ∪ [4/5,1]"
+      lean: "Z32.BlockCert.Cert.ok_eq_false_of_two_cell_chain, ...ok_eq_false_of_covers_two_cell"
+      module: "Z32.CertComplete"
+      status: proved
+      note: >-
+        The backward chain Z32.twoCellPt (1/5)(2/3)^k accumulating on the
+        2-cycle {1/5, 4/5} makes the hold set infinite, so Theorem 5.7 applies.
+        This is what turns [Ste26]'s refusal to depth 60 into a refusal at every
+        depth.
+    - source: "Propositions 6.1 and 6.2: expansion and contraction"
+      lean: "Z32.volume_le_volume_pre, Z32.one_le_volume_funnel_add, Z32.BlockCert.abs_sub_le_of_memI_block, Z32.BlockCert.volume_funnel_le_of_cert"
+      module: "Z32.DepthSize"
+      status: proved
+      note: >-
+        With the factorisation Z32.pre_eq_slice_fold, Z32.subset_slice_fold and
+        Z32.volume_slice. The two halves of Theorem 6.3; Proposition 6.2
+        quantifies over Cert.
+    - source: "Corollary 6.4 and Example 6.5: a valid certificate leaves a hole of positive measure"
+      lean: "Z32.BlockCert.cert_depth_size, Z32.BlockCert.volume_hole_pos, ...volume_certSet_lt_one, Z32.BlockCert.hole_union_2536"
+      module: "Z32.DepthSize"
+      status: proved
+      note: >-
+        δ ≥ (2(K + 2 + log_{p/q} 2B))⁻¹ > 0, so the certified set has measure
+        < 1. Example 6.5 evaluates it on certUnion2536 (K = 11, B = 17): the
+        bound gives δ ≥ 1/44 against the true hole 11/36, slack of about
+        thirteen. All quantify over Cert and are not compared.
+    - source: "The rank-stratified certificate of Theorem 7.1"
+      lean: "Z32.BlockCert.certTwoSeven, Z32.BlockCert.certTwoSeven_ok"
+      module: "Z32.RankedFrontier"
+      status: proved
+      note: >-
+        D = 7·3¹⁵, funnel depth 15, 166 blocks in 32 rank strata; generated by
+        `Z32/gencert.py --closed --ranked 7 2 5`. Discharged by `by decide`, so
+        the comparator's kernel replay re-evaluates it from raw integer data.
+    - source: "Conjecture 7.2 and Remark 7.3: the period-doubling cascade and the transient tree"
+      lean: "—"
+      module: "—"
+      status: not-formalized
+      note: >-
+        Marked "not formalized" in Appendix A. Conjecture 7.2 is the outcome of
+        an exact rational computation, verified against a complete enumeration of
+        the periodic orbits of period at most 20 with the closed form checked for
+        k ≤ 4; granting it, the certificate family stops exactly at Dubickas's
+        constant. Remark 7.3 reads the same cascade off the transient tree above
+        the periodic orbits.

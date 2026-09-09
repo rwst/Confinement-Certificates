@@ -4,6 +4,7 @@ Released under CC0 1.0 Universal (public-domain dedication).
 See https://creativecommons.org/publicdomain/zero/1.0/
 -/
 import Z32.BlockCert
+import Z32.EscapeBound
 
 /-!
 # The union-largeness record, kernel-checked (`17/24 = 0.7083…`)
@@ -19,9 +20,10 @@ depth 17, levels of up to 214 intervals, 100 blocks, common denominator `D = 48�
 
 **Cost, stated up front.**  The `decide` below runs about 100 s and peaks near 12 GB of kernel
 memory, which is why it lives in its own module: nothing imports it, so no other file pays for it.
-The search climbs further still — `43/60 = 0.71666…` at depth 20 with 433 blocks, and `0.74167` at
-240 cells with 2512 blocks — but those funnels are three and thirty times wider again, past what
-the kernel evaluator can hold here.  Narrowing a funnel by coarsening its intermediate levels
+The search climbs further still — `43/60 = 0.71666…` at depth 20 with 433 blocks, and, after the
+restart recorded in `Z32/DepthSize.lean`, `179/240`, `3/4` and `181/240 = 0.754167…` at depth 29
+with 2801 blocks — but those funnels are three and thirty times wider again, past what the kernel
+evaluator can hold here.  Narrowing a funnel by coarsening its intermediate levels
 outward is sound (only the containment in (F) must survive) and is the route to those entries.
 
 A record *on the curve* of [KK18] Problem 6.1, not a solution of it.
@@ -113,5 +115,68 @@ theorem union_record_7083_empty {ξ : ℝ} (hξ : ξ ≠ 0) :
       simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
   · refine ⟨(5940447498, 6069587661), by simp [cert7083_U], ?_, ?_⟩ <;>
       simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+
+/-- **Effective form of `Z32.union_record_7083_empty`** (plan z32-transform, milestone M2).  The
+tenth atlas entry, and the last one a bound reaches: every `ξ ∈ [1, X]` has some `n ≤ 120 + α`
+with `{ξ(3/2)ⁿ}` outside the union, where `2^α ≥ X(3/2)¹⁰⁰ + 1`.  The additive constant is large
+because this certificate is: funnel depth 17 and 100 blocks, against 8 and 3 at the flagship
+window.  See `Z32/EscapeBound.lean` for why the ninth entry, the ranked `certDub08`, gets no
+bound at all. -/
+theorem escape_union_7083 {ξ X : ℝ} {α : ℕ} (h1 : 1 ≤ ξ) (hX : ξ ≤ X)
+    (hα : X * ((3 : ℝ) / 2) ^ 100 + 1 ≤ 2 ^ α) :
+    ∃ n ≤ 120 + α, Int.fract (ξ * ((3 : ℝ) / 2) ^ n) ∉
+      Set.Ico (0 : ℝ) (1 / 24) ∪
+      Set.Ico (1 / 16 : ℝ) (3 / 16) ∪
+      Set.Ico (5 / 24 : ℝ) (11 / 48) ∪
+      Set.Ico (1 / 4 : ℝ) (1 / 3) ∪
+      Set.Ico (17 / 48 : ℝ) (3 / 8) ∪
+      Set.Ico (5 / 12 : ℝ) (7 / 16) ∪
+      Set.Ico (23 / 48 : ℝ) (17 / 24) ∪
+      Set.Ico (3 / 4 : ℝ) (37 / 48) ∪
+      Set.Ico (19 / 24 : ℝ) (5 / 6) ∪
+      Set.Ico (41 / 48 : ℝ) (15 / 16) ∪
+      Set.Ico (23 / 24 : ℝ) (47 / 48) := by
+  obtain ⟨n, hn, hne⟩ :=
+    exists_fract_notMem_le_of_cover_pow (Q := 2) (K := 17) (L := 100) (β := 2)
+      (S :=
+        Set.Ico (0 : ℝ) (1 / 24) ∪
+        Set.Ico (1 / 16 : ℝ) (3 / 16) ∪
+        Set.Ico (5 / 24 : ℝ) (11 / 48) ∪
+        Set.Ico (1 / 4 : ℝ) (1 / 3) ∪
+        Set.Ico (17 / 48 : ℝ) (3 / 8) ∪
+        Set.Ico (5 / 12 : ℝ) (7 / 16) ∪
+        Set.Ico (23 / 48 : ℝ) (17 / 24) ∪
+        Set.Ico (3 / 4 : ℝ) (37 / 48) ∪
+        Set.Ico (19 / 24 : ℝ) (5 / 6) ∪
+        Set.Ico (41 / 48 : ℝ) (15 / 16) ∪
+        Set.Ico (23 / 24 : ℝ) (47 / 48)) certUnion7083_ok rfl (3 / 2)
+      (by simp only [show certUnion7083.p = 3 from rfl, show certUnion7083.q = 2 from rfl]
+          norm_num) rfl rfl rfl
+      (fun y hy => by
+        rcases hy with (((((((((⟨h1, h2⟩ | ⟨h1, h2⟩) | ⟨h1, h2⟩) | ⟨h1, h2⟩) | ⟨h1, h2⟩) | ⟨h1, h2⟩) | ⟨h1, h2⟩) | ⟨h1, h2⟩) | ⟨h1, h2⟩) | ⟨h1, h2⟩) | ⟨h1, h2⟩
+        · refine ⟨(0, 258280326), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+        · refine ⟨(387420489, 1162261467), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+        · refine ⟨(1291401630, 1420541793), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+        · refine ⟨(1549681956, 2066242608), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+        · refine ⟨(2195382771, 2324522934), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+        · refine ⟨(2582803260, 2711943423), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+        · refine ⟨(2970223749, 4390765542), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+        · refine ⟨(4649045868, 4778186031), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+        · refine ⟨(4907326194, 5165606520), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+        · refine ⟨(5294746683, 5811307335), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith
+        · refine ⟨(5940447498, 6069587661), by simp [cert7083_U], ?_, ?_⟩ <;>
+            simp only [cert7083_D, cert7083_closed, rleR] <;> push_cast <;> linarith)
+      h1 hX (by push_cast; exact hα) (by norm_num)
+  exact ⟨n, by omega, hne⟩
 
 end Z32

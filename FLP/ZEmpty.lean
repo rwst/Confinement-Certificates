@@ -83,7 +83,7 @@ theorem ZSet_eq_empty_of_survivors_finite {p q : ℕ} {s : ℝ}
       rw [theta_shift, hthr]
       exact (thetaPart_mem hp hq hmem (n + m)).2
   -- pigeonhole: two coordinates coincide
-  haveI : Finite (survivors ((p : ℝ) / q) (alphaSym p q s)) := hSfin.to_subtype
+  have : Finite (survivors ((p : ℝ) / q) (alphaSym p q s)) := hSfin.to_subtype
   obtain ⟨k, k', hne, hFeq⟩ :=
     Finite.exists_ne_map_eq_of_infinite
       (fun n : ℕ => (⟨thetaPart p q s ξ n, hmem_surv n⟩ :

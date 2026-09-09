@@ -144,7 +144,7 @@ theorem lmo_mono_branch (j : Bool) {u v : ℝ}
     (huv : u ≤ v) : lmo β α u ≤ lmo β α v := by
   cases j with
   | false =>
-      simp only [if_neg (by decide : ¬ (false = true))] at hu hv
+      simp only [ite_eq_right (by decide : ¬ (false = true))] at hu hv
       rw [lmo_lower hβ hα0 hα1 hu.1 hu.2, lmo_lower hβ hα0 hα1 hv.1 hv.2]; nlinarith [huv, hβ]
   | true =>
       rw [lmo_upper hβ hα0 hα1 hu.1 hu.2, lmo_upper hβ hα0 hα1 hv.1 hv.2]; nlinarith [huv, hβ]
@@ -157,7 +157,7 @@ theorem cyl_subset_J : ∀ w, cyl β α w ⊆ Ico 0 (1 / β)
       rw [cyl]
       rintro x ⟨hxJ, _⟩
       cases j with
-      | false => simp only [if_neg (by decide : ¬ (false = true))] at hxJ
+      | false => simp only [ite_eq_right (by decide : ¬ (false = true))] at hxJ
                  exact ⟨hxJ.1, lt_of_lt_of_le hxJ.2 (splitPt_le hβ hα0 hα1)⟩
       | true => exact ⟨le_trans (le_of_lt (splitPt_pos hβ hα0 hα1)) hxJ.1, hxJ.2⟩
 
@@ -198,7 +198,7 @@ theorem false_child_nonempty (w : List Bool) :
   · rintro ⟨x, hx⟩
     rw [cyl] at hx
     obtain ⟨hxJ, hxc⟩ := hx
-    simp only [if_neg (by decide : ¬ (false = true))] at hxJ
+    simp only [ite_eq_right (by decide : ¬ (false = true))] at hxJ
     refine ⟨lmo β α x, hxc, ?_⟩
     rw [lmo_lower hβ hα0 hα1 hxJ.1 hxJ.2]
     refine ⟨by nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ β) hxJ.1], ?_⟩
@@ -210,7 +210,7 @@ theorem false_child_nonempty (w : List Bool) :
     have hxc : (y - α) / β < splitPt β α := by
       rw [div_lt_iff₀ (by linarith), splitPt, div_mul_cancel₀ _ (by linarith : β ≠ 0)]; linarith
     rw [cyl]
-    refine ⟨by simp only [if_neg (by decide : ¬ (false = true))]; exact ⟨hx0, hxc⟩, ?_⟩
+    refine ⟨by simp only [ite_eq_right (by decide : ¬ (false = true))]; exact ⟨hx0, hxc⟩, ?_⟩
     rw [lmo_lower hβ hα0 hα1 hx0 hxc, mul_div_cancel₀ _ (by linarith : β ≠ 0)]
     simpa using hyc
 
@@ -275,12 +275,12 @@ theorem children_card_le (w : List Bool) :
   unfold children
   rw [Finset.card_image_of_injective _ (fun a b h => (List.cons.inj h).1)]
   by_cases hs : straddle β α w
-  · rw [if_pos hs]
+  · rw [ite_eq_left hs]
     calc (Finset.univ.filter fun j : Bool => (cyl β α (j :: w)).Nonempty).card
         ≤ (Finset.univ : Finset Bool).card := Finset.card_filter_le _ _
       _ = 2 := by decide
       _ = 1 + 1 := by norm_num
-  · rw [if_neg hs, add_zero, Finset.card_le_one]
+  · rw [ite_eq_right hs, add_zero, Finset.card_le_one]
     intro a ha b hb
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
     by_contra hab
@@ -349,8 +349,8 @@ theorem straddle_lt_N {N : ℕ} (hesc : 1 / β ≤ (lmo β α)^[N] 0) {m : ℕ} 
 theorem splitCount_le {N : ℕ} (hesc : 1 / β ≤ (lmo β α)^[N] 0) (m : ℕ) :
     ((alive β α m).filter (straddle β α)).card ≤ (if m < N then 1 else 0) := by
   by_cases hm : m < N
-  · rw [if_pos hm]; exact straddle_filter_card_le_one hβ hα0 hα1 m
-  · rw [if_neg hm, Nat.le_zero, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  · rw [ite_eq_left hm]; exact straddle_filter_card_le_one hβ hα0 hα1 m
+  · rw [ite_eq_right hm, Nat.le_zero, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
     exact fun w hw hstr => hm (straddle_lt_N hβ hα0 hα1 hesc hw hstr)
 
 theorem alive_step {N : ℕ} (hesc : 1 / β ≤ (lmo β α)^[N] 0) (m : ℕ) :
@@ -375,8 +375,8 @@ theorem alive_card_le {N : ℕ} (hesc : 1 / β ≤ (lmo β α)^[N] 0) (m : ℕ) 
     | succ k ih =>
         have hstep := alive_step hβ hα0 hα1 hesc k
         rcases Nat.lt_or_ge k N with hk | hk
-        · rw [if_pos hk] at hstep; omega
-        · rw [if_neg (not_lt.mpr hk)] at hstep; omega
+        · rw [ite_eq_left hk] at hstep; omega
+        · rw [ite_eq_right (not_lt.mpr hk)] at hstep; omega
   have := hbound m; omega
 
 /-! ## Expansivity -/
@@ -476,7 +476,7 @@ theorem survivors_finite {N : ℕ} (hesc : 1 / β ≤ (lmo β α)^[N] 0) :
     intro x hx y hy hxy
     have hex : ∃ m, word β α x m ≠ word β α y m := hsep x hx y hy hxy
     have hsi : word β α x (sepIdx (x, y)) ≠ word β α y (sepIdx (x, y)) := by
-      rw [hsepIdx]; simp only [dif_pos hex]; exact Nat.find_spec hex
+      rw [hsepIdx]; simp only [dite_eq_left hex]; exact Nat.find_spec hex
     exact word_ne_mono (Finset.le_sup (Finset.mem_offDiag.mpr ⟨hx, hy, hxy⟩)) hsi
   have hinj : Set.InjOn (fun x => word β α x M) T := by
     intro x hx y hy heq

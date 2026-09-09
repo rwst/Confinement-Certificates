@@ -24,12 +24,15 @@ require comparator from git
   "https://github.com/leanprover/comparator" @ "v4.33.0-rc1"
 
 
+@[default_target]
 lean_lib ForMathlib where
   globs := #[.submodules `ForMathlib]
 
+@[default_target]
 lean_lib FLP where
   globs := #[.submodules `FLP]
 
+@[default_target]
 lean_lib Z32 where
   globs := #[.submodules `Z32]
 
@@ -50,6 +53,20 @@ lean_lib Solution where
 because the union record of Theorem 7.12 is among the statements it certifies. -/
 lean_lib SolutionRecord where
 
+/-! ### The second challenge/solution pair: the *schemas* paper
+
+`Challenge2.lean` states the theorems of *Confinement schemas and the reach of block certificates*
+against Mathlib alone; `Solution2` and `SolutionRecord2` re-export the development that proves
+them.  Same three axioms, same kernel re-check, separate config (`comparator2.json`). -/
+lean_lib Challenge2 where
+
+/-- The schemas-paper development, re-exported for `comparator` to compare against `Challenge2`. -/
+lean_lib Solution2 where
+
+/-- `Solution2` plus `Z32.UnionRecord`, for Table 1 row 6 (`Z32.escape_union_7083`); the same
+expensive kernel check as `SolutionRecord`.  `comparator2.json` names this module. -/
+lean_lib SolutionRecord2 where
+
 /-! ## `lake test`: certify the challenge/solution pair with `leanprover/comparator`
 
 `lake test` runs comparator on `comparator.json`, checking that the solution module proves
@@ -62,12 +79,14 @@ overridable via `COMPARATOR_BIN`, `COMPARATOR_LEAN4EXPORT`, `COMPARATOR_LANDRUN`
 See `README.md`.
 -/
 
-/-- The comparator config run by `lake test`, unless overridden by `lake test -- <cfg>…`.
+/-- The comparator configs run by `lake test`, unless overridden by `lake test -- <cfg>…`.
 
-One config certifies every statement of `Challenge`, against `SolutionRecord`.  That module
-carries `Z32.UnionRecord`, whose kernel check alone costs about 100 seconds and 12 gigabytes,
-so the run wants a machine with about 16 GB of memory. -/
-def comparatorConfigs : Array String := #["comparator.json"]
+One config per paper: `comparator.json` certifies every statement of `Challenge` against
+`SolutionRecord`, `comparator2.json` every statement of `Challenge2` against `SolutionRecord2`.
+Both solution modules carry `Z32.UnionRecord`, whose kernel check alone costs about 100 seconds
+and 12 gigabytes, so the run wants a machine with about 16 GB of memory — and pays that once per
+config.  `lake test -- comparator2.json` runs just the second. -/
+def comparatorConfigs : Array String := #["comparator.json", "comparator2.json"]
 
 /-- Resolve a binary: `$envVar` if set, else the first candidate path that exists, else
 whatever `PATH` yields.  `none` if it cannot be found at all. -/

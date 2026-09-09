@@ -338,8 +338,8 @@ private theorem card_filter_range_succ (Q : ℕ → Prop) [DecidablePred Q] (N :
   classical
   rw [Finset.range_add_one, Finset.filter_insert]
   by_cases h : Q N
-  · rw [if_pos h, if_pos h, Finset.card_insert_of_notMem (by simp)]
-  · rw [if_neg h, if_neg h, add_zero]
+  · rw [ite_eq_left h, ite_eq_left h, Finset.card_insert_of_notMem (by simp)]
+  · rw [ite_eq_right h, ite_eq_right h, add_zero]
 
 /-- The shift by one date costs exactly the first term. -/
 private theorem card_filter_shift (Q : ℕ → Prop) [DecidablePred Q] (N : ℕ) :
@@ -376,7 +376,7 @@ theorem abs_sum_edgeCount_in_sub (β ξ : ℝ) {w b' : ℕ} (hb' : b' < 2 ^ w) (
       ((∑ b ∈ Finset.range (2 ^ w), edgeCount β ξ w b b' N : ℕ) : ℤ)
         - ((winCount β ξ w b' N : ℕ) : ℤ) ≤ 1 := by
     by_cases h0 : Q 0 <;> by_cases hN : Q N <;>
-      simp only [if_pos, h0, hN, if_false] at key <;> omega
+      simp only [ite_eq_left, h0, hN, ite_false] at key <;> omega
   rw [abs_le]
   exact ⟨by exact_mod_cast hz.1, by exact_mod_cast hz.2⟩
 
@@ -553,7 +553,7 @@ theorem exists_balanceVec (β ξ : ℝ) (w : ℕ)
       ν b b' = a (⟨b, h⟩, ⟨b', h'⟩) := by
     intro b b' h h'
     rw [hνdef]
-    simp only [dif_pos h, dif_pos h']
+    simp only [dite_eq_left h, dite_eq_left h']
   have hνtend : ∀ b b' : ℕ, b < 2 ^ w → b' < 2 ^ w →
       Tendsto (fun k => flowVec β ξ w (M k) b b') atTop (𝓝 (ν b b')) := by
     intro b b' hb hb'
@@ -564,8 +564,8 @@ theorem exists_balanceVec (β ξ : ℝ) (w : ℕ)
     by_cases hb : b < 2 ^ w
     · by_cases hb' : b' < 2 ^ w
       · exact ge_of_tendsto' (hνtend b b' hb hb') fun k => flowVec_nonneg β ξ w (M k) b b'
-      · rw [hνdef]; simp [dif_neg hb']
-    · rw [hνdef]; simp [dif_neg hb]
+      · rw [hνdef]; simp [dite_eq_right hb']
+    · rw [hνdef]; simp [dite_eq_right hb]
   -- the limit mass vector is the out-marginal
   set μ : ℕ → ℝ := fun b => ∑ b' ∈ Finset.range (2 ^ w), ν b b' with hμdef
   have hμtend : ∀ b < 2 ^ w, Tendsto (fun k => freqVec β ξ w (M k) b) atTop (𝓝 (μ b)) := by
@@ -621,8 +621,8 @@ theorem exists_balanceVec (β ξ : ℝ) (w : ℕ)
         have := hadm n
         rw [h1, h2] at this
         exact this
-      · rw [hνdef] at hpos; simp [dif_neg hb'] at hpos
-    · rw [hνdef] at hpos; simp [dif_neg hb] at hpos
+      · rw [hνdef] at hpos; simp [dite_eq_right hb'] at hpos
+    · rw [hνdef] at hpos; simp [dite_eq_right hb] at hpos
   exact ⟨BalanceVec.mk μ ν hνnonneg hsum (fun _ _ => rfl) hinn hadmν, φ, hφ, hμtend⟩
 
 /-! ## The enemy statement, and the criterion it yields

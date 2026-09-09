@@ -7,22 +7,33 @@ no `sorry`, no cited axiom, and no natively compiled arithmetic: the block certi
 verified by the kernel's own evaluator on integer data.
 
 ```sh
-lake build Z32          # the development
+lake build              # the development
 lake test               # re-certify it with `leanprover/comparator`
 ```
 
 `lake test` runs [`leanprover/comparator`](https://github.com/leanprover/comparator) on
-`comparator.json`. It checks, independently of this repository's build, that the development
-proves exactly the statements of `Challenge.lean` — the paper's claims restated against Mathlib
-alone — using only the three axioms of classical Lean, and that the resulting environment is
-re-accepted by the Lean kernel from a fresh export.
+`comparator.json` and `comparator2.json` — one config per paper. Each checks, independently of
+this repository's build, that the development proves exactly the statements of its challenge file
+— the paper's claims restated against Mathlib alone — using only the three axioms of classical
+Lean, and that the resulting environment is re-accepted by the Lean kernel from a fresh export.
 
-The config certifies all twenty-four statements against `SolutionRecord`, which adds the union
-record of Theorem 7.12; that certificate's kernel check alone costs about 100 seconds and 12
-gigabytes, so the run wants a machine with about 16 GB of memory. `comparator` and
-`lean4export` are Lake dependencies (`lake build comparator lean4export`); `landrun`, which
-comparator uses to sandbox every build, has no pinned release and must be built once by hand
-(Go, and Linux-only — it uses Landlock), or supplied via `COMPARATOR_LANDRUN`.
+| Config | Challenge | Solution | Statements | Paper |
+| --- | --- | --- | --- | --- |
+| `comparator.json` | `Challenge.lean` | `SolutionRecord` | 24 | *Confinement certificates …* |
+| `comparator2.json` | `Challenge2.lean` | `SolutionRecord2` | 41 | *Confinement schemas …* |
+
+Run one at a time with `lake test -- comparator2.json`. Both solution modules carry
+`Z32/UnionRecord.lean`, whose certificate's kernel check alone costs about 100 seconds and 12
+gigabytes, so the run wants a machine with about 16 GB of memory and pays that once per config.
+
+`Challenge2.lean` states the schemas paper's Theorems A–E and their corollaries; the statements it
+leaves out are those quantified over the certificate format `Z32.BlockCert.Cert` itself
+(Thm. 4.2, 5.6–5.8, Cor. 5.9, Cor. 6.4, Ex. 6.5), whose challenge would have to re-declare the
+whole `Bool`-valued validity checker. Its docstring says so, entry by entry.
+
+`comparator` and `lean4export` are Lake dependencies (`lake build comparator lean4export`);
+`landrun`, which comparator uses to sandbox every build, has no pinned release and must be built
+once by hand (Go, and Linux-only — it uses Landlock), or supplied via `COMPARATOR_LANDRUN`.
 
 Please cite:
 ```

@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Algebra.Order.Round
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.NumberTheory.Real.Irrational
 public import ForMathlib.Data.Rat.NearestInt
 
