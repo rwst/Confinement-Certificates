@@ -460,8 +460,8 @@ end BlockCert
 most `B`, then `(K + j + 1)·δ + B ≥ 1`, where `δ = |[0,1) ∖ U|`. -/
 theorem depth_size {p q : ℕ} (hp : 0 < p) (hq : 0 < q) {U : Set ℝ} (hU : U ⊆ Ico (0 : ℝ) 1)
     (hUm : MeasurableSet U) {K j : ℕ} {B : ℝ}
-    (hcov : (volume (funnel p q U (K + j))).toReal ≤ B) :
-    1 ≤ ((K : ℝ) + j + 1) * (volume (Ico (0 : ℝ) 1 \ U)).toReal + B := sorry
+    (hcov : volume.real (funnel p q U (K + j)) ≤ B) :
+    1 ≤ ((K : ℝ) + j + 1) * volume.real (Ico (0 : ℝ) 1 \ U) + B := sorry
 
 /-- **Theorem 6.3 (Theorem D(iii)), in the form that prices a target.**  A union whose funnel is
 confined by `B` blocks from depth `K` on obeys `1 ≤ 2δ(K + 2 + log_{p/q} 2B)`, so the hole cannot
@@ -469,8 +469,8 @@ be made small without paying in depth or in blocks like `1/δ` — a negative an
 Problem 6.1 for this certificate format. -/
 theorem depth_size_logb {p q : ℕ} (hq : 0 < q) (hqp : q < p) {U : Set ℝ}
     (hU : U ⊆ Ico (0 : ℝ) 1) (hUm : MeasurableSet U) {K B : ℕ} (hB : 0 < B)
-    (hcov : ∀ j, (volume (funnel p q U (K + j))).toReal ≤ (B : ℝ) * ((q : ℝ) / (p : ℝ)) ^ j) :
-    1 ≤ 2 * (volume (Ico (0 : ℝ) 1 \ U)).toReal
+    (hcov : ∀ j, volume.real (funnel p q U (K + j)) ≤ (B : ℝ) * ((q : ℝ) / (p : ℝ)) ^ j) :
+    1 ≤ 2 * volume.real (Ico (0 : ℝ) 1 \ U)
           * ((K : ℝ) + 2 + Real.logb ((p : ℝ) / (q : ℝ)) (2 * B)) := sorry
 
 /-! ## §7 — the ranked frontier and its exact ceiling -/

@@ -395,8 +395,9 @@ The two sides pull against each other: the funnel can only lose `δ` per level
 `B` intervals of length `(q/p)ʲ` (`Z32.BlockCert.volume_funnel_le_of_cert`). -/
 theorem depth_size {p q : ℕ} (hp : 0 < p) (hq : 0 < q) {U : Set ℝ} (hU : U ⊆ Ico (0 : ℝ) 1)
     (hUm : MeasurableSet U) {K j : ℕ} {B : ℝ}
-    (hcov : (volume (funnel p q U (K + j))).toReal ≤ B) :
-    1 ≤ ((K : ℝ) + j + 1) * (volume (Ico (0 : ℝ) 1 \ U)).toReal + B := by
+    (hcov : volume.real (funnel p q U (K + j)) ≤ B) :
+    1 ≤ ((K : ℝ) + j + 1) * volume.real (Ico (0 : ℝ) 1 \ U) + B := by
+  simp only [MeasureTheory.measureReal_def] at hcov ⊢
   have h := one_le_volume_funnel_toReal hp hq hU hUm (K + j)
   push_cast at h
   linarith
@@ -411,9 +412,10 @@ So `δ` cannot be made small without paying in depth or in blocks: driving `δ` 
 `(p/q)^{cP}`, exponentially in `P`. -/
 theorem depth_size_logb {p q : ℕ} (hq : 0 < q) (hqp : q < p) {U : Set ℝ}
     (hU : U ⊆ Ico (0 : ℝ) 1) (hUm : MeasurableSet U) {K B : ℕ} (hB : 0 < B)
-    (hcov : ∀ j, (volume (funnel p q U (K + j))).toReal ≤ (B : ℝ) * ((q : ℝ) / (p : ℝ)) ^ j) :
-    1 ≤ 2 * (volume (Ico (0 : ℝ) 1 \ U)).toReal
+    (hcov : ∀ j, volume.real (funnel p q U (K + j)) ≤ (B : ℝ) * ((q : ℝ) / (p : ℝ)) ^ j) :
+    1 ≤ 2 * volume.real (Ico (0 : ℝ) 1 \ U)
           * ((K : ℝ) + 2 + Real.logb ((p : ℝ) / (q : ℝ)) (2 * B)) := by
+  simp only [MeasureTheory.measureReal_def] at hcov ⊢
   have hp : 0 < p := lt_trans hq hqp
   have hqR : (0 : ℝ) < (q : ℝ) := by exact_mod_cast hq
   have hpR : (0 : ℝ) < (p : ℝ) := by exact_mod_cast hp
@@ -436,6 +438,7 @@ theorem depth_size_logb {p q : ℕ} (hq : 0 < q) (hqp : q < p) {U : Set ℝ}
     rw [hqp', ← div_eq_mul_inv, div_le_iff₀ hpowpos]
     linarith
   have hmain := depth_size hp hq hU hUm (K := K) (j := j) ((hcov j).trans hhalf)
+  simp only [MeasureTheory.measureReal_def] at hmain
   have hδ : 0 ≤ (volume (Ico (0 : ℝ) 1 \ U)).toReal := ENNReal.toReal_nonneg
   nlinarith [hmain, hδ, hjL]
 
