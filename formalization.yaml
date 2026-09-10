@@ -63,19 +63,32 @@ status:
     Theorem C (the escape rate, Theorem 4.4), Theorem D (what the scheme can and
     cannot decide: Theorem 5.5, Theorem 5.7, and Theorem 6.3 with Corollary 6.4)
     and Theorem E (the ranked frontier, Theorem 7.1).
-    Forty-one declarations are compared by comparator2.json. They are the
-    statements of the paper that speak about real numbers and windows: all of §3,
-    Theorem 4.4 row one with the nine rows of Table 1 and Corollary 4.5,
-    Theorems 5.2, 5.5 and 5.10, Theorem 6.3 in both its forms, and all four forms
-    of Theorem 7.1. Three groups are proved but deliberately not compared,
-    because their statements quantify over the certificate format itself —
-    Z32.BlockCert.Cert together with its Bool-valued checker Cert.ok — rather
-    than over reals: Theorem 4.2 with Proposition 4.3(ii) and Theorem 4.4 row
-    two; Theorems 5.6, 5.7, 5.8 and Corollary 5.9; Corollary 6.4 and Example 6.5.
-    Restating those against Mathlib alone would mean re-declaring several hundred
-    lines of the decision procedure inside Challenge2.lean, i.e. inside the one
-    file the challenge exists to keep auditable; their consequences on concrete
-    sets are compared instead. Challenge2.lean says so, entry by entry.
+    Eleven declarations are compared by comparator2.json, and they are exactly
+    the lettered results: Theorem A (Z32.ZSet_eq_empty_of_certifiedK,
+    Z32.ZSet_eq_empty_of_lowBand), Theorem B (Z32.ZSet_eq_empty_of_certified),
+    Theorem C (Z32.exists_fract_notMem_le_of_certifiedK), Theorem D(i)
+    (Z32.holdSet_finite_imp), Theorem D(iii) (Z32.depth_size,
+    Z32.depth_size_logb) and Theorem E in all four of its forms
+    (Z32.ZSet_three_two_two_seven, Z32.two_seven_empty,
+    Z32.not_eventually_two_seven, Z32.not_forall_two_seven_le_abs_sub_round).
+    Corollary 3.8 is not a separate declaration, being immediate arithmetic from
+    the display Corollary 3.7 is stated with.
+    Two things are outside that list, for different reasons. Theorem D(ii)
+    (Theorem 5.7) is the one lettered result that cannot be compared: like
+    Theorem 4.2 with Proposition 4.3(ii) and Theorem 4.4 row two, Theorems 5.6
+    and 5.8 with Corollary 5.9, and Corollary 6.4 with Example 6.5, it quantifies
+    over the certificate format itself — Z32.BlockCert.Cert together with its
+    Bool-valued checker Cert.ok — rather than over reals, and restating it
+    against Mathlib alone would mean re-declaring several hundred lines of the
+    decision procedure inside Challenge2.lean, i.e. inside the one file the
+    challenge exists to keep auditable. Challenge2.lean says so, entry by entry.
+    The other thirty are the paper's corollaries and instances: the rest of §3,
+    the nine rows of Table 1 with Corollary 4.5, Theorem 5.2 and the five closed
+    entries of Theorem 5.10. Challenge2.lean does restate all of them, and the
+    development proves all of them at std3; they are simply not what this config
+    certifies, and restoring any of them to comparator2.json costs nothing but
+    the run time. Each is a main_results entry below without a
+    comparator_config field.
     The certificates behind the "computed" rows — the nine unranked ones of
     Table 1, the five closed-endpoint ones of Theorem 5.10, and the rank-
     stratified certTwoSeven of Theorem 7.1 (funnel depth 15, 166 blocks in 32
@@ -121,87 +134,73 @@ status:
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_eq_empty_of_theta_int"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_half_eq_empty"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     # --- §3, Theorem 3.10: the thirty grid entries, p > q² ---
     - declaration: "Z32.ZSet_five_two"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_seven_two"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_nine_two"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_ten_three"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_eleven_three"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     # --- §3, Corollary 3.11: continua of real positions at the base 5/2 ---
     - declaration: "Z32.ZSet_five_two_upper"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_five_two_band"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_five_two_interval"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_five_two_depth_two"
       file: "Z32/DepthKSchema.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_five_two_depth_three"
       file: "Z32/DepthKSchema.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.ZSet_five_two_depth_two_interval"
       file: "Z32/DepthKSchema.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     # --- §4, Theorem C: the escape rate (Z32/EscapeBound.lean) ---
     - declaration: "Z32.exists_fract_notMem_le_of_certifiedK"
@@ -214,68 +213,57 @@ status:
       file: "Z32/EscapeBound.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.escape_sixth_3_8_million"
       file: "Z32/EscapeBound.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.escape_frontier"
       file: "Z32/EscapeBound.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.escape_union_712"
       file: "Z32/EscapeBound.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.escape_union_23"
       file: "Z32/EscapeBound.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.escape_union_2536"
       file: "Z32/EscapeBound.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.escape_two_cell_fifth"
       file: "Z32/EscapeBound.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.escape_four_three"
       file: "Z32/EscapeBound.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.escape_five_two_fifth"
       file: "Z32/EscapeBound.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.escape_union_7083"
       file: "Z32/UnionRecord.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     # --- §5, Theorem D(i) and the closed-endpoint entries (Z32/CertComplete.lean) ---
     - declaration: "Z32.step_unique"
       file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.holdSet_finite_imp"
       file: "Z32/CertComplete.lean"
@@ -287,31 +275,26 @@ status:
       file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.sixth_3_8_closed"
       file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.frontier_closed"
       file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.four_three_closed"
       file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     - declaration: "Z32.BlockCert.five_two_fifth_closed"
       file: "Z32/CertComplete.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "comparator2.json"
       literature_dependencies: []
     # --- §6, Theorem D(iii): the depth–size bound (Z32/DepthSize.lean) ---
     - declaration: "Z32.depth_size"
@@ -363,7 +346,8 @@ fidelity:
     One entry of Appendix A's tables gives a name that does not resolve: Table 1
     row 6 is listed as Z32.BlockCert.escape_union_7083, but the declaration sits
     after `end Z32.BlockCert` in Z32/UnionRecord.lean and is Z32.escape_union_7083.
-    comparator2.json uses the real name.
+    Challenge2.lean and the development use the real name; comparator2.json no
+    longer names the row at all.
     §3.3 states the correspondence with the literature and is used nowhere in the
     development: Definition 3.3 is the finiteness criterion of [FLP95, Thm. 3.4]
     together with the returning case of [Bug04, Lem. 1]; Proposition 3.4 is the
@@ -410,9 +394,12 @@ sources:
       from the same collaboration and were developed together; Appendix A of the
       paper indexes every statement by Lean identifier, file and status,
       including the load-bearing ones that are not separately compared. The
-      forty-one compared declarations are the statements phrased in Mathlib
-      vocabulary alone; the statements quantified over the certificate format are
-      proved but not compared, and Challenge2.lean lists them. Novelty is
+      eleven compared declarations are the paper's lettered results, Theorems A
+      to E, less Theorem D(ii): that one, like the other statements quantified
+      over the certificate format, is proved but cannot be phrased in Mathlib
+      vocabulary alone, and Challenge2.lean lists them. The paper's corollaries
+      and instances are restated in Challenge2.lean and proved at std3, but are
+      outside what comparator2.json certifies. Novelty is
       recorded as unknown: §3.3 positions Theorems 3.5 and 3.6 explicitly as a
       machine-checked fragment of [Bug04, Thm. 1] rather than as new mathematics,
       and a full prior-art gate was performed.
@@ -666,9 +653,11 @@ automation:
     and hardware were not recorded, except for the union record behind Table 1
     row 6, whose kernel check alone costs about 100 seconds and 12 gigabytes;
     the development isolates it in Z32/UnionRecord.lean so that nothing else
-    pays that. comparator2.json names SolutionRecord2 rather than Solution2, that
-    row being among the statements it certifies, so a `lake test` run pays the
-    cost once per config.
+    pays that. Only comparator.json reaches it: that config names SolutionRecord,
+    and Table 1 row 6 (Z32.escape_union_7083) is among the statements it
+    certifies. comparator2.json certifies the lettered results, none of which
+    needs that module, so it names Solution2 and a `lake test` run pays the cost
+    once rather than twice.
 
 review:
   status: self-assessed
@@ -693,11 +682,15 @@ limitations:
     holes, so no compared statement can be hollowed out by a definition value
     supplied elsewhere.
   - >-
-    Three groups of the paper's statements are proved but not compared, because
+    Three groups of the paper's statements cannot be compared at all, because
     restating them would mean re-declaring Z32.BlockCert.Cert and its Bool-valued
     checker Cert.ok inside the challenge: Theorem 4.2 with Proposition 4.3(ii)
     and Theorem 4.4 row two; Theorems 5.6, 5.7, 5.8 and Corollary 5.9; and
-    Corollary 6.4 with Example 6.5. Their consequences on concrete real sets are
+    Corollary 6.4 with Example 6.5. Theorem 5.7 is Theorem D(ii), so one of the
+    five lettered results is out of reach of the challenge format. Separately,
+    comparator2.json certifies only the lettered results, so the paper's thirty
+    corollaries and instances are restated in Challenge2.lean and proved at std3
+    but not certified by a `lake test` run either. Their consequences on concrete real sets are
     compared instead — Table 1, Corollary 4.5, Theorem 5.10, Theorem 7.1 — so
     what a reader of Challenge2.lean alone does not see verified is exactly the
     reach statements about the format, including Theorem D(ii). This is a
@@ -749,7 +742,7 @@ alignment:
   # FLP.ZSet, in namespace FLP; the word-combinatorics infrastructure in
   # ForMathlib/ is in the root namespace and is not reached from here.
   statements:
-    # --- §3: the schema and the rotation (forty-one compared, seventeen here) ---
+    # --- §3: the schema and the rotation (three compared, seventeen here) ---
     - source: "Theorem A (Thm. 3.5): Z_{p/q}(s, s+1/p) = ∅ whenever s escapes at depth K"
       lean: "Z32.ZSet_eq_empty_of_certifiedK"
       module: "Challenge2 (statement), Solution2 / Z32.DepthKSchema (proof)"
@@ -942,7 +935,9 @@ alignment:
         the largest additive constant in the table, because the certificate is
         the largest in the corpus. Its kernel check alone costs about 100 seconds
         and 12 gigabytes, which is why it has a module of its own that nothing
-        else imports, and why comparator2.json names SolutionRecord2. Appendix A
+        else imports. comparator2.json does not certify this row and so names
+        Solution2, not SolutionRecord2; SolutionRecord2 remains as the module
+        that adds it, for anyone who wants it compared. Appendix A
         lists this row as Z32.BlockCert.escape_union_7083; the declaration is
         Z32.escape_union_7083, outside the BlockCert namespace.
 

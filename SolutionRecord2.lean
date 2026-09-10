@@ -15,9 +15,11 @@ effective form of the union record of total length `17/24`.  Its certificate
 `Z32.BlockCert.certUnion7083` has denominator `48·3¹⁷` and a funnel of 17 levels and 100 blocks;
 kernel-checking `certUnion7083_ok` alone costs about 100 seconds and 12 gigabytes.
 
-The development keeps that cost in a module of its own so that no other file pays it.  This
-module is what `comparator2.json` names, so a `lake test` run pays it once per config; certifying
-any subset of the other statements against `Solution2` does not pay it at all.
+The development keeps that cost in a module of its own so that no other file pays it.
+`comparator2.json` certifies the paper's lettered results, Theorems A to E, and Table 1 row 6 is
+not among them — so the config names `Solution2` and a `lake test` run does not pay this cost.
+This module exists for anyone who wants `Z32.escape_union_7083` compared too: add it to
+`comparator2.json`'s `theorem_names` and point `solution_module` here.
 
 As with `Solution2.lean`, there is deliberately no content here.
 -/

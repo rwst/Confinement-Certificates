@@ -34,8 +34,9 @@ proved there (Proposition 5.4 and Theorems 5.8, 5.10's transversal half quantify
 Table 1 row 6 of the paper is deliberately **not** here: `Z32.escape_union_7083` rests on the
 certificate `Z32.BlockCert.certUnion7083`, whose kernel check alone costs about 100 seconds and 12
 gigabytes, and `Z32/UnionRecord.lean` exists so that nothing else pays that.  `SolutionRecord2.lean`
-adds it, and `comparator2.json` names *that* module — so this one stays the cheap re-export, for
-anyone certifying a subset of the statements against it.
+adds it, for anyone who wants that row compared.  Since `comparator2.json` certifies the paper's
+lettered results and that row is not among them, the config names **this** module, and a
+`comparator2.json` run does not pay the union record's cost at all.
 
 There is deliberately no content here.  Anything proved *in this file* would be outside the scope
 of what comparator checks against the challenge, so the file must stay a pure re-export of the

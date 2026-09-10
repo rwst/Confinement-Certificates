@@ -13,18 +13,37 @@ lake test               # re-certify it with `leanprover/comparator`
 
 `lake test` runs [`leanprover/comparator`](https://github.com/leanprover/comparator) on
 `comparator.json` and `comparator2.json` — one config per paper. Each checks, independently of
-this repository's build, that the development proves exactly the statements of its challenge file
-— the paper's claims restated against Mathlib alone — using only the three axioms of classical
-Lean, and that the resulting environment is re-accepted by the Lean kernel from a fresh export.
+this repository's build, that the development proves the statements of its challenge file — the
+paper's claims restated against Mathlib alone — using only the three axioms of classical Lean, and
+that the resulting environment is re-accepted by the Lean kernel from a fresh export.
+`comparator.json` checks every statement of `Challenge.lean`; `comparator2.json` checks the
+schemas paper's lettered results — the eleven entries of `Challenge2.lean` that carry a Theorem
+A–E label, which is all of them except Theorem D(ii):
+
+| Paper | Numbered statements | `Challenge2.lean` |
+| --- | --- | --- |
+| Theorem A | Thms. 3.5, 3.6 | `ZSet_eq_empty_of_certifiedK`, `ZSet_eq_empty_of_lowBand` |
+| Theorem B | Cors. 3.7, 3.8 | `ZSet_eq_empty_of_certified` (Cor. 3.8 is arithmetic from it) |
+| Theorem C | Thm. 4.4 | `exists_fract_notMem_le_of_certifiedK` |
+| Theorem D(i) | Thm. 5.5 | `holdSet_finite_imp` |
+| Theorem D(ii) | Thm. 5.7 | — (quantifies over `Z32.BlockCert.Cert`; not restated) |
+| Theorem D(iii) | Thm. 6.3, Cor. 6.4 | `depth_size`, `depth_size_logb` |
+| Theorem E | Thm. 7.1 | `ZSet_three_two_two_seven`, `two_seven_empty`, `not_eventually_two_seven`, `not_forall_two_seven_le_abs_sub_round` |
+
+The remaining thirty statements of `Challenge2.lean` — the §3 corollaries, the Table 1 escape
+rows, the closed entries of Thm. 5.10 — are still stated and still proved by the development; they
+are simply not part of what this config certifies.
 
 | Config | Challenge | Solution | Statements | Paper |
 | --- | --- | --- | --- | --- |
 | `comparator.json` | `Challenge.lean` | `SolutionRecord` | 24 | *Confinement certificates …* |
-| `comparator2.json` | `Challenge2.lean` | `SolutionRecord2` | 41 | *Confinement schemas …* |
+| `comparator2.json` | `Challenge2.lean` | `Solution2` | 11 | *Confinement schemas …* |
 
-Run one at a time with `lake test -- comparator2.json`. Both solution modules carry
+Run one at a time with `lake test -- comparator2.json`. `comparator.json`'s solution module carries
 `Z32/UnionRecord.lean`, whose certificate's kernel check alone costs about 100 seconds and 12
-gigabytes, so the run wants a machine with about 16 GB of memory and pays that once per config.
+gigabytes, so that config wants a machine with about 16 GB of memory.  `comparator2.json` no
+longer names `Z32.escape_union_7083` (Table 1 row 6), so it runs against `Solution2` and does not
+pay that cost.
 
 `Challenge2.lean` states the schemas paper's Theorems A–E and their corollaries; the statements it
 leaves out are those quantified over the certificate format `Z32.BlockCert.Cert` itself

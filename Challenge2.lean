@@ -35,17 +35,24 @@ checks that
 
 ## The statements, by section of the paper
 
-| Section | Paper | Statements below |
-| --- | --- | --- |
-| §3 | Thm. 3.5, 3.6 (Thm. A) | the depth-`K` schema and its closed form |
-| §3 | Cor. 3.7 (Thm. B) | the depth-one schema on the single parameter `ε` |
-| §3 | Cor. 3.9, Thm. 3.10 | the integer-`θ` positions and the thirty grid entries |
-| §3 | Cor. 3.11 | continua of *real* positions at the base `5/2`, depths one to three |
-| §4 | Thm. 4.4 row one, Tab. 1, Cor. 4.5 (Thm. C) | the escape rate, uniform and tabulated |
-| §5 | Thm. 5.2, Thm. 5.5 (Thm. D(i)) | determinism, and completeness on the finite-hold-set class |
-| §5 | Thm. 5.10 | the five closed-endpoint entries |
-| §6 | Thm. 6.3 (Thm. D(iii)) | the depth–size bound |
-| §7 | Thm. 7.1 (Thm. E) | the ranked frontier `Z_{3/2}(2/7, 3/7) = ∅` |
+The `✓` column marks the eleven statements `comparator2.json` names.  They are exactly the
+paper's lettered results — Theorems A to E — less Thm. D(ii), which is out of reach of this
+format (see below).  Everything else here is stated for the record and proved by the
+development, but is not part of what a `lake test` run certifies; adding any of it back to
+`comparator2.json` costs nothing but the run time.
+
+| ✓ | Section | Paper | Statements below |
+| --- | --- | --- | --- |
+| ✓ | §3 | Thm. 3.5, 3.6 (Thm. A) | the depth-`K` schema and its closed form |
+| ✓ | §3 | Cor. 3.7 (Thm. B) | the depth-one schema on the single parameter `ε` |
+| | §3 | Cor. 3.9, Thm. 3.10 | the integer-`θ` positions and the thirty grid entries |
+| | §3 | Cor. 3.11 | continua of *real* positions at the base `5/2`, depths one to three |
+| ✓ | §4 | Thm. 4.4 row one (Thm. C) | the escape rate, uniform in `(p, q, s, K)` |
+| | §4 | Tab. 1, Cor. 4.5 | the escape rate tabulated on the nine unranked certificates |
+| ✓ | §5 | Thm. 5.5 (Thm. D(i)) | completeness on the finite-hold-set class |
+| | §5 | Thm. 5.2, Thm. 5.10 | determinism, and the five closed-endpoint entries |
+| ✓ | §6 | Thm. 6.3 (Thm. D(iii)) | the depth–size bound, in both its forms |
+| ✓ | §7 | Thm. 7.1 (Thm. E) | the ranked frontier `Z_{3/2}(2/7, 3/7) = ∅`, all four forms |
 
 ## What is deliberately *not* here
 
@@ -59,14 +66,17 @@ together with its decision procedure `Cert.ok` — rather than over reals and wi
 Restating those against Mathlib alone would mean re-declaring the whole certificate format and its
 `Bool`-valued validity checker here — several hundred lines of the very decision procedure whose
 verdicts the challenge exists to keep at arm's length.  A challenge that carries it is no longer a
-document one can audit by reading.  Their *consequences* on concrete sets are certified instead:
+document one can audit by reading.  Their *consequences* on concrete sets are stated instead:
 every "computed" row of the paper that speaks about real numbers — Tab. 1, Cor. 4.5, Thm. 5.10,
 Thm. 7.1 — is below.  Conj. 7.2 and Rem. 7.3 are not formalized at all, as Appendix A says.
 
-The config names `SolutionRecord2` rather than `Solution2`, because Tab. 1 row 6
-(`Z32.escape_union_7083`) rests on `Z32.BlockCert.certUnion7083`, whose kernel check alone costs
-about 100 seconds and 12 gigabytes; the development isolates it in `Z32/UnionRecord.lean` so that
-nothing else pays that.  A `lake test` run therefore wants a machine with about 16 GB of memory.
+Thm. 5.7 is Thm. D(ii), so exactly one of the paper's five lettered results is out of reach of the
+challenge format, and `comparator2.json` certifies the other four and a half.
+
+The config names `Solution2`, not `SolutionRecord2`: the one statement below that needs the extra
+module is Tab. 1 row 6 (`Z32.escape_union_7083`), which rests on `Z32.BlockCert.certUnion7083` and
+costs about 100 seconds and 12 gigabytes to kernel-check.  It is not among the certified eleven, so
+a `comparator2.json` run does not pay that; `comparator.json` still does.
 
 Nothing here is proved; the `sorry`s are the point.  The proofs live in `Z32/SymbolicCert.lean`,
 `Z32/DepthKSchema.lean`, `Z32/EscapeBound.lean`, `Z32/CertComplete.lean`, `Z32/DepthSize.lean`,
@@ -377,8 +387,8 @@ theorem escape_five_two_fifth {ξ X : ℝ} {α : ℕ} (h1 : 1 ≤ ξ) (hX : ξ �
 end BlockCert
 
 /-- **Table 1, row 6**, the union record of total length `17/24`.  This is the entry that costs
-about 100 seconds and 12 gigabytes to kernel-check, and the reason `comparator2.json` names
-`SolutionRecord2`. -/
+about 100 seconds and 12 gigabytes to kernel-check; `SolutionRecord2` is the module that carries
+it, and `comparator2.json` — which does not certify this row — names `Solution2` instead. -/
 theorem escape_union_7083 {ξ X : ℝ} {α : ℕ} (h1 : 1 ≤ ξ) (hX : ξ ≤ X)
     (hα : X * ((3 : ℝ) / 2) ^ 100 + 1 ≤ 2 ^ α) :
     ∃ n ≤ 120 + α, Int.fract (ξ * ((3 : ℝ) / 2) ^ n) ∉

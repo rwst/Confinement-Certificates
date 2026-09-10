@@ -57,14 +57,16 @@ lean_lib SolutionRecord where
 
 `Challenge2.lean` states the theorems of *Confinement schemas and the reach of block certificates*
 against Mathlib alone; `Solution2` and `SolutionRecord2` re-export the development that proves
-them.  Same three axioms, same kernel re-check, separate config (`comparator2.json`). -/
+them.  Same three axioms, same kernel re-check, separate config (`comparator2.json`), which
+certifies that paper's lettered results — Theorems A to E — against `Solution2`. -/
 lean_lib Challenge2 where
 
 /-- The schemas-paper development, re-exported for `comparator` to compare against `Challenge2`. -/
 lean_lib Solution2 where
 
 /-- `Solution2` plus `Z32.UnionRecord`, for Table 1 row 6 (`Z32.escape_union_7083`); the same
-expensive kernel check as `SolutionRecord`.  `comparator2.json` names this module. -/
+expensive kernel check as `SolutionRecord`.  `comparator2.json` does not certify that row and so
+names `Solution2`; this module is here for anyone who wants the row compared as well. -/
 lean_lib SolutionRecord2 where
 
 /-! ## `lake test`: certify the challenge/solution pair with `leanprover/comparator`
@@ -82,10 +84,11 @@ See `README.md`.
 /-- The comparator configs run by `lake test`, unless overridden by `lake test -- <cfg>…`.
 
 One config per paper: `comparator.json` certifies every statement of `Challenge` against
-`SolutionRecord`, `comparator2.json` every statement of `Challenge2` against `SolutionRecord2`.
-Both solution modules carry `Z32.UnionRecord`, whose kernel check alone costs about 100 seconds
-and 12 gigabytes, so the run wants a machine with about 16 GB of memory — and pays that once per
-config.  `lake test -- comparator2.json` runs just the second. -/
+`SolutionRecord`; `comparator2.json` certifies the schemas paper's lettered results — Theorems A
+to E, eleven of the statements of `Challenge2` — against `Solution2`.  Only `SolutionRecord`
+carries `Z32.UnionRecord`, whose kernel check alone costs about 100 seconds and 12 gigabytes, so
+the first config wants a machine with about 16 GB of memory and the second does not.
+`lake test -- comparator2.json` runs just the second. -/
 def comparatorConfigs : Array String := #["comparator.json", "comparator2.json"]
 
 /-- Resolve a binary: `$envVar` if set, else the first candidate path that exists, else
