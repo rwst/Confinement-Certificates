@@ -85,7 +85,7 @@ See `README.md`.
 
 One config per paper: `comparator.json` certifies every statement of `Challenge` against
 `SolutionRecord`; `comparator2.json` certifies the schemas paper's lettered results — Theorems A
-to E, eleven of the statements of `Challenge2` — against `Solution2`.  Only `SolutionRecord`
+to E, fourteen of the statements of `Challenge2` — against `Solution2`.  Only `SolutionRecord`
 carries `Z32.UnionRecord`, whose kernel check alone costs about 100 seconds and 12 gigabytes, so
 the first config wants a machine with about 16 GB of memory and the second does not.
 `lake test -- comparator2.json` runs just the second. -/

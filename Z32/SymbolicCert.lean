@@ -356,6 +356,34 @@ theorem exists_fract_ge_of_certified (hq : 1 < q) (hpq : q < p) (hcop : Nat.Copr
     ring_nf
   rwa [hrw] at hm
 
+/-- Leaving `[0, 1/p)` in the shifted coordinate `{ξ(p/q)ⁿ − s}` is leaving `[s, s + 1/p)` in the
+unshifted one. -/
+theorem fract_notMem_Ico_of_le_yFract (hp : 0 < p) {n : ℕ}
+    (h : 1 / (p : ℝ) ≤ yFract p q ξ (-s) n) :
+    Int.fract (ξ * ((p : ℝ) / q) ^ n) ∉ Set.Ico s (s + 1 / (p : ℝ)) := by
+  have hp0R : (0 : ℝ) < p := by exact_mod_cast hp
+  have hp1 : 1 / (p : ℝ) ≤ 1 := by rw [div_le_one hp0R]; exact_mod_cast hp
+  intro hmem
+  rw [Set.mem_Ico] at hmem
+  have hsplit : ξ * ((p : ℝ) / q) ^ n - s
+      = (Int.fract (ξ * ((p : ℝ) / q) ^ n) - s) + (⌊ξ * ((p : ℝ) / q) ^ n⌋ : ℝ) := by
+    have := Int.floor_add_fract (ξ * ((p : ℝ) / q) ^ n)
+    linarith
+  simp only [yFract, orb, ← sub_eq_add_neg] at h
+  rw [hsplit, Int.fract_add_intCast,
+    Int.fract_eq_self.mpr ⟨by linarith [hmem.1], by linarith [hmem.2]⟩] at h
+  linarith [hmem.2]
+
+/-- **The schema theorem for every `ξ ≠ 0`.**  No nonzero real `ξ`, of either sign, keeps every
+`{ξ(p/q)ⁿ}` in `[s, s + 1/p)` when `ε = {(p−q)s}` is certified.  `FLP.ZSet` speaks only of
+`ξ > 0`, so `ZSet_eq_empty_of_certified` below is this statement restricted to positive `ξ`. -/
+theorem not_forall_fract_mem_Ico_of_certified (hq : 1 < q) (hpq : q < p)
+    (hcop : Nat.Coprime p q) (hξ : ξ ≠ 0) (hcert : SchemaCertified p q s) :
+    ¬ ∀ n : ℕ, Int.fract (ξ * ((p : ℝ) / q) ^ n) ∈ Set.Ico s (s + 1 / (p : ℝ)) := by
+  intro hall
+  obtain ⟨n, hn⟩ := not_confined_of_certified hq hpq hcop hξ hcert
+  exact fract_notMem_Ico_of_le_yFract (by omega) hn (hall n)
+
 /-- **Target T1/T2/T3 in one statement.**  `Z_{p/q}(s, s + 1/p) = ∅` for every real position `s`
 whose `ε = {(p−q)s}` is certified — at *every* coprime base `p > q > 1`, and with no assumption on
 the arithmetic nature of `ξ`.
@@ -364,22 +392,10 @@ This is the anti-unification of the thirty depth-one certificates of [Ste26] Tab
 covers a set of positions of measure `1 − 2q²/(p(p+q))` at each base. -/
 theorem ZSet_eq_empty_of_certified (hq : 1 < q) (hpq : q < p) (hcop : Nat.Coprime p q)
     (hcert : SchemaCertified p q s) : FLP.ZSet p q s (1 / (p : ℝ)) = ∅ := by
-  have hp0 : 0 < p := by omega
-  have hp0R : (0 : ℝ) < p := by exact_mod_cast hp0
-  have hp1 : 1 / (p : ℝ) ≤ 1 := by rw [div_le_one hp0R]; exact_mod_cast hp0
   ext ξ
   simp only [Set.mem_empty_iff_false, iff_false]
   rintro ⟨hξ0, hmem⟩
-  obtain ⟨n, -, hn⟩ := exists_fract_ge_of_certified hq hpq hcop hξ0.ne' hcert 0
-  have h := hmem n
-  rw [Set.mem_Ico] at h
-  have hsplit : ξ * ((p : ℝ) / q) ^ n - s
-      = (Int.fract (ξ * ((p : ℝ) / q) ^ n) - s) + (⌊ξ * ((p : ℝ) / q) ^ n⌋ : ℝ) := by
-    have := Int.floor_add_fract (ξ * ((p : ℝ) / q) ^ n)
-    linarith
-  rw [hsplit, Int.fract_add_intCast,
-    Int.fract_eq_self.mpr ⟨by linarith [h.1], by linarith [h.2]⟩] at hn
-  linarith [h.2]
+  exact not_forall_fract_mem_Ico_of_certified hq hpq hcop hξ0.ne' hcert hmem
 
 /-- The certification hypothesis in the form every concrete instance uses: an explicit
 decomposition `(p − q)s = m + e`. -/

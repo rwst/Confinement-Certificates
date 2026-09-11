@@ -31,11 +31,10 @@ project:
     31/81 = 0.38271… of [Dub19] as a window and past the corpus's own 1/3 as a
     nearest-integer constant.
   authors:
-    # Contributor roles for the formalization, not a bibliographic byline; the
-    # paper's byline is recorded under sources.
-    - "Ralf Stephan (direction, review, paper author)"
-    - "Claude Code, claude-fable-5 (mathematical discovery, paper drafting)"
-    - "Claude Code, claude-opus-5 (formalization)"
+    # People only: Palomar reserves this field for human authors. The automated
+    # systems that contributed are credited under automation, and the paper's
+    # byline is recorded under sources.
+    - "Ralf Stephan"
   license: "CC0-1.0"
   responsible_maintainers:
     - "Ralf Stephan"
@@ -63,14 +62,21 @@ status:
     Theorem C (the escape rate, Theorem 4.4), Theorem D (what the scheme can and
     cannot decide: Theorem 5.5, Theorem 5.7, and Theorem 6.3 with Corollary 6.4)
     and Theorem E (the ranked frontier, Theorem 7.1).
-    Eleven declarations are compared by comparator2.json, and they are exactly
-    the lettered results: Theorem A (Z32.ZSet_eq_empty_of_certifiedK,
-    Z32.ZSet_eq_empty_of_lowBand), Theorem B (Z32.ZSet_eq_empty_of_certified),
-    Theorem C (Z32.exists_fract_notMem_le_of_certifiedK), Theorem D(i)
+    Fourteen declarations are compared by comparator2.json, and they are
+    exactly the lettered results: Theorem A (Z32.ZSet_eq_empty_of_certifiedK,
+    Z32.ZSet_eq_empty_of_lowBand, and for every ξ ≠ 0
+    Z32.not_forall_fract_mem_Ico_of_certifiedK,
+    Z32.not_forall_fract_mem_Ico_of_lowBand), Theorem B
+    (Z32.ZSet_eq_empty_of_certified, and for every ξ ≠ 0
+    Z32.not_forall_fract_mem_Ico_of_certified), Theorem C
+    (Z32.exists_fract_notMem_le_of_certifiedK), Theorem D(i)
     (Z32.holdSet_finite_imp), Theorem D(iii) (Z32.depth_size,
     Z32.depth_size_logb) and Theorem E in all four of its forms
     (Z32.ZSet_three_two_two_seven, Z32.two_seven_empty,
     Z32.not_eventually_two_seven, Z32.not_forall_two_seven_le_abs_sub_round).
+    Theorems A and B are compared in two forms because FLP.ZSet follows
+    [FLP95] in quantifying over ξ > 0 only: the Z-set forms state the paper's
+    displays, the other three the scope it claims, every real ξ ≠ 0.
     Corollary 3.8 is not a separate declaration, being immediate arithmetic from
     the display Corollary 3.7 is stated with.
     Two things are outside that list, for different reasons. Theorem D(ii)
@@ -117,7 +123,19 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator2.json"
       literature_dependencies: []
+    - declaration: "Z32.not_forall_fract_mem_Ico_of_certifiedK"
+      file: "Z32/DepthKSchema.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
     - declaration: "Z32.ZSet_eq_empty_of_lowBand"
+      file: "Z32/DepthKSchema.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.not_forall_fract_mem_Ico_of_lowBand"
       file: "Z32/DepthKSchema.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
@@ -125,6 +143,12 @@ status:
       literature_dependencies: []
     # --- §3, Theorem B: the closed-form family on ε (Z32/SymbolicCert.lean) ---
     - declaration: "Z32.ZSet_eq_empty_of_certified"
+      file: "Z32/SymbolicCert.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator2.json"
+      literature_dependencies: []
+    - declaration: "Z32.not_forall_fract_mem_Ico_of_certified"
       file: "Z32/SymbolicCert.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
@@ -394,15 +418,16 @@ sources:
       from the same collaboration and were developed together; Appendix A of the
       paper indexes every statement by Lean identifier, file and status,
       including the load-bearing ones that are not separately compared. The
-      eleven compared declarations are the paper's lettered results, Theorems A
-      to E, less Theorem D(ii): that one, like the other statements quantified
+      fourteen compared declarations are the paper's lettered results, Theorems A
+      to E (A and B in two forms), less Theorem D(ii): that one, like the other statements quantified
       over the certificate format, is proved but cannot be phrased in Mathlib
       vocabulary alone, and Challenge2.lean lists them. The paper's corollaries
       and instances are restated in Challenge2.lean and proved at std3, but are
       outside what comparator2.json certifies. Novelty is
       recorded as unknown: §3.3 positions Theorems 3.5 and 3.6 explicitly as a
       machine-checked fragment of [Bug04, Thm. 1] rather than as new mathematics,
-      and a full prior-art gate was performed.
+      and the prior-art search behind that verdict was targeted rather than
+      exhaustive; PRIOR_ART.md documents it.
 
   - title: "Confinement certificates for powers of rational numbers modulo one"
     authors: ["Ralf Stephan"]
@@ -560,8 +585,9 @@ sources:
       The printed single-window record that Theorem 7.1 passes: 31/81 =
       0.38271… at the base 3/2, against 3/7 = 0.428571… here. Theorem 1.1
       settles the regime p > q² at every position for algebraic ξ ≠ 0, which is
-      what makes Corollary 3.11 — the same regime for a continuum of positions
-      and every real ξ ≠ 0 — a statement the certificate scheme could not reach.
+      what makes Corollary 3.11 — the same regime for a continuum of positions,
+      with no assumption on the arithmetic nature of ξ — a statement the
+      certificate scheme could not reach.
       Nothing is assumed from it.
 
   - title: "Progressions arithmétiques généralisées et le problème des (3/2)ⁿ"
@@ -616,7 +642,7 @@ automation:
       role: >-
         Mathematical discovery, and the drafting of the paper.
     - method: agent
-      models: ["claude-opus-4-8"]
+      models: ["claude-opus-5"]
       framework: "Claude Code"
       role: >-
         Formalization and tooling.
@@ -630,6 +656,12 @@ automation:
         content.
   spend_usd: "subscription-based usage ($100/month subscription; no separate API spend)"
   notes: >-
+    Two automated systems made substantive contributions, both working as
+    agents in Claude Code under the author's direction: claude-fable-5 in
+    mathematical discovery and in drafting the paper, and claude-opus-5 in
+    writing the Lean formalization and its tooling. They are credited here
+    rather than under project.authors, which Palomar reserves for people; the
+    author directed and reviewed their work, as the manual entry above records.
     The checks of the first paper still ship with the repository and still
     apply to the certificates this one reuses: the four independent engines
     (atlas.c, hold.c, gridcert.c and the naive Python verify_atlas.py, all in
@@ -703,8 +735,13 @@ limitations:
     an improvement of it, and that the mathematics of §3 is not new; what is new
     there is uniformity in (p, q, s, K), the identification of Definition 3.3
     with certificate funnel depth, and the continuum statements of
-    Corollary 3.11 in a regime where [Dub19] needs ξ algebraic. No systematic
-    prior-art gate is documented in this repository.
+    Corollary 3.11 in a regime where [Dub19] needs ξ algebraic. The prior-art
+    search behind these statements is documented in PRIOR_ART.md: a scoop gate
+    on 2026-09-01 with forward-citation sweeps on [Dub09AA], [Dub19] and
+    [KK17], and a search for the objects of §3 on 2026-09-02, which found them
+    in [FLP95] and [Bug04] after the first gate had missed [Bug04]. It was
+    targeted, not a systematic search of every result, so novelty is recorded
+    as unknown.
   - >-
     Not formalized: Conjecture 7.2 and Remark 7.3 (marked as such in Appendix A),
     and the measurements. Remark 6.6's search records — unions of total length
@@ -755,6 +792,17 @@ alignment:
         points cut the window into K+1 arcs, the map permutes them cyclically,
         so the rank sequence is eventually periodic, and the branch — hence the
         carry letter — is a function of the rank.
+    - source: "Theorem A (Thm. 3.5) for every real ξ ≠ 0: no nonzero ξ keeps every {ξ(p/q)ⁿ} in [s, s+1/p)"
+      lean: "Z32.not_forall_fract_mem_Ico_of_certifiedK"
+      module: "Challenge2 (statement), Solution2 / Z32.DepthKSchema (proof)"
+      status: proved
+      note: >-
+        The scope the paper states and the abstract claims. FLP.ZSet follows
+        [FLP95] in quantifying over ξ > 0, so the Z-set form above speaks of
+        positive ξ only; this form covers ξ of either sign, and the Z-set form
+        is derived from it. Both rest on the core form
+        Z32.not_confined_of_certifiedK, which holds for every ξ ≠ 0 because the
+        aperiodicity lemma does.
     - source: "Theorem A (Thm. 3.6), closed form: the all-low escape data, as two inequalities in ε"
       lean: "Z32.ZSet_eq_empty_of_lowBand"
       module: "Challenge2 (statement), Solution2 / Z32.DepthKSchema (proof)"
@@ -765,6 +813,13 @@ alignment:
         necessary — Definition 3.3 permits any branch word — since the other
         words cut the cells indexed by rotation number rather than by depth.
         With Z32.lowOrbit and Z32.lowOrbit_add_eq for the closed form of wᵢ.
+    - source: "Theorem A (Thm. 3.6), closed form, for every real ξ ≠ 0"
+      lean: "Z32.not_forall_fract_mem_Ico_of_lowBand"
+      module: "Challenge2 (statement), Solution2 / Z32.DepthKSchema (proof)"
+      status: proved
+      note: >-
+        The band (4) in the scope of Z32.not_forall_fract_mem_Ico_of_certifiedK;
+        the Z-set form above is its restriction to ξ > 0.
     - source: "Theorem B (Cor. 3.7), the certificate schema: ε = 0, or q ≤ pε, or q² ≤ p(p+q)ε and (p+q)ε ≤ q"
       lean: "Z32.ZSet_eq_empty_of_certified"
       module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
@@ -778,6 +833,15 @@ alignment:
         2q²/(p(p+q)); that corollary is immediate arithmetic from the display and
         has no Lean identifier. Z32.certifiedK_of_certified is the bridge back to
         Theorem A.
+    - source: "Theorem B (Cor. 3.7) for every real ξ ≠ 0: the statement the abstract makes"
+      lean: "Z32.not_forall_fract_mem_Ico_of_certified"
+      module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
+      status: proved
+      note: >-
+        No nonzero real ξ, of either sign, keeps every {ξ(p/q)ⁿ} in [s, s+1/p)
+        when ε is certified. This is the form behind the abstract's "for every
+        real ξ ≠ 0"; the Z-set form above is its restriction to ξ > 0. It rests
+        on the core form Z32.not_confined_of_certified.
     - source: "Corollary 3.9(i): Z_{p/q}(0, 1/p) = ∅ at every coprime base p > q > 1"
       lean: "Z32.ZSet_zero_eq_empty"
       module: "Challenge2 (statement), Solution2 / Z32.SymbolicCert (proof)"
@@ -1064,7 +1128,8 @@ alignment:
         verbatim, as in the first paper's challenge. A half-open window quietly
         turned closed, or 0 < ξ swapped, is what comparator's statement match
         catches. The statements that hold for every ξ ≠ 0 say so explicitly and
-        are phrased without ZSet.
+        are phrased without ZSet, Theorems A and B among them in their second
+        form.
     - source: "§2: the shifted orbit ξ(p/q)ⁿ + ν and its fractional part"
       lean: "Z32.orb, Z32.yFract"
       module: "Challenge2 (statement), Z32.DubickasWord (definition)"

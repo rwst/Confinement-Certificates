@@ -18,9 +18,10 @@ paper (against Mathlib alone, with `sorry` proofs), this file simply **imports t
 proofs**, so that the constants comparator is asked about are present in this module's environment
 with their genuine proofs and their genuine definitional dependencies:
 
-* `Z32.ZSet_eq_empty_of_certified` and the §3 corollaries — `Z32.SymbolicCert`
-* `Z32.ZSet_eq_empty_of_certifiedK`, `Z32.ZSet_eq_empty_of_lowBand` and the depth-`K` instances —
-  `Z32.DepthKSchema`
+* `Z32.ZSet_eq_empty_of_certified`, its form for every `ξ ≠ 0`
+  (`Z32.not_forall_fract_mem_Ico_of_certified`) and the §3 corollaries — `Z32.SymbolicCert`
+* `Z32.ZSet_eq_empty_of_certifiedK`, `Z32.ZSet_eq_empty_of_lowBand`, their forms for every `ξ ≠ 0`
+  and the depth-`K` instances — `Z32.DepthKSchema`
 * `Z32.exists_fract_notMem_le_of_certifiedK` and the `Z32.BlockCert.escape_*` table —
   `Z32.EscapeBound`
 * `Z32.step_unique`, `Z32.holdSet_finite_imp` and the five closed entries — `Z32.CertComplete`

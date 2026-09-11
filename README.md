@@ -17,13 +17,15 @@ this repository's build, that the development proves the statements of its chall
 paper's claims restated against Mathlib alone — using only the three axioms of classical Lean, and
 that the resulting environment is re-accepted by the Lean kernel from a fresh export.
 `comparator.json` checks every statement of `Challenge.lean`; `comparator2.json` checks the
-schemas paper's lettered results — the eleven entries of `Challenge2.lean` that carry a Theorem
-A–E label, which is all of them except Theorem D(ii):
+schemas paper's lettered results — the fourteen entries of `Challenge2.lean` that carry a Theorem
+A–E label, which is all of them except Theorem D(ii). Theorems A and B are listed twice:
+`FLP.ZSet` contains only `ξ > 0`, so each also has a form for every real `ξ ≠ 0`, the scope the
+paper claims:
 
 | Paper | Numbered statements | `Challenge2.lean` |
 | --- | --- | --- |
-| Theorem A | Thms. 3.5, 3.6 | `ZSet_eq_empty_of_certifiedK`, `ZSet_eq_empty_of_lowBand` |
-| Theorem B | Cors. 3.7, 3.8 | `ZSet_eq_empty_of_certified` (Cor. 3.8 is arithmetic from it) |
+| Theorem A | Thms. 3.5, 3.6 | `ZSet_eq_empty_of_certifiedK`, `ZSet_eq_empty_of_lowBand`; for `ξ ≠ 0`, `not_forall_fract_mem_Ico_of_certifiedK`, `not_forall_fract_mem_Ico_of_lowBand` |
+| Theorem B | Cors. 3.7, 3.8 | `ZSet_eq_empty_of_certified`; for `ξ ≠ 0`, `not_forall_fract_mem_Ico_of_certified` (Cor. 3.8 is arithmetic from it) |
 | Theorem C | Thm. 4.4 | `exists_fract_notMem_le_of_certifiedK` |
 | Theorem D(i) | Thm. 5.5 | `holdSet_finite_imp` |
 | Theorem D(ii) | Thm. 5.7 | — (quantifies over `Z32.BlockCert.Cert`; not restated) |
@@ -37,7 +39,7 @@ are simply not part of what this config certifies.
 | Config | Challenge | Solution | Statements | Paper |
 | --- | --- | --- | --- | --- |
 | `comparator.json` | `Challenge.lean` | `SolutionRecord` | 24 | *Confinement certificates …* |
-| `comparator2.json` | `Challenge2.lean` | `Solution2` | 11 | *Confinement schemas …* |
+| `comparator2.json` | `Challenge2.lean` | `Solution2` | 14 | *Confinement schemas …* |
 
 Run one at a time with `lake test -- comparator2.json`. `comparator.json`'s solution module carries
 `Z32/UnionRecord.lean`, whose certificate's kernel check alone costs about 100 seconds and 12

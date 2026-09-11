@@ -547,28 +547,25 @@ theorem not_confined_of_certifiedK (hq : 1 < q) (hqp : q < p) (hcop : Nat.Coprim
   exact not_isEventuallyPeriodic_carry hq hqp hcop hξ
     (isEventuallyPeriodic_carry_of_certifiedK (by omega) hqp hcon hcert)
 
+/-- **The depth-`K` schema theorem for every `ξ ≠ 0`.**  No nonzero real `ξ`, of either sign, keeps
+every `{ξ(p/q)ⁿ}` in `[s, s + 1/p)` when `s` escapes at depth `K`.  `ZSet_eq_empty_of_certifiedK`
+below is this statement restricted to positive `ξ`. -/
+theorem not_forall_fract_mem_Ico_of_certifiedK (hq : 1 < q) (hqp : q < p)
+    (hcop : Nat.Coprime p q) (hξ : ξ ≠ 0) (hcert : SchemaCertifiedK p q s K) :
+    ¬ ∀ n : ℕ, Int.fract (ξ * ((p : ℝ) / q) ^ n) ∈ Set.Ico s (s + 1 / (p : ℝ)) := by
+  intro hall
+  obtain ⟨n, hn⟩ := not_confined_of_certifiedK hq hqp hcop hξ hcert
+  exact fract_notMem_Ico_of_le_yFract (by omega) hn (hall n)
+
 /-- **The depth-`K` schema theorem.**  `Z_{p/q}(s, s + 1/p) = ∅` for every real position `s`
 whose marked orbit escapes, at every coprime base `p > q > 1`, with no assumption on the
 arithmetic nature of `ξ`. -/
 theorem ZSet_eq_empty_of_certifiedK (hq : 1 < q) (hqp : q < p) (hcop : Nat.Coprime p q)
     (hcert : SchemaCertifiedK p q s K) : FLP.ZSet p q s (1 / (p : ℝ)) = ∅ := by
-  have hp0 : 0 < p := by omega
-  have hp0R : (0 : ℝ) < p := by exact_mod_cast hp0
-  have hp1 : 1 / (p : ℝ) ≤ 1 := by rw [div_le_one hp0R]; exact_mod_cast hp0
   ext ξ
   simp only [Set.mem_empty_iff_false, iff_false]
   rintro ⟨hξ0, hmem⟩
-  obtain ⟨n, hn⟩ := not_confined_of_certifiedK hq hqp hcop hξ0.ne' hcert
-  have h := hmem n
-  rw [Set.mem_Ico] at h
-  have hsplit : ξ * ((p : ℝ) / q) ^ n - s
-      = (Int.fract (ξ * ((p : ℝ) / q) ^ n) - s) + (⌊ξ * ((p : ℝ) / q) ^ n⌋ : ℝ) := by
-    have := Int.floor_add_fract (ξ * ((p : ℝ) / q) ^ n)
-    linarith
-  simp only [yFract, orb, ← sub_eq_add_neg] at hn
-  rw [hsplit, Int.fract_add_intCast,
-    Int.fract_eq_self.mpr ⟨by linarith [h.1], by linarith [h.2]⟩] at hn
-  linarith [h.2]
+  exact not_forall_fract_mem_Ico_of_certifiedK hq hqp hcop hξ0.ne' hcert hmem
 
 /-! ## The closed-form family: taking the low branch `K` times -/
 
@@ -698,6 +695,16 @@ lies in the depth-`K` band, at every coprime base and for every `K`. -/
 theorem ZSet_eq_empty_of_lowBand (hq : 1 < q) (hqp : q < p) (hcop : Nat.Coprime p q)
     (hb : LowBand p q (schemaEps p q s) K) : FLP.ZSet p q s (1 / (p : ℝ)) = ∅ :=
   ZSet_eq_empty_of_certifiedK (K := K) hq hqp hcop
+    ⟨lowOrbit p q (schemaEps p q s),
+      escape_lowOrbit (by omega) hqp (schemaEps_nonneg p q s) hb⟩
+
+/-- **The closed-form family for every `ξ ≠ 0`.**  No nonzero real `ξ`, of either sign, keeps every
+`{ξ(p/q)ⁿ}` in `[s, s + 1/p)` when `ε = {(p−q)s}` lies in the depth-`K` band;
+`ZSet_eq_empty_of_lowBand` is this statement restricted to positive `ξ`. -/
+theorem not_forall_fract_mem_Ico_of_lowBand (hq : 1 < q) (hqp : q < p) (hcop : Nat.Coprime p q)
+    (hξ : ξ ≠ 0) (hb : LowBand p q (schemaEps p q s) K) :
+    ¬ ∀ n : ℕ, Int.fract (ξ * ((p : ℝ) / q) ^ n) ∈ Set.Ico s (s + 1 / (p : ℝ)) :=
+  not_forall_fract_mem_Ico_of_certifiedK (K := K) hq hqp hcop hξ
     ⟨lowOrbit p q (schemaEps p q s),
       escape_lowOrbit (by omega) hqp (schemaEps_nonneg p q s) hb⟩
 

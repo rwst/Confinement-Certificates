@@ -3,8 +3,11 @@
     "solution_module": "Solution2",
     "theorem_names": [
         "Z32.ZSet_eq_empty_of_certifiedK",
+        "Z32.not_forall_fract_mem_Ico_of_certifiedK",
         "Z32.ZSet_eq_empty_of_lowBand",
+        "Z32.not_forall_fract_mem_Ico_of_lowBand",
         "Z32.ZSet_eq_empty_of_certified",
+        "Z32.not_forall_fract_mem_Ico_of_certified",
         "Z32.exists_fract_notMem_le_of_certifiedK",
         "Z32.holdSet_finite_imp",
         "Z32.depth_size",

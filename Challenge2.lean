@@ -35,16 +35,18 @@ checks that
 
 ## The statements, by section of the paper
 
-The `✓` column marks the eleven statements `comparator2.json` names.  They are exactly the
+The `✓` column marks the fourteen statements `comparator2.json` names.  They are exactly the
 paper's lettered results — Theorems A to E — less Thm. D(ii), which is out of reach of this
-format (see below).  Everything else here is stated for the record and proved by the
-development, but is not part of what a `lake test` run certifies; adding any of it back to
-`comparator2.json` costs nothing but the run time.
+format (see below).  Theorems A and B appear twice: as `Z`-set emptiness, which by the definition
+of [FLP95] speaks only of `ξ > 0`, and in the scope the paper claims, for every real `ξ ≠ 0`.
+Everything else here is stated for the record and proved by the development, but is not part of
+what a `lake test` run certifies; adding any of it back to `comparator2.json` costs nothing but
+the run time.
 
 | ✓ | Section | Paper | Statements below |
 | --- | --- | --- | --- |
-| ✓ | §3 | Thm. 3.5, 3.6 (Thm. A) | the depth-`K` schema and its closed form |
-| ✓ | §3 | Cor. 3.7 (Thm. B) | the depth-one schema on the single parameter `ε` |
+| ✓ | §3 | Thm. 3.5, 3.6 (Thm. A) | the depth-`K` schema and its closed form, for `ξ > 0` and `ξ ≠ 0` |
+| ✓ | §3 | Cor. 3.7 (Thm. B) | the depth-one schema on the single parameter `ε`, for `ξ > 0` and `ξ ≠ 0` |
 | | §3 | Cor. 3.9, Thm. 3.10 | the integer-`θ` positions and the thirty grid entries |
 | | §3 | Cor. 3.11 | continua of *real* positions at the base `5/2`, depths one to three |
 | ✓ | §4 | Thm. 4.4 row one (Thm. C) | the escape rate, uniform in `(p, q, s, K)` |
@@ -75,7 +77,7 @@ challenge format, and `comparator2.json` certifies the other four and a half.
 
 The config names `Solution2`, not `SolutionRecord2`: the one statement below that needs the extra
 module is Tab. 1 row 6 (`Z32.escape_union_7083`), which rests on `Z32.BlockCert.certUnion7083` and
-costs about 100 seconds and 12 gigabytes to kernel-check.  It is not among the certified eleven, so
+costs about 100 seconds and 12 gigabytes to kernel-check.  It is not among the certified fourteen, so
 a `comparator2.json` run does not pay that; `comparator.json` still does.
 
 Nothing here is proved; the `sorry`s are the point.  The proofs live in `Z32/SymbolicCert.lean`,
@@ -228,6 +230,14 @@ no assumption on the arithmetic nature of `ξ`. -/
 theorem ZSet_eq_empty_of_certified (hq : 1 < q) (hpq : q < p) (hcop : Nat.Coprime p q)
     (hcert : SchemaCertified p q s) : FLP.ZSet p q s (1 / (p : ℝ)) = ∅ := sorry
 
+/-- **Corollary 3.7 (Theorem B), for every `ξ ≠ 0`.**  No nonzero real `ξ`, of either sign, keeps
+every `{ξ(p/q)ⁿ}` in `[s, s + 1/p)` when `ε = {(p−q)s}` is certified.  `FLP.ZSet` follows [FLP95]
+in speaking only of `ξ > 0`, so the statement above is this one restricted to positive `ξ`; this
+is the scope the paper claims. -/
+theorem not_forall_fract_mem_Ico_of_certified (hq : 1 < q) (hpq : q < p)
+    (hcop : Nat.Coprime p q) (hξ : ξ ≠ 0) (hcert : SchemaCertified p q s) :
+    ¬ ∀ n : ℕ, Int.fract (ξ * ((p : ℝ) / q) ^ n) ∈ Set.Ico s (s + 1 / (p : ℝ)) := sorry
+
 /-- **Corollary 3.9(i).**  `Z_{p/q}(0, 1/p) = ∅` at every coprime base `p > q > 1`. -/
 theorem ZSet_zero_eq_empty (hq : 1 < q) (hpq : q < p) (hcop : Nat.Coprime p q) :
     FLP.ZSet p q 0 (1 / (p : ℝ)) = ∅ := sorry
@@ -294,6 +304,19 @@ theorem ZSet_eq_empty_of_certifiedK (hq : 1 < q) (hqp : q < p) (hcop : Nat.Copri
 `ε = {(p−q)s}` lies in the depth-`K` band of display (4). -/
 theorem ZSet_eq_empty_of_lowBand (hq : 1 < q) (hqp : q < p) (hcop : Nat.Coprime p q)
     (hb : LowBand p q (schemaEps p q s) K) : FLP.ZSet p q s (1 / (p : ℝ)) = ∅ := sorry
+
+/-- **Theorem 3.5 (Theorem A), for every `ξ ≠ 0`.**  No nonzero real `ξ`, of either sign, keeps
+every `{ξ(p/q)ⁿ}` in `[s, s + 1/p)` when `s` escapes at depth `K`;
+`ZSet_eq_empty_of_certifiedK` is this statement restricted to positive `ξ`. -/
+theorem not_forall_fract_mem_Ico_of_certifiedK (hq : 1 < q) (hqp : q < p)
+    (hcop : Nat.Coprime p q) (hξ : ξ ≠ 0) (hcert : SchemaCertifiedK p q s K) :
+    ¬ ∀ n : ℕ, Int.fract (ξ * ((p : ℝ) / q) ^ n) ∈ Set.Ico s (s + 1 / (p : ℝ)) := sorry
+
+/-- **Theorem 3.6 (Theorem A, closed form), for every `ξ ≠ 0`.**  The same, for every `ε` in the
+depth-`K` band; `ZSet_eq_empty_of_lowBand` is this statement restricted to positive `ξ`. -/
+theorem not_forall_fract_mem_Ico_of_lowBand (hq : 1 < q) (hqp : q < p) (hcop : Nat.Coprime p q)
+    (hξ : ξ ≠ 0) (hb : LowBand p q (schemaEps p q s) K) :
+    ¬ ∀ n : ℕ, Int.fract (ξ * ((p : ℝ) / q) ^ n) ∈ Set.Ico s (s + 1 / (p : ℝ)) := sorry
 
 /-- **Corollary 3.11, depth 2.**  Every real `s` with `{3s} ∈ [8/195, 4/39]`, an interval strictly
 inside the band on which the depth-one schema says nothing. -/
