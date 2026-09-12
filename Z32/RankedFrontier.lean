@@ -168,7 +168,7 @@ namespace Z32
 
 open BlockCert
 
-/-- **The tip of the tongue, as a window statement.**  `Z_{3/2}(2/7, 3/7) = ∅`: no `ξ > 0` has
+/-- **The tip of the tongue, as a window statement.**  `Z_{3/2}(2/7, 5/7) = ∅`: no `ξ > 0` has
 every `{ξ(3/2)ⁿ}` in `[2/7, 5/7)`, a window of length `3/7 = 0.428571…`.  This passes the corpus's
 previous single-window record `Z32.ZSet_three_two_frontier` (`0.40722`, the hull-merge frontier)
 and [Dub19] Theorem 1.2 (`31/81 = 0.38271…`, the longest window in print). -/

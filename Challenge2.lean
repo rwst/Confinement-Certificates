@@ -54,7 +54,7 @@ the run time.
 | ✓ | §5 | Thm. 5.5 (Thm. D(i)) | completeness on the finite-hold-set class |
 | | §5 | Thm. 5.2, Thm. 5.10 | determinism, and the five closed-endpoint entries |
 | ✓ | §6 | Thm. 6.3 (Thm. D(iii)) | the depth–size bound, in both its forms |
-| ✓ | §7 | Thm. 7.1 (Thm. E) | the ranked frontier `Z_{3/2}(2/7, 3/7) = ∅`, all four forms |
+| ✓ | §7 | Thm. 7.1 (Thm. E) | the ranked frontier `Z_{3/2}(2/7, 5/7) = ∅`, all four forms |
 
 ## What is deliberately *not* here
 
@@ -498,7 +498,7 @@ theorem depth_size_logb {p q : ℕ} (hq : 0 < q) (hqp : q < p) {U : Set ℝ}
 
 /-! ## §7 — the ranked frontier and its exact ceiling -/
 
-/-- **Theorem 7.1 (Theorem E).**  `Z_{3/2}(2/7, 3/7) = ∅`: a window of length
+/-- **Theorem 7.1 (Theorem E).**  `Z_{3/2}(2/7, 5/7) = ∅`: a window of length
 `3/7 = 0.428571…`, past the corpus record `0.40722` and past [Dub19] Theorem 1.2's
 `31/81 = 0.38271…`, the longest single window excluded in print. -/
 theorem ZSet_three_two_two_seven : FLP.ZSet 3 2 (2 / 7 : ℝ) (3 / 7) = ∅ := sorry
